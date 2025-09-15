@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi Restaurant | Auténtica experiencia japonesa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'carbon-black': '#0B0B0B',
+                        'warm-white': '#F7F7F5',
+                        'torii-red': '#F4511E',
+                        'medium-gray': '#9CA3AF',
+                        'subtle-gold': '#FFC857',
+                    },
+                    fontFamily: {
+                        'primary': ['Manrope', 'sans-serif'],
+                        'japanese': ['Noto Sans JP', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #F7F7F5;
+            color: #0B0B0B;
+        }
+
+        .sticky-header {
+            transition: all 0.3s ease;
+        }
+
+        .sticky-header.scrolled {
+            background-color: rgba(247, 247, 245, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sticky-header.scrolled .nav-item,
+        .sticky-header.scrolled .dropdown button {
+            color: #0B0B0B !important;
+        }
+
+        .sticky-header.scrolled .logo h1 {
+            color: #0B0B0B !important;
+        }
+
+        /* Fix for hamburger color on scroll */
+        .sticky-header.scrolled .hamburger-line {
+            background-color: #0B0B0B !important;
+        }
+
+        .menu-item-card {
+            transition: all 0.3s ease;
+        }
+
+        .menu-item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-menu {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .mobile-menu.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger-active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .dropdown-menu {
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .japanese-accent {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 500;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(11, 11, 11, 0.7), rgba(11, 11, 11, 0.4));
+            z-index: -1;
+        }
+
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 25px;
+            right: 25px;
+            background-color: #25d366;
+            color: white;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.6);
+        }
+
+        .whatsapp-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(37, 211, 102, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .video-controls {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .whatsapp-float {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-warm-white text-carbon-black font-primary">
+    <div id="app">
+        <!-- Sticky Header -->
+        <header class="sticky-header fixed w-full z-50 py-4 bg-carbon-black" :class="{'scrolled': scrolled}">
+            <div class="container mx-auto px-4 flex justify-between items-center">
+                <div class="logo">
+                    <h1 class="text-2xl font-bold font-japanese text-warm-white">寿司</h1>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="#" class="nav-item text-warm-white hover:text-torii-red transition-colors">Inicio</a>
+
+                    <!-- Menu Dropdown -->
+                    <div class="dropdown relative">
+                        <button
+                            class="nav-item text-warm-white hover:text-torii-red transition-colors flex items-center focus:outline-none">
+                            Menú <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div
+                            class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-warm-white rounded-lg shadow-lg py-2 border border-medium-gray">
+                            <a v-for="item in menuCategories" href="javascript:void(0);"
+                                @click="scrollToCategory(item.id)"
+                                class="block px-4 py-2 text-carbon-black hover:bg-medium-gray hover:bg-opacity-10 transition-colors cursor-pointer">
+                                {{ item.name }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="#promos"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors">Promociones</a>
+                    <a href="#about"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors">Nosotros</a>
+                    <a href="#location"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors">Ubicación</a>
+                </nav>
+
+                <!-- WhatsApp Button (Desktop) -->
+                <div class="hidden md:block">
+                    <a href="https://wa.me/1234567890"
+                        class="bg-torii-red text-warm-white px-4 py-2 rounded-full flex items-center">
+                        <i class="fab fa-whatsapp mr-2"></i> Pedir
+                    </a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="md:hidden flex items-center">
+                    <button @click="toggleMobileMenu" class="focus:outline-none"
+                        :class="{'hamburger-active': mobileMenuOpen}">
+                        <div class="w-8 h-8 flex flex-col justify-between py-2">
+                            <span class="hamburger-line w-full h-0.5 bg-warm-white rounded"></span>
+                            <span class="hamburger-line w-full h-0.5 bg-warm-white rounded"></span>
+                            <span class="hamburger-line w-full h-0.5 bg-warm-white rounded"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Dropdown -->
+            <div class="mobile-menu md:hidden bg-carbon-black border-t border-medium-gray"
+                :class="{'open': mobileMenuOpen}">
+                <div class="container mx-auto px-4 flex flex-col space-y-4 py-4">
+                    <a href="#" class="text-warm-white hover:text-torii-red transition-colors py-2"
+                        @click="closeMobileMenu">Inicio</a>
+
+                    <!-- Mobile Menu Dropdown Trigger -->
+                    <div>
+                        <button @click="toggleMobileMenuDropdown"
+                            class="w-full text-left text-warm-white hover:text-torii-red transition-colors py-2 flex items-center justify-between">
+                            Menú <i class="fas fa-chevron-down text-xs"
+                                :class="{'transform rotate-180': mobileMenuDropdownOpen}"></i>
+                        </button>
+
+                        <!-- Mobile Menu Dropdown Content -->
+                        <div class="pl-4 mt-2 space-y-2" :class="{'hidden': !mobileMenuDropdownOpen}">
+                            <a v-for="item in menuCategories" href="javascript:void(0);"
+                                @click="scrollToCategory(item.id)"
+                                class="block py-2 text-warm-white hover:text-torii-red transition-colors cursor-pointer">
+                                {{ item.name }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="#promos" class="text-warm-white hover:text-torii-red transition-colors py-2"
+                        @click="closeMobileMenu">Promociones</a>
+                    <a href="#about" class="text-warm-white hover:text-torii-red transition-colors py-2"
+                        @click="closeMobileMenu">Nosotros</a>
+                    <a href="#location" class="text-warm-white hover:text-torii-red transition-colors py-2"
+                        @click="closeMobileMenu">Ubicación</a>
+                    <a href="https://wa.me/1234567890"
+                        class="bg-torii-red text-warm-white px-4 py-2 rounded-full text-center flex items-center justify-center mt-4"
+                        @click="closeMobileMenu">
+                        <i class="fab fa-whatsapp mr-2"></i> Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section with Video Background -->
+        <section class="hero-section pt-32 pb-20 px-4 flex items-center justify-center min-h-screen">
+            <!-- Video Background -->
+            <video class="video-background" autoplay muted loop playsinline>
+                <source src="https://www.fabricsushi.com.ar/wp-content/uploads/2025/03/Video-Home.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+            <!-- Video Overlay -->
+            <div class="video-overlay"></div>
+
+            <!-- Hero Content -->
+            <div class="container mx-auto text-center relative z-10">
+                <h2 class="text-4xl md:text-6xl font-bold mb-6 font-japanese text-warm-white">Auténtico Sushi Japonés
+                </h2>
+                <p class="text-xl md:text-2xl text-warm-white text-opacity-90 max-w-2xl mx-auto mb-10">Disfruta de la
+                    verdadera esencia de la cocina japonesa con ingredientes frescos y tradicionales.</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#menu"
+                        class="bg-torii-red text-warm-white px-8 py-4 rounded-full text-lg font-medium hover:bg-opacity-90 transition-all">Ver
+                        Menú</a>
+                    <a href="https://wa.me/1234567890"
+                        class="border-2 border-warm-white text-warm-white px-8 py-4 rounded-full text-lg font-medium flex items-center justify-center hover:bg-warm-white hover:bg-opacity-10 transition-all">
+                        <i class="fab fa-whatsapp mr-2"></i> Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promos Section -->
+        <section id="promos" class="py-16 bg-warm-white px-4">
+            <div class="container mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Promociones Especiales</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div v-for="promo in promos"
+                        class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray">
+                        <div class="h-48 bg-torii-red flex items-center justify-center">
+                            <span class="text-warm-white text-5xl font-japanese">割引</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-carbon-black">{{ promo.name }}</h3>
+                            <p class="text-medium-gray mb-4">{{ promo.description }}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-torii-red">{{ promo.price }}</span>
+                                <a :href="promo.whatsappLink"
+                                    class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm">Pedir</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="py-16 px-4">
+            <div class="container mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-japanese">Nuestro Menú</h2>
+                <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">Explora nuestras delicias japonesas
+                    preparadas con técnicas tradicionales y los ingredientes más frescos.</p>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap justify-center gap-3 mb-12">
+                    <button v-for="category in categories" @click="setActiveCategory(category.id)"
+                        :class="{'bg-carbon-black text-warm-white': activeCategory === category.id, 'bg-warm-white text-carbon-black': activeCategory !== category.id}"
+                        class="px-4 py-2 rounded-full border border-medium-gray transition-colors">
+                        {{ category.name }}
+                    </button>
+                </div>
+
+                <!-- Menu Items -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="item in filteredMenu"
+                        class="bg-warm-white rounded-2xl p-6 shadow-md menu-item-card border border-medium-gray">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-carbon-black">{{ item.name }}</h3>
+                                <p class="text-sm text-medium-gray japanese-accent">{{ item.type }} · {{ item.contents
+                                    }}</p>
+                            </div>
+                            <span class="text-torii-red font-bold">{{ item.price }}</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span v-for="flag in item.flags" class="text-xs px-2 py-1 rounded-full japanese-accent"
+                                :class="{'bg-red-100 text-red-800': flag === 'Picante', 'bg-green-100 text-green-800': flag === 'Veggie'}">
+                                {{ flag }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <select class="bg-warm-white rounded-lg px-3 py-2 text-sm border border-medium-gray">
+                                <option v-for="option in item.options">{{ option }}</option>
+                            </select>
+                            <a :href="item.whatsappLink"
+                                class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm flex items-center">
+                                <i class="fab fa-whatsapp mr-2"></i> Pedir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-16 bg-warm-white px-4">
+            <div class="container mx-auto">
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="md:w-1/2">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6 font-japanese">Nuestra Experiencia</h2>
+                        <p class="text-medium-gray mb-6">Con más de 15 años de tradición, nuestro chef japonés lleva la
+                            auténtica esencia del sushi a tu mesa. Cada pieza es una obra de arte cuidadosamente
+                            elaborada con ingredientes de la más alta calidad.</p>
+                        <p class="text-medium-gray">Nuestra filosofía se basa en el respeto por los sabores
+                            tradicionales, la frescura de los ingredientes y la presentación impecable de cada plato.
+                        </p>
+                    </div>
+                    <div
+                        class="md:w-1/2 bg-warm-white h-80 rounded-2xl flex items-center justify-center border border-medium-gray">
+                        <span class="text-6xl font-japanese text-medium-gray">体験</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Section -->
+        <section id="location" class="py-16 px-4">
+            <div class="container mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Visítanos</h2>
+                <div class="flex flex-col md:flex-row gap-12">
+                    <div
+                        class="md:w-1/2 bg-warm-white h-96 rounded-2xl flex items-center justify-center border border-medium-gray">
+                        <span class="text-6xl font-japanese text-medium-gray">地図</span>
+                    </div>
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold mb-6 text-carbon-black">Horarios de atención</h3>
+                        <ul class="space-y-4 mb-8">
+                            <li v-for="schedule in schedules" class="flex justify-between">
+                                <span class="text-medium-gray">{{ schedule.day }}</span>
+                                <span class="font-medium text-carbon-black">{{ schedule.hours }}</span>
+                            </li>
+                        </ul>
+                        <a href="https://maps.google.com"
+                            class="bg-carbon-black text-warm-white px-6 py-3 rounded-full inline-flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i> Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-carbon-black text-warm-white py-12 px-4">
+            <div class="container mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div>
+                        <h3 class="text-2xl font-japanese mb-4">寿司</h3>
+                        <p class="text-medium-gray">Auténtica experiencia culinaria japonesa</p>
+                    </div>
+                    <div class="flex space-x-6">
+                        <a v-for="social in socialLinks" :href="social.link"
+                            class="text-2xl text-medium-gray hover:text-warm-white transition-colors">
+                            <i :class="social.icon"></i>
+                        </a>
+                    </div>
+                    <div class="text-medium-gray text-sm">
+                        <a href="#" class="hover:text-warm-white transition-colors mr-4">Política de datos</a>
+                        <a href="#" class="hover:text-warm-white transition-colors">Términos y condiciones</a>
+                    </div>
+                </div>
+                <div class="border-t border-medium-gray mt-8 pt-8 text-center text-medium-gray text-sm">
+                    <p>© 2023 Sushi Restaurant. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Floating WhatsApp Button -->
+        <a href="https://wa.me/1234567890" class="whatsapp-float whatsapp-pulse" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const scrolled = ref(false);
+                const activeCategory = ref('all');
+                const mobileMenuOpen = ref(false);
+                const mobileMenuDropdownOpen = ref(false);
+
+                const menuCategories = ref([
+                    { id: 'uramaki', name: 'Uramaki' },
+                    { id: 'hosomaki', name: 'Hosomaki' },
+                    { id: 'nigiri', name: 'Nigiri' },
+                    { id: 'sashimi', name: 'Sashimi' },
+                    { id: 'special', name: 'Especiales' }
+                ]);
+
+                const categories = ref([
+                    { id: 'all', name: 'Todo' },
+                    ...menuCategories.value
+                ]);
+
+                const promos = ref([
+                    {
+                        name: 'Combo Familiar',
+                        description: '40 piezas de sushi variado + 2 postres',
+                        price: '$49.990',
+                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Familiar'
+                    },
+                    {
+                        name: 'Combo Pareja',
+                        description: '24 piezas de sushi + 1 bebida',
+                        price: '$29.990',
+                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Pareja'
+                    },
+                    {
+                        name: 'Combo Picante',
+                        description: '20 piezas de rolls picantes + salsa especial',
+                        price: '$24.990',
+                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Picante'
+                    },
+                    {
+                        name: 'Combo Veggie',
+                        description: '20 piezas of sushi vegetariano',
+                        price: '$22.990',
+                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Veggie'
+                    }
+                ]);
+
+                const menuItems = ref([
+                    {
+                        name: 'Roll California',
+                        type: 'Uramaki',
+                        contents: 'Cangrejo, palta, pepino, philadelphia',
+                        price: '$8.990',
+                        flags: [],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'uramaki',
+                        whatsappLink: 'https://wa.me/+5491173628251?text=Quisiera%20pedir%20Roll%20California'
+                    },
+                    {
+                        name: 'Nigiri Salmón',
+                        type: 'Nigiri',
+                        contents: 'Salmón fresco, arroz',
+                        price: '$7.990',
+                        flags: [],
+                        options: ['4 piezas', '8 piezas'],
+                        category: 'nigiri',
+                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Nigiri%20Salmón'
+                    },
+                    {
+                        name: 'Sashimi Mixto',
+                        type: 'Sashimi',
+                        contents: 'Corte fino de salmón, atún y pez mantequilla',
+                        price: '$12.990',
+                        flags: [],
+                        options: ['10 piezas', '16 piezas'],
+                        category: 'sashimi',
+                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Sashimi%20Mixto'
+                    },
+                    {
+                        name: 'Hosomaki Pepino',
+                        type: 'Hosomaki',
+                        contents: 'Pepino, arroz, alga nori',
+                        price: '$5.990',
+                        flags: ['Veggie'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'hosomaki',
+                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Hosomaki%20Pepino'
+                    },
+                    {
+                        name: 'Roll Picante',
+                        type: 'Uramaki',
+                        contents: 'Salmón, queso crema, salsa picante',
+                        price: '$9.990',
+                        flags: ['Picante'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'uramaki',
+                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Roll%20Picante'
+                    },
+                    {
+                        name: 'Special Dragon',
+                        type: 'Uramaki',
+                        contents: 'Langostino tempura, palta, salsa especial',
+                        price: '$13.990',
+                        flags: [],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'special',
+                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Special%20Dragon'
+                    }
+                ]);
+
+                const schedules = ref([
+                    { day: 'Lunes a Jueves', hours: '12:00 - 15:00 / 19:00 - 23:00' },
+                    { day: 'Viernes y Sábado', hours: '12:00 - 16:00 / 18:30 - 00:00' },
+                    { day: 'Domingo', hours: '12:30 - 17:00' }
+                ]);
+
+                const socialLinks = ref([
+                    { icon: 'fab fa-instagram', link: 'https://instagram.com' },
+                    { icon: 'fab fa-facebook', link: 'https://facebook.com' },
+                    { icon: 'fab fa-tiktok', link: 'https://tiktok.com' }
+                ]);
+
+                const filteredMenu = computed(() => {
+                    if (activeCategory.value === 'all') {
+                        return menuItems.value;
+                    }
+                    return menuItems.value.filter(item => item.category === activeCategory.value);
+                });
+
+                const setActiveCategory = (categoryId) => {
+                    activeCategory.value = categoryId;
+                };
+
+                const toggleMobileMenu = () => {
+                    mobileMenuOpen.value = !mobileMenuOpen.value;
+                    if (!mobileMenuOpen.value) {
+                        mobileMenuDropdownOpen.value = false;
+                    }
+                };
+
+                const toggleMobileMenuDropdown = () => {
+                    mobileMenuDropdownOpen.value = !mobileMenuDropdownOpen.value;
+                };
+
+                const closeMobileMenu = () => {
+                    mobileMenuOpen.value = false;
+                    mobileMenuDropdownOpen.value = false;
+                };
+
+                const scrollToCategory = (categoryId) => {
+                    // Close mobile menu if open
+                    closeMobileMenu();
+
+                    // Set active category
+                    setActiveCategory(categoryId);
+
+                    // Scroll to menu section
+                    const menuSection = document.getElementById('menu');
+                    if (menuSection) {
+                        menuSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                };
+
+                onMounted(() => {
+                    window.addEventListener('scroll', () => {
+                        scrolled.value = window.scrollY > 50;
+                    });
+                });
+
+                return {
+                    scrolled,
+                    activeCategory,
+                    mobileMenuOpen,
+                    mobileMenuDropdownOpen,
+                    menuCategories,
+                    categories,
+                    promos,
+                    menuItems,
+                    schedules,
+                    socialLinks,
+                    filteredMenu,
+                    setActiveCategory,
+                    toggleMobileMenu,
+                    toggleMobileMenuDropdown,
+                    closeMobileMenu,
+                    scrollToCategory
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
