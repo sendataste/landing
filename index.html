@@ -203,6 +203,73 @@
                 font-size: 24px;
             }
         }
+
+        .logo-svg {
+            width: 120px;
+            height: auto;
+            transition: color 0.3s ease;
+        }
+
+        .sticky-header .logo-svg {
+            color: #F7F7F5;
+            /* Warm white */
+        }
+
+        .sticky-header.scrolled .logo-svg {
+            color: #0B0B0B !important;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .map-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Button styles */
+        .map-button {
+            display: inline-flex;
+            align-items: center;
+            background-color: #1a1a1a;
+            color: #f5f5f0;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .map-button:hover {
+            background-color: #333;
+        }
+
+        .map-button i {
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .md\:flex-row {
+                flex-direction: column;
+            }
+
+            .md\:w-1\/2 {
+                width: 100%;
+            }
+
+            .h-96 {
+                height: 20rem;
+            }
+
+            .gap-12 {
+                gap: 2rem;
+            }
+        }
     </style>
 </head>
 
@@ -211,8 +278,8 @@
         <!-- Sticky Header -->
         <header class="sticky-header fixed w-full z-50 py-4 bg-carbon-black" :class="{'scrolled': scrolled}">
             <div class="container mx-auto px-4 flex justify-between items-center">
-                <div class="logo">
-                    <h1 class="text-2xl font-bold font-japanese text-warm-white">寿司</h1>
+                <div class="logo max-h-24 max-w-24">
+                    <img src="assets/logo_senda.svg">
                 </div>
 
                 <!-- Desktop Navigation -->
@@ -245,7 +312,7 @@
 
                 <!-- WhatsApp Button (Desktop) -->
                 <div class="hidden md:block">
-                    <a href="https://wa.me/1234567890"
+                    <a href="https://wa.me/+541140587888"
                         class="bg-torii-red text-warm-white px-4 py-2 rounded-full flex items-center">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir
                     </a>
@@ -295,7 +362,7 @@
                         @click="closeMobileMenu">Nosotros</a>
                     <a href="#location" class="text-warm-white hover:text-torii-red transition-colors py-2"
                         @click="closeMobileMenu">Ubicación</a>
-                    <a href="https://wa.me/1234567890"
+                    <a href="https://wa.me/+541140587888"
                         class="bg-torii-red text-warm-white px-4 py-2 rounded-full text-center flex items-center justify-center mt-4"
                         @click="closeMobileMenu">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir por WhatsApp
@@ -308,7 +375,7 @@
         <section class="hero-section pt-32 pb-20 px-4 flex items-center justify-center min-h-screen">
             <!-- Video Background -->
             <video class="video-background" autoplay muted loop playsinline>
-                <source src="https://www.fabricsushi.com.ar/wp-content/uploads/2025/03/Video-Home.mp4" type="video/mp4">
+                <source src="assets/header-video.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
 
@@ -317,15 +384,15 @@
 
             <!-- Hero Content -->
             <div class="container mx-auto text-center relative z-10">
-                <h2 class="text-4xl md:text-6xl font-bold mb-6 font-japanese text-warm-white">Auténtico Sushi Japonés
+                <h2 class="text-4xl md:text-6xl font-bold mb-6 font-japanese text-warm-white">Elegí la SENDA correcta 道
                 </h2>
-                <p class="text-xl md:text-2xl text-warm-white text-opacity-90 max-w-2xl mx-auto mb-10">Disfruta de la
-                    verdadera esencia de la cocina japonesa con ingredientes frescos y tradicionales.</p>
+                <p class="text-xl md:text-2xl text-warm-white text-opacity-90 max-w-2xl mx-auto mb-10">Tu camino directo
+                    al buen sushi</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#menu"
                         class="bg-torii-red text-warm-white px-8 py-4 rounded-full text-lg font-medium hover:bg-opacity-90 transition-all">Ver
                         Menú</a>
-                    <a href="https://wa.me/1234567890"
+                    <a href="https://wa.me/+541140587888"
                         class="border-2 border-warm-white text-warm-white px-8 py-4 rounded-full text-lg font-medium flex items-center justify-center hover:bg-warm-white hover:bg-opacity-10 transition-all">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir por WhatsApp
                     </a>
@@ -336,33 +403,38 @@
         <!-- Promos Section -->
         <section id="promos" class="py-16 bg-warm-white px-4">
             <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Promociones Especiales</h2>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Promociones</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div v-for="promo in promos"
-                        class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray">
-                        <div class="h-48 bg-torii-red flex items-center justify-center">
+                        class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray flex flex-col">
+                        <!-- <div class="h-48 bg-torii-red flex items-center justify-center">
                             <span class="text-warm-white text-5xl font-japanese">割引</span>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2 text-carbon-black">{{ promo.name }}</h3>
+                        </div> -->
+                        <div class="p-6 flex-grow">
+                            <h1 class="text-2xl mb-2 text-carbon-black font-bold ">{{ promo.name }}</h1>
+                            <h2 class="text-xl mb-2 text-carbon-black font-bold ">{{ promo.secondname }}</h2>
+                            <h3 class="text-lg mb-2 text-carbon-black">{{ promo.pieces }}</h3>
                             <p class="text-medium-gray mb-4">{{ promo.description }}</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-2xl font-bold text-torii-red">{{ promo.price }}</span>
-                                <a :href="promo.whatsappLink"
-                                    class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm">Pedir</a>
-                            </div>
+
+
                         </div>
+                        <div class="p-4 pt-0 flex">
+                            <span class="text-2xl font-bold text-torii-red">{{ promo.price }}</span>
+                        </div>
+                        <div class="p-4 pt-0 flex justify-end"><a :href="promo.whatsappLink"
+                                class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm"><i
+                                    class="fab fa-whatsapp mr-2"></i>Pedir</a></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Menu Section -->
-        <section id="menu" class="py-16 px-4">
+        <section id="menu" class="py-16 px-4 bg-gray-100">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-japanese">Nuestro Menú</h2>
-                <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">Explora nuestras delicias japonesas
-                    preparadas con técnicas tradicionales y los ingredientes más frescos.</p>
+                <!-- <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">Explora nuestras delicias japonesas
+                    preparadas con técnicas tradicionales y los ingredientes más frescos.</p> -->
 
                 <!-- Category Filters -->
                 <div class="flex flex-wrap justify-center gap-3 mb-12">
@@ -380,21 +452,25 @@
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <h3 class="text-xl font-bold text-carbon-black">{{ item.name }}</h3>
-                                <p class="text-sm text-medium-gray japanese-accent">{{ item.type }} · {{ item.contents
+                                <h5 class="text-xl font-bold text-carbon-black"><b>{{ item.secondname }}</b></h5>
+                                <p class="text-sm text-medium-gray japanese-accent">{{ item.contents
                                     }}</p>
                             </div>
-                            <span class="text-torii-red font-bold">{{ item.price }}</span>
                         </div>
                         <div class="flex flex-wrap gap-2 mb-4">
                             <span v-for="flag in item.flags" class="text-xs px-2 py-1 rounded-full japanese-accent"
-                                :class="{'bg-red-100 text-red-800': flag === 'Picante', 'bg-green-100 text-green-800': flag === 'Veggie'}">
+                                :class="{'bg-red-100 text-red-800': flag === 'Picante', 'bg-green-100 text-green-800': flag === 'Veggie', 'bg-amber-300 text-amber-600': flag === 'Premium', 'bg-orange-200 text-orange-600 border': flag === 'Tempura', 'bg-cyan-200 text-zinc-400': flag === 'Exclusivo', 'bg-emerald-400 text-white': flag === 'Fresh', 'bg-amber-800 text-white': flag === 'Flameado', 'bg-yellow-300 text-black': flag === 'Bestseller', 'bg-green-900 text-green-800': flag === 'Promo'}">
                                 {{ flag }}
                             </span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <select class="bg-warm-white rounded-lg px-3 py-2 text-sm border border-medium-gray">
+                            <!-- <select class="bg-warm-white rounded-lg px-3 py-2 text-sm border border-medium-gray">
                                 <option v-for="option in item.options">{{ option }}</option>
-                            </select>
+                            </select> -->
+                            <span class="text-torii-red font-bold">{{ item.price }}</span>
+                            <span class="text-torii-red font-bold"></span>
+
+
                             <a :href="item.whatsappLink"
                                 class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm flex items-center">
                                 <i class="fab fa-whatsapp mr-2"></i> Pedir
@@ -410,42 +486,62 @@
             <div class="container mx-auto">
                 <div class="flex flex-col md:flex-row items-center gap-12">
                     <div class="md:w-1/2">
-                        <h2 class="text-3xl md:text-4xl font-bold mb-6 font-japanese">Nuestra Experiencia</h2>
-                        <p class="text-medium-gray mb-6">Con más de 15 años de tradición, nuestro chef japonés lleva la
-                            auténtica esencia del sushi a tu mesa. Cada pieza es una obra de arte cuidadosamente
-                            elaborada con ingredientes de la más alta calidad.</p>
-                        <p class="text-medium-gray">Nuestra filosofía se basa en el respeto por los sabores
-                            tradicionales, la frescura de los ingredientes y la presentación impecable de cada plato.
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6 font-japanese">Nuestra historia</h2>
+                        <p class="text-medium-gray mb-6"><b>SENDA nace de dos amigos con hambre de aprender la cocina
+                                desde
+                                adentro. </b> Elegimos el camino simple: pocas
+                            piezas, sabores nítidos y procesos prolijos. El <b>Torii</b> es nuestro símbolo: un puente
+                            entre la
+                            calma japonesa y la vida del
+                            barrio. Creemos en 3 cosas: <b>frescura</b> que se nota, <b>simpleza</b> al pedir y calidad
+                            al
+                            alcance de
+                            tu plato. Estamos en <b>Villa
+                                Pueyrredón</b> y queremos que SENDA sea el sushi que todo el público elija: cercano,
+                            honesto y
+                            consistente.
+
+
                         </p>
+                        <div class="text-center">
+                            <p class="text-medium-gray mb-6">Unite y se parte de SENDA.</p>
+                        </div>
                     </div>
-                    <div
-                        class="md:w-1/2 bg-warm-white h-80 rounded-2xl flex items-center justify-center border border-medium-gray">
-                        <span class="text-6xl font-japanese text-medium-gray">体験</span>
+
+                    <div class="md:w-1/2 bg-warm-white h-80 rounded-2xl flex items-center justify-center ">
+                        <!-- <span class="text-6xl font-japanese text-medium-gray">体験</span> -->
+                        <img src="assets/senda_horizontal_armoniosa.png" class="rounded-xl">
                     </div>
                 </div>
-            </div>
         </section>
 
         <!-- Location Section -->
-        <section id="location" class="py-16 px-4">
-            <div class="container mx-auto">
+
+        <section id="location" class="py-16 px-4 bg-gray-100">
+            <div class="container">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Visítanos</h2>
                 <div class="flex flex-col md:flex-row gap-12">
                     <div
                         class="md:w-1/2 bg-warm-white h-96 rounded-2xl flex items-center justify-center border border-medium-gray">
-                        <span class="text-6xl font-japanese text-medium-gray">地図</span>
+                        <div class="map-container">
+                            <iframe class="map-iframe"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.6136660557495!2d-58.510991925462356!3d-34.58864077295971!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb70045a6961d%3A0x6c972f5d9f9703e2!2sSenda%20Sushi!5e0!3m2!1ses-419!2sar!4v1758262559895!5m2!1ses-419!2sar"
+                                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
                     </div>
                     <div class="md:w-1/2">
                         <h3 class="text-2xl font-bold mb-6 text-carbon-black">Horarios de atención</h3>
                         <ul class="space-y-4 mb-8">
-                            <li v-for="schedule in schedules" class="flex justify-between">
-                                <span class="text-medium-gray">{{ schedule.day }}</span>
-                                <span class="font-medium text-carbon-black">{{ schedule.hours }}</span>
-                            </li>
+                            <li v-for="schedule in schedules" class="flex justify-between"> <span
+                                    class="text-medium-gray">{{ schedule.day }}</span> <span
+                                    class="font-medium text-carbon-black">{{ schedule.hours }}</span> </li>
                         </ul>
-                        <a href="https://maps.google.com"
-                            class="bg-carbon-black text-warm-white px-6 py-3 rounded-full inline-flex items-center">
-                            <i class="fas fa-map-marker-alt mr-2"></i> Ver en Google Maps
+                        <h1 class="text-2xl mb-2 text-carbon-black font-bold ">Acercate a nuestro local</h1>
+                        <p>Visitanos en nuestro local y sé parte de esto!</p>
+                        </br>
+                        <a href="https://maps.google.com/?q=Senda+Sushi" target="_blank" class="map-button">
+                            <i class="fas fa-map-marker-alt"></i> Ver en Google Maps
                         </a>
                     </div>
                 </div>
@@ -456,9 +552,12 @@
         <footer class="bg-carbon-black text-warm-white py-12 px-4">
             <div class="container mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div>
-                        <h3 class="text-2xl font-japanese mb-4">寿司</h3>
-                        <p class="text-medium-gray">Auténtica experiencia culinaria japonesa</p>
+                    <div class="flex justify-center mb-8">
+                        <div class="text-center">
+                            <img class="max-h-24 max-w-24 mx-auto footer-logo" src="assets/footer_logo.png"
+                                alt="Senda Restaurant Logo">
+                            <p class="text-medium-gray mt-2">Auténtica experiencia culinaria japonesa</p>
+                        </div>
                     </div>
                     <div class="flex space-x-6">
                         <a v-for="social in socialLinks" :href="social.link"
@@ -472,13 +571,13 @@
                     </div>
                 </div>
                 <div class="border-t border-medium-gray mt-8 pt-8 text-center text-medium-gray text-sm">
-                    <p>© 2023 Sushi Restaurant. Todos los derechos reservados.</p>
+                    <p>© 2025 Senda Restaurant. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>
 
         <!-- Floating WhatsApp Button -->
-        <a href="https://wa.me/1234567890" class="whatsapp-float whatsapp-pulse" target="_blank">
+        <a href="https://wa.me/+541140587888" class="whatsapp-float whatsapp-pulse" target="_blank">
             <i class="fab fa-whatsapp"></i>
         </a>
     </div>
@@ -495,11 +594,12 @@
                 const mobileMenuDropdownOpen = ref(false);
 
                 const menuCategories = ref([
-                    { id: 'uramaki', name: 'Uramaki' },
-                    { id: 'hosomaki', name: 'Hosomaki' },
-                    { id: 'nigiri', name: 'Nigiri' },
-                    { id: 'sashimi', name: 'Sashimi' },
-                    { id: 'special', name: 'Especiales' }
+                    { id: 'clasico', name: 'Clásico' },
+                    { id: 'hot', name: 'Hot' },
+                    { id: 'veggie', name: 'Línea veggie' },
+                    {
+                        id: 'salad-bowls', name: 'Salad Bowls'
+                    },
                 ]);
 
                 const categories = ref([
@@ -509,104 +609,248 @@
 
                 const promos = ref([
                     {
-                        name: 'Combo Familiar',
-                        description: '40 piezas de sushi variado + 2 postres',
-                        price: '$49.990',
-                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Familiar'
+                        name: 'Clásico',
+                        secondname: 'Camino simple',
+                        pieces: '30 piezas',
+                        description: '3 niguiris de salmón, 3 nigiris de langostinos, 4 sashimis, 10 california, 5 vegetarianos, 5 spicy tuna',
+                        price: '$XXXX',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     },
                     {
-                        name: 'Combo Pareja',
-                        description: '24 piezas de sushi + 1 bebida',
-                        price: '$29.990',
-                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Pareja'
+                        name: 'Salmón',
+                        secondname: 'Doble paso',
+                        pieces: '30 piezas',
+                        description: '4 nigiris de salmón, 3 geishas, 3 sashimi, 5 philadelphia, 5 Buenos Aires, 5 New York, 5 SENDA',
+                        price: '$XXXX',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     },
                     {
-                        name: 'Combo Picante',
-                        description: '20 piezas de rolls picantes + salsa especial',
-                        price: '$24.990',
-                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Picante'
+                        name: 'Veggie',
+                        secondname: 'Jardín Zen',
+                        pieces: '20 piezas',
+                        description: '5 ZEN, 5 Praga, 5 wasabi, 5 maki veggie',
+                        price: '$XXXX',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     },
                     {
-                        name: 'Combo Veggie',
+                        name: 'Camino propio',
+                        secondname: 'A elección del cliente',
+                        pieces: '',
+                        description: '',
+                        price: '$XXXX',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Premium',
+                        secondname: 'Experiencia Umami',
+                        pieces: '20 piezas',
                         description: '20 piezas of sushi vegetariano',
-                        price: '$22.990',
-                        whatsappLink: 'https://wa.me/1234567890?text=Me%20interesa%20el%20Combo%20Veggie'
+                        price: '$XXXX',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     }
                 ]);
 
                 const menuItems = ref([
                     {
-                        name: 'Roll California',
-                        type: 'Uramaki',
-                        contents: 'Cangrejo, palta, pepino, philadelphia',
-                        price: '$8.990',
-                        flags: [],
+                        name: 'Philadelphia Roll 2.0',
+                        secondname: 'Dreams Roll',
+                        type: 'Clásico',
+                        contents: 'Delicado roll con salmón fresco y queso crema, coronado con guacamole suave que realza cada bocado.',
+                        price: '$XXXX',
+                        flags: ['Bestseller', 'Premium'],
                         options: ['6 piezas', '12 piezas'],
-                        category: 'uramaki',
-                        whatsappLink: 'https://wa.me/+5491173628251?text=Quisiera%20pedir%20Roll%20California'
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+54+541140587888'
                     },
                     {
-                        name: 'Nigiri Salmón',
-                        type: 'Nigiri',
-                        contents: 'Salmón fresco, arroz',
-                        price: '$7.990',
-                        flags: [],
+                        name: 'California Roll',
+                        secondname: 'Avocado Roll',
+                        type: 'Clásico',
+                        contents: 'La clásica combinación de kani kama, palta y pepino rallado, fresca y ligera, con un toque crocante irresistible.',
+                        price: '$XXXX',
+                        flags: ['Bestseller', 'Fresh'],
                         options: ['4 piezas', '8 piezas'],
-                        category: 'nigiri',
-                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Nigiri%20Salmón'
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     },
                     {
-                        name: 'Sashimi Mixto',
-                        type: 'Sashimi',
-                        contents: 'Corte fino de salmón, atún y pez mantequilla',
-                        price: '$12.990',
-                        flags: [],
-                        options: ['10 piezas', '16 piezas'],
-                        category: 'sashimi',
-                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Sashimi%20Mixto'
-                    },
-                    {
-                        name: 'Hosomaki Pepino',
-                        type: 'Hosomaki',
-                        contents: 'Pepino, arroz, alga nori',
-                        price: '$5.990',
-                        flags: ['Veggie'],
+                        name: 'Buenos Aires Roll',
+                        secondname: 'Top Roll',
+                        type: 'Clásico',
+                        contents: 'Langostinos en tempura y queso crema, cubiertos de salmón fresco con salsa spicy mayo, intenso y sabroso.',
+                        price: '$XXXX',
+                        flags: ['Tempura'],
                         options: ['6 piezas', '12 piezas'],
-                        category: 'hosomaki',
-                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Hosomaki%20Pepino'
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     },
                     {
-                        name: 'Roll Picante',
-                        type: 'Uramaki',
-                        contents: 'Salmón, queso crema, salsa picante',
-                        price: '$9.990',
-                        flags: ['Picante'],
+                        name: 'New York Salmon',
+                        secondname: 'Salmon Dreams',
+                        type: 'Clásico',
+                        contents: 'Salmón fresco y rodajas de palta en un clásico roll premium, combinación cremosa y de sabor elegante.',
+                        price: '$XXXX',
+                        flags: ['Premium', 'Fresh'],
                         options: ['6 piezas', '12 piezas'],
-                        category: 'uramaki',
-                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Roll%20Picante'
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     },
                     {
-                        name: 'Special Dragon',
-                        type: 'Uramaki',
-                        contents: 'Langostino tempura, palta, salsa especial',
-                        price: '$13.990',
-                        flags: [],
+                        name: 'Nigiris',
+                        secondname: 'Nigiri Dreams',
+                        type: 'Clásico',
+                        contents: 'Tradicional nigiri japonés: arroz sazonado y cortes de salmón fresco, bocado simple y elegante en su esencia.',
+                        price: '$XXXX',
+                        flags: ['Premium'],
                         options: ['6 piezas', '12 piezas'],
-                        category: 'special',
-                        whatsappLink: 'https://wa.me/1234567890?text=Quisiera%20pedir%20Special%20Dragon'
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Sashimi',
+                        secondname: 'Tataki Supreme',
+                        type: 'Clásico',
+                        contents: 'Delicadas rodajas de salmón fresco, finamente cortadas para resaltar su suavidad y pureza de sabor.',
+                        price: '$XXXX',
+                        flags: ['Premium', 'Fresh'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'SENDA Roll',
+                        secondname: '    ',
+                        type: 'Clásico',
+                        contents: 'Roll especial con langostinos tsurai, palta y queso crema, coronado con cebiche fresco que sorprende al paladar.',
+                        price: '$XXXX',
+                        flags: ['Premium', 'Exclusivo'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Spicy Tuna Roll',
+                        secondname: 'Tuna Fire',
+                        type: 'Clásico',
+                        contents: 'Atún fresco acompañado de pepino y salsa spicy, combinación intensa y picante que despierta los sentidos.',
+                        price: '$XXXX',
+                        flags: ['Picante', 'Premium', 'Fresh'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'clasico',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Philadelphia Hot Roll',
+                        secondname: 'Sabroso Hot Roll',
+                        type: 'Hot',
+                        contents: 'Roll rebozado y crujiente, con salmón fresco, palta y queso crema, sabor cálido con contraste perfecto.',
+                        price: '$XXXX',
+                        flags: ['Tempura'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'hot',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Flameado Roll',
+                        secondname: 'Volcano Roll',
+                        type: 'Hot',
+                        contents: 'Roll con relleno de salmón crispy y palta, cubierto de salmón flameado, aroma intenso y textura única.',
+                        price: '$XXXX',
+                        flags: ['Premium', 'Flameado'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'hot',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Crunchy Roll',
+                        secondname: '',
+                        type: 'Hot',
+                        contents: 'Salmón fresco, queso crema y ciboulette, envueltos en un roll con crocante irresistible en cada mordida.',
+                        price: '$XXXX',
+                        flags: ['Tempura', 'Bestseller'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'hot',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Senda Acevichado',
+                        secondname: 'Acevichado Loco',
+                        type: 'Hot',
+                        contents: 'Roll con pescado blanco y palta, coronado con batata frita crocante y salsa acevichada fresca y vibrante.',
+                        price: '$XXXX',
+                        flags: ['Picante', 'Premium'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'hot',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Hot Dog Sushi',
+                        secondname: 'Tokyo Dog',
+                        type: 'Hot',
+                        contents: 'Una fusión urbana: hot dog de sushi con salmón fresco, salsa teriyaki y ciboulette, original y divertido.',
+                        price: '$XXXX',
+                        flags: ['Bestseller'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'hot',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Vegetariano',
+                        secondname: 'Green Garden Roll',
+                        type: 'Veggie',
+                        contents: 'Una opción fresca con palta cremosa, pepino crocante y zanahoria en tiras, equilibrio natural y saludable.',
+                        price: '$XXXX',
+                        flags: ['Veggie', 'Fresh'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'veggie',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'SENDA Salmón Bowl',
+                        secondname: 'Samurai Bowl',
+                        type: 'Salad Bowls',
+                        contents: 'Bowl fresco con salmón, palta, mango y verdeo, mezcla colorida y deliciosa para una experiencia diferente.',
+                        price: '$XXXX',
+                        flags: ['Fresh', 'Premium'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'salad-bowls',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Spicy Tuna Bowl',
+                        secondname: 'Tuna Fire Bowl',
+                        type: 'Salad Bowls',
+                        contents: 'Atún fresco, palta, pepino y cebolla morada, unidos en un bowl vibrante con un toque picante especial.',
+                        price: '$XXXX',
+                        flags: ['Picante', 'Fresh'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'salad-bowls',
+                        whatsappLink: 'https://wa.me/+541140587888'
+                    },
+                    {
+                        name: 'Ebi Tempura Bowl',
+                        secondname: 'Golden Ebi Bowl',
+                        type: 'Salad Bowls',
+                        contents: 'Arroz acompañado de langostinos crocantes en tempura, zanahoria, palta y jengibre rallado, fresco y sabroso.',
+                        price: '$XXXX',
+                        flags: ['Tempura'],
+                        options: ['6 piezas', '12 piezas'],
+                        category: 'salad-bowls',
+                        whatsappLink: 'https://wa.me/+541140587888'
                     }
+
                 ]);
 
                 const schedules = ref([
-                    { day: 'Lunes a Jueves', hours: '12:00 - 15:00 / 19:00 - 23:00' },
-                    { day: 'Viernes y Sábado', hours: '12:00 - 16:00 / 18:30 - 00:00' },
-                    { day: 'Domingo', hours: '12:30 - 17:00' }
+                    { day: 'Miercoles a Domingo', hours: '18:00 - 23:00' },
+                    // { day: 'Viernes y Sábado', hours: '12:00 - 16:00 / 18:30 - 00:00' },
+                    // { day: 'Domingo', hours: '12:30 - 17:00' }
                 ]);
 
                 const socialLinks = ref([
-                    { icon: 'fab fa-instagram', link: 'https://instagram.com' },
-                    { icon: 'fab fa-facebook', link: 'https://facebook.com' },
-                    { icon: 'fab fa-tiktok', link: 'https://tiktok.com' }
+                    { icon: 'fab fa-instagram', link: 'https://www.instagram.com/sendasushi.ar/' }
+                    // { icon: 'fab fa-facebook', link: 'https://facebook.com' },
+                    // { icon: 'fab fa-tiktok', link: 'https://tiktok.com' }
                 ]);
 
                 const filteredMenu = computed(() => {
