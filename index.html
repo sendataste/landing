@@ -38,6 +38,16 @@
             color: #0B0B0B;
         }
 
+        /* Smooth scroll for all anchors */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Offset for fixed header */
+        section {
+            scroll-margin-top: 80px;
+        }
+
         .sticky-header {
             transition: all 0.3s ease;
         }
@@ -77,7 +87,7 @@
         }
 
         .mobile-menu.open {
-            max-height: 500px;
+            max-height: 600px;
             opacity: 1;
         }
 
@@ -252,6 +262,129 @@
             margin-right: 0.5rem;
         }
 
+        /* Carousel Styles */
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(11, 11, 11, 0.7);
+            color: #F7F7F5;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .carousel-btn:hover {
+            background-color: rgba(244, 81, 30, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-btn.prev {
+            left: 20px;
+        }
+
+        .carousel-btn.next {
+            right: 20px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(247, 247, 245, 0.5);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background-color: #F4511E;
+            border-color: #F7F7F5;
+            transform: scale(1.2);
+        }
+
+        .carousel-dot:hover {
+            background-color: #F4511E;
+        }
+
+        .nav-item-highlight {
+            position: relative;
+        }
+
+        .nav-item-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #F4511E;
+            transition: width 0.3s ease;
+        }
+
+        .nav-item-highlight:hover::after {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-slide {
+                height: 300px;
+            }
+
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            .carousel-btn.prev {
+                left: 10px;
+            }
+
+            .carousel-btn.next {
+                right: 10px;
+            }
+
+            .carousel-dot {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .md\:flex-row {
@@ -276,44 +409,37 @@
 <body class="bg-warm-white text-carbon-black font-primary">
     <div id="app">
         <!-- Sticky Header -->
-        <header class="sticky-header fixed w-full z-50 py-4 bg-gray-500" :class="{'scrolled': scrolled}">
+        <header class="sticky-header fixed w-full z-50 py-4" :class="{'scrolled': scrolled}">
             <div class="container mx-auto px-4 flex justify-between items-center">
                 <div class="logo max-h-24 max-w-24">
-                    <img src="assets/logo_senda.svg">
+                    <a href="#"><img src="assets/logo_senda.svg" alt="SENDA Sushi Logo"></a>
                 </div>
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="#" class="nav-item text-warm-white hover:text-torii-red transition-colors">Inicio</a>
+                    <a href="#"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Inicio</a>
 
-                    <!-- Menu Dropdown -->
-                    <div class="dropdown relative">
-                        <button
-                            class="nav-item text-warm-white hover:text-torii-red transition-colors flex items-center focus:outline-none">
-                            Menú <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                        </button>
-                        <div
-                            class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-warm-white rounded-lg shadow-lg py-2 border border-medium-gray">
-                            <a v-for="item in menuCategories" href="javascript:void(0);"
-                                @click="scrollToCategory(item.id)"
-                                class="block px-4 py-2 text-carbon-black hover:bg-medium-gray hover:bg-opacity-10 transition-colors cursor-pointer">
-                                {{ item.name }}
-                            </a>
-                        </div>
-                    </div>
+                    <a href="#nosotros"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Nosotros</a>
+
+                    <a href="#menu"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Menú</a>
 
                     <a href="#promos"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors">Promociones</a>
-                    <a href="#about"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors">Nosotros</a>
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Promociones</a>
+
+                    <a href="#galeria"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Galería</a>
+
                     <a href="#location"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors">Ubicación</a>
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Ubicación</a>
                 </nav>
 
                 <!-- WhatsApp Button (Desktop) -->
                 <div class="hidden md:block">
                     <a href="https://wa.me/+541140587888"
-                        class="bg-torii-red text-warm-white px-4 py-2 rounded-full flex items-center">
+                        class="bg-torii-red text-warm-white px-4 py-2 rounded-full flex items-center hover:bg-opacity-90 transition-all">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir
                     </a>
                 </div>
@@ -335,33 +461,29 @@
             <div class="mobile-menu md:hidden bg-carbon-black border-t border-medium-gray"
                 :class="{'open': mobileMenuOpen}">
                 <div class="container mx-auto px-4 flex flex-col space-y-4 py-4">
-                    <a href="#" class="text-warm-white hover:text-torii-red transition-colors py-2"
+                    <a href="#"
+                        class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
                         @click="closeMobileMenu">Inicio</a>
 
-                    <!-- Mobile Menu Dropdown Trigger -->
-                    <div>
-                        <button @click="toggleMobileMenuDropdown"
-                            class="w-full text-left text-warm-white hover:text-torii-red transition-colors py-2 flex items-center justify-between">
-                            Menú <i class="fas fa-chevron-down text-xs"
-                                :class="{'transform rotate-180': mobileMenuDropdownOpen}"></i>
-                        </button>
+                    <a href="#menu"
+                        class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
+                        @click="closeMobileMenu">Menú</a>
 
-                        <!-- Mobile Menu Dropdown Content -->
-                        <div class="pl-4 mt-2 space-y-2" :class="{'hidden': !mobileMenuDropdownOpen}">
-                            <a v-for="item in menuCategories" href="javascript:void(0);"
-                                @click="scrollToCategory(item.id)"
-                                class="block py-2 text-warm-white hover:text-torii-red transition-colors cursor-pointer">
-                                {{ item.name }}
-                            </a>
-                        </div>
-                    </div>
-
-                    <a href="#promos" class="text-warm-white hover:text-torii-red transition-colors py-2"
+                    <a href="#promos"
+                        class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
                         @click="closeMobileMenu">Promociones</a>
-                    <a href="#about" class="text-warm-white hover:text-torii-red transition-colors py-2"
+
+                    <a href="#galeria"
+                        class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
+                        @click="closeMobileMenu">Galería</a>
+
+                    <a href="#nosotros"
+                        class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
                         @click="closeMobileMenu">Nosotros</a>
+
                     <a href="#location" class="text-warm-white hover:text-torii-red transition-colors py-2"
                         @click="closeMobileMenu">Ubicación</a>
+
                     <a href="https://wa.me/+541140587888"
                         class="bg-torii-red text-warm-white px-4 py-2 rounded-full text-center flex items-center justify-center mt-4"
                         @click="closeMobileMenu">
@@ -400,41 +522,10 @@
             </div>
         </section>
 
-        <!-- Promos Section -->
-        <section id="promos" class="py-16 bg-warm-white px-4">
-            <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Promociones</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div v-for="promo in promos"
-                        class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray flex flex-col">
-                        <!-- <div class="h-48 bg-torii-red flex items-center justify-center">
-                            <span class="text-warm-white text-5xl font-japanese">割引</span>
-                        </div> -->
-                        <div class="p-6 flex-grow">
-                            <h1 class="text-2xl mb-2 text-carbon-black font-bold ">{{ promo.name }}</h1>
-                            <h2 class="text-xl mb-2 text-carbon-black font-bold ">{{ promo.secondname }}</h2>
-                            <h3 class="text-lg mb-2 text-carbon-black">{{ promo.pieces }}</h3>
-                            <p class="text-medium-gray mb-4">{{ promo.description }}</p>
-
-
-                        </div>
-                        <div class="p-4 pt-0 flex">
-                            <span class="text-2xl font-bold text-torii-red">{{ promo.price }}</span>
-                        </div>
-                        <div class="p-4 pt-0 flex justify-end"><a :href="promo.whatsappLink"
-                                class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm"><i
-                                    class="fab fa-whatsapp mr-2"></i>Pedir</a></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Menu Section -->
         <section id="menu" class="py-16 px-4 bg-gray-100">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-japanese">Nuestro Menú</h2>
-                <!-- <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">Explora nuestras delicias japonesas
-                    preparadas con técnicas tradicionales y los ingredientes más frescos.</p> -->
 
                 <!-- Category Filters -->
                 <div class="flex flex-wrap justify-center gap-3 mb-12">
@@ -464,9 +555,6 @@
                             </span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <!-- <select class="bg-warm-white rounded-lg px-3 py-2 text-sm border border-medium-gray">
-                                <option v-for="option in item.options">{{ option }}</option>
-                            </select> -->
                             <span class="text-torii-red font-bold">{{ item.price }}</span>
                             <span class="text-torii-red font-bold"></span>
 
@@ -481,8 +569,67 @@
             </div>
         </section>
 
+        <!-- Promos Section -->
+        <section id="promos" class="py-16 bg-warm-white px-4">
+            <div class="container mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Promociones</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div v-for="promo in promos"
+                        class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray flex flex-col">
+                        <div class="p-6 flex-grow">
+                            <h1 class="text-2xl mb-2 text-carbon-black font-bold ">{{ promo.name }}</h1>
+                            <h2 class="text-xl mb-2 text-carbon-black font-bold ">{{ promo.secondname }}</h2>
+                            <h3 class="text-lg mb-2 text-carbon-black">{{ promo.pieces }}</h3>
+                            <p class="text-medium-gray mb-4">{{ promo.description }}</p>
+
+
+                        </div>
+                        <div class="p-4 pt-0 flex">
+                            <span class="text-2xl font-bold text-torii-red">{{ promo.price }}</span>
+                        </div>
+                        <div class="p-4 pt-0 flex justify-end"><a :href="promo.whatsappLink"
+                                class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm"><i
+                                    class="fab fa-whatsapp mr-2"></i>Pedir</a></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Carousel Section -->
+        <section id="galeria" class="py-16 bg-gray-100 px-4">
+            <div class="container mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-japanese">Galería</h2>
+                <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">Descubre la experiencia SENDA a través
+                    de nuestras imágenes</p>
+
+                <div class="carousel-container relative max-w-5xl mx-auto shadow-2xl">
+                    <!-- Carousel Track -->
+                    <div class="carousel-track" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+                        <div v-for="(image, index) in carouselImages" :key="index" class="carousel-slide flex-shrink-0">
+                            <img :src="image.src" :alt="image.alt" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button @click="prevSlide" class="carousel-btn prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button @click="nextSlide" class="carousel-btn next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+
+                    <!-- Dots -->
+                    <div class="carousel-dots">
+                        <span v-for="(image, index) in carouselImages" :key="index" @click="goToSlide(index)"
+                            class="carousel-dot" :class="{ 'active': currentSlide === index }">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- About Section -->
-        <section id="about" class="py-16 bg-warm-white px-4">
+        <section id="nosotros" class="py-16 bg-warm-white px-4">
             <div class="container mx-auto">
                 <div class="flex flex-col md:flex-row items-center gap-12">
                     <div class="md:w-1/2">
@@ -510,14 +657,14 @@
 
                     <div class="md:w-1/2 bg-warm-white h-80 rounded-2xl flex items-center justify-center ">
                         <!-- <span class="text-6xl font-japanese text-medium-gray">体験</span> -->
-                        <img src="assets/senda_horizontal_armoniosa.png" class="rounded-xl">
+                        <img src="assets/senda_horizontal_armoniosa.png" class="rounded-xl" alt="SENDA Sushi">
                     </div>
                 </div>
         </section>
 
-        <!-- Location Section -->
 
-        <section id="location" class="py-16 px-4 bg-gray-100">
+        <!-- Location Section -->
+        <section id="location" class="py-16 bg-gray-100 px-4">
             <div class="container">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Visítanos</h2>
                 <div class="flex flex-col md:flex-row gap-12">
@@ -533,11 +680,16 @@
                     <div class="md:w-1/2">
                         <h3 class="text-2xl font-bold mb-6 text-carbon-black">Horarios de atención</h3>
                         <ul class="space-y-4 mb-8">
-                            <li v-for="schedule in schedules" class="flex justify-between"> <span
-                                    class="text-medium-gray">{{ schedule.day }}</span> <span
-                                    class="font-medium text-carbon-black">{{ schedule.hours }}</span> </li>
+                            <li class="flex flex-col">
+                                <span class="text-medium-gray font-semibold">Almuerzo:</span>
+                                <span class="font-medium text-carbon-black">Miércoles a Sábados de 12 a 15:30hs</span>
+                            </li>
+                            <li class="flex flex-col">
+                                <span class="text-medium-gray font-semibold">Cena:</span>
+                                <span class="font-medium text-carbon-black">Martes a Domingos de 19 a 23hs</span>
+                            </li>
                         </ul>
-                        <h1 class="text-2xl mb-2 text-carbon-black font-bold ">Acercate a nuestro local</h1>
+                        <h1 class="text-2xl mb-2 text-carbon-black font-bold">Acercate a nuestro local</h1>
                         <p>Visitanos en nuestro local y sé parte de esto!</p>
                         </br>
                         <a href="https://maps.google.com/?q=Senda+Sushi" target="_blank" class="map-button">
@@ -571,7 +723,7 @@
                     </div>
                 </div>
                 <div class="border-t border-medium-gray mt-8 pt-8 text-center text-medium-gray text-sm">
-                    <p>© 2025 Senda Sushi. Todos los derechos reservados.</p>
+                    <p>© 2026 Senda Sushi. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>
@@ -584,7 +736,7 @@
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref, computed, onMounted } = Vue;
+        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
 
         createApp({
             setup() {
@@ -592,6 +744,8 @@
                 const activeCategory = ref('all');
                 const mobileMenuOpen = ref(false);
                 const mobileMenuDropdownOpen = ref(false);
+                const currentSlide = ref(0);
+                let autoplayInterval = null;
 
                 const menuCategories = ref([
                     { id: 'clasico', name: 'Clásico' },
@@ -647,6 +801,29 @@
                         description: '20 piezas of sushi vegetariano',
                         price: '$XXXX',
                         whatsappLink: 'https://wa.me/+541140587888'
+                    }
+                ]);
+
+                const carouselImages = ref([
+                    {
+                        src: 'assets/tori.jpg',
+                        alt: 'SENDA Sushi - Imagen 1'
+                    },
+                    {
+                        src: 'assets/tori.jpg',
+                        alt: 'SENDA Sushi - Imagen 2'
+                    },
+                    {
+                        src: 'assets/tori.jpg',
+                        alt: 'SENDA Sushi - Imagen 3'
+                    },
+                    {
+                        src: 'assets/tori.jpg',
+                        alt: 'SENDA Sushi - Imagen 4'
+                    },
+                    {
+                        src: 'assets/tori.jpg',
+                        alt: 'SENDA Sushi - Imagen 5'
                     }
                 ]);
 
@@ -842,15 +1019,12 @@
                 ]);
 
                 const schedules = ref([
-                    { day: 'Miercoles a Domingo', hours: '18:00 - 23:00' },
-                    // { day: 'Viernes y Sábado', hours: '12:00 - 16:00 / 18:30 - 00:00' },
-                    // { day: 'Domingo', hours: '12:30 - 17:00' }
+                    { day: 'Almuerzo:', hours: 'Miércoles a Sábados de 12 a 15:30hs' },
+                    { day: 'Cena:', hours: 'Martes a Domingos de 19 a 23hs' }
                 ]);
 
                 const socialLinks = ref([
                     { icon: 'fab fa-instagram', link: 'https://www.instagram.com/sendasushi.ar/' }
-                    // { icon: 'fab fa-facebook', link: 'https://facebook.com' },
-                    // { icon: 'fab fa-tiktok', link: 'https://tiktok.com' }
                 ]);
 
                 const filteredMenu = computed(() => {
@@ -881,16 +1055,43 @@
                 };
 
                 const scrollToCategory = (categoryId) => {
-                    // Close mobile menu if open
                     closeMobileMenu();
-
-                    // Set active category
                     setActiveCategory(categoryId);
-
-                    // Scroll to menu section
                     const menuSection = document.getElementById('menu');
                     if (menuSection) {
                         menuSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                };
+
+                // Carousel functions
+                const nextSlide = () => {
+                    currentSlide.value = (currentSlide.value + 1) % carouselImages.value.length;
+                    resetAutoplay();
+                };
+
+                const prevSlide = () => {
+                    currentSlide.value = (currentSlide.value - 1 + carouselImages.value.length) % carouselImages.value.length;
+                    resetAutoplay();
+                };
+
+                const goToSlide = (index) => {
+                    currentSlide.value = index;
+                    resetAutoplay();
+                };
+
+                const startAutoplay = () => {
+                    if (autoplayInterval) {
+                        clearInterval(autoplayInterval);
+                    }
+                    autoplayInterval = setInterval(() => {
+                        currentSlide.value = (currentSlide.value + 1) % carouselImages.value.length;
+                    }, 4000);
+                };
+
+                const resetAutoplay = () => {
+                    if (autoplayInterval) {
+                        clearInterval(autoplayInterval);
+                        startAutoplay();
                     }
                 };
 
@@ -898,6 +1099,13 @@
                     window.addEventListener('scroll', () => {
                         scrolled.value = window.scrollY > 50;
                     });
+                    startAutoplay();
+                });
+
+                onUnmounted(() => {
+                    if (autoplayInterval) {
+                        clearInterval(autoplayInterval);
+                    }
                 });
 
                 return {
@@ -905,9 +1113,11 @@
                     activeCategory,
                     mobileMenuOpen,
                     mobileMenuDropdownOpen,
+                    currentSlide,
                     menuCategories,
                     categories,
                     promos,
+                    carouselImages,
                     menuItems,
                     schedules,
                     socialLinks,
@@ -916,7 +1126,10 @@
                     toggleMobileMenu,
                     toggleMobileMenuDropdown,
                     closeMobileMenu,
-                    scrollToCategory
+                    scrollToCategory,
+                    nextSlide,
+                    prevSlide,
+                    goToSlide
                 };
             }
         }).mount('#app');
