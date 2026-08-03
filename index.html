@@ -73,6 +73,16 @@
             background-color: #0B0B0B !important;
         }
 
+        /* Smooth transition for logo text */
+        .logo-text {
+            transition: color 0.3s ease;
+        }
+
+        /* Ensure the text color changes properly when scrolled */
+        .sticky-header.scrolled .logo-text {
+            color: #0B0B0B !important;
+        }
+
         .menu-item-card {
             transition: all 0.3s ease;
         }
@@ -438,9 +448,15 @@
         <!-- Sticky Header -->
         <header class="sticky-header fixed w-full z-50 py-4" :class="{'scrolled': scrolled}">
             <div class="container mx-auto px-4 flex justify-between items-center">
-                <div class="logo max-h-24 max-w-24">
-                    <a href="#"><img src="assets/logo_cuadrado_transparente.png" alt="SENDA Sushi Logo"></a>
-                </div>
+                <a href="#" class="flex items-center gap-3">
+                    <img src="assets/logo_cuadrado_transparente.png" alt="SENDA Sushi Logo"
+                        class="max-h-12 md:max-h-16">
+                    <span
+                        class="font-japanese text-warm-white text-lg md:text-xl font-medium tracking-wider hidden md:inline-block transition-colors duration-300"
+                        :class="{'text-carbon-black': scrolled}">
+                        せんだ すし
+                    </span>
+                </a>
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-8 items-center">
@@ -662,23 +678,14 @@
                 <div class="flex flex-col md:flex-row items-center gap-12">
                     <div class="md:w-1/2">
                         <h2 class="text-3xl md:text-4xl font-bold mb-6 font-japanese">Nuestra historia</h2>
-                        <p class="text-medium-gray mb-6"><b>SENDA nace de dos amigos con hambre de aprender la cocina
-                                desde
-                                adentro. </b> Elegimos el camino simple: pocas
-                            piezas, sabores nítidos y procesos prolijos. El <b>Torii</b> es nuestro símbolo: un puente
-                            entre la
-                            calma japonesa y la vida del
-                            barrio. Creemos en 3 cosas: <b>frescura</b> que se nota, <b>simpleza</b> al pedir y calidad
-                            al
-                            alcance de
-                            tu plato. Estamos en <b>Villa
-                                Pueyrredón</b> y queremos que SENDA sea el sushi que todo el público elija: cercano,
-                            honesto y
-                            consistente.
-
-
+                        <p class="text-medium-gray mb-6"><b> Senda nace de la necesidad de experimentar la cocina del
+                                oriente en primera persona.</b> Elegimos el camino de la simpleza.
+                            Piezas creativas, sabores nítidos y prolijos. </br>Escogimos el arco <b>Torii</b> como
+                            símbolo, una separación entre el mundo terrenal y nuestro lugar sagrado.
+                            <b>Frescura,</b> <b>simpleza</b> y calidad.</br> Estamos en <b>Villa
+                                Pueyrredón</b> y queremos que nos acompañen en esta experiencia.
                         </p>
-                        <div class="text-center">
+                        <div class="text-left">
                             <p class="text-medium-gray mb-6">Unite y se parte de SENDA.</p>
                         </div>
                     </div>
@@ -735,7 +742,8 @@
                         <div class="text-center">
                             <img class="max-h-24 max-w-24 mx-auto footer-logo" src="assets/arco_tori_footer.png"
                                 alt="Senda Restaurant Logo">
-                            <p class="text-medium-gray mt-2">Auténtica experiencia culinaria japonesa</p>
+                            <p class="text-medium-gray mt-2">Oriente al alcance de Occidente</p>
+                            <p class="text-medium-gray mt-2">日本 / アルゼンチン</p>
                         </div>
                     </div>
                     <div class="flex space-x-6">
