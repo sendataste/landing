@@ -78,9 +78,14 @@
             transition: color 0.3s ease;
         }
 
-        /* Ensure the text color changes properly when scrolled */
+        /* Forzar el cambio de color del texto japonés cuando el header hace scroll */
         .sticky-header.scrolled .logo-text {
             color: #0B0B0B !important;
+        }
+
+        /* Asegurar que el texto mantenga el color blanco cuando no hay scroll */
+        .sticky-header:not(.scrolled) .logo-text {
+            color: #F7F7F5 !important;
         }
 
         .menu-item-card {
@@ -452,7 +457,7 @@
                     <img src="assets/logo_cuadrado_transparente.png" alt="SENDA Sushi Logo"
                         class="max-h-12 md:max-h-16">
                     <span
-                        class="font-japanese text-warm-white text-lg md:text-xl font-medium tracking-wider hidden md:inline-block transition-colors duration-300"
+                        class="logo-text font-japanese text-warm-white text-lg md:text-xl font-medium tracking-wider hidden lg:inline-block transition-colors duration-300"
                         :class="{'text-carbon-black': scrolled}">
                         せんだ すし
                     </span>
@@ -697,6 +702,7 @@
                     </div>
                 </div>
         </section>
+
         <!-- Location Section -->
         <section id="location" class="py-16 bg-gray-100 px-4">
             <div class="container">
