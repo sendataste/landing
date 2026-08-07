@@ -55,8 +55,14 @@
         }
 
         .sticky-header.scrolled {
-            background-color: rgba(247, 247, 245, 0.95);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(11, 11, 11, .82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, .25);
         }
 
         .sticky-header.scrolled .nav-item,
@@ -468,9 +474,6 @@
                     <a href="#"
                         class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Inicio</a>
 
-                    <a href="#nosotros"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Nosotros</a>
-
                     <a href="#menu"
                         class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Menú</a>
 
@@ -480,6 +483,9 @@
                     <a href="#galeria"
                         class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Galería</a>
 
+                    <a href="#nosotros"
+                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Nosotros</a>
+
                     <a href="#location"
                         class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Ubicación</a>
                 </nav>
@@ -487,7 +493,7 @@
                 <!-- WhatsApp Button (Desktop) -->
                 <div class="hidden md:block">
                     <a href="https://wa.me/+541140587888"
-                        class="bg-torii-red text-warm-white px-4 py-2 rounded-full flex items-center hover:bg-opacity-90 transition-all">
+                        class="bg-black bg-opacity-50 text-warm-white px-4 py-2 rounded-full flex items-center hover:bg-opacity-90 transition-all">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir
                     </a>
                 </div>
@@ -561,7 +567,7 @@
                     al buen sushi</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#menu"
-                        class="bg-torii-red text-warm-white px-8 py-4 rounded-full text-lg font-medium hover:bg-opacity-90 transition-all">Ver
+                        class="bg-black bg-opacity-50 text-warm-white px-8 py-4 rounded-full text-lg font-medium hover:bg-opacity-90 transition-all">Ver
                         Menú</a>
                     <a href="https://wa.me/+541140587888"
                         class="border-2 border-warm-white text-warm-white px-8 py-4 rounded-full text-lg font-medium flex items-center justify-center hover:bg-warm-white hover:bg-opacity-10 transition-all">
@@ -574,17 +580,16 @@
         <!-- Menu Section -->
         <section id="menu" class="py-16 px-4 bg-gray-100">
             <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-japanese">Nuestro Menú</h2>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-comforter">Nuestro Menú</h2>
 
                 <!-- Category Filters -->
                 <div class="flex flex-wrap justify-center gap-3 mb-12">
                     <button v-for="category in categories" @click="setActiveCategory(category.id)"
-                        :class="{'bg-carbon-black text-warm-white': activeCategory === category.id, 'bg-warm-white text-carbon-black': activeCategory !== category.id}"
+                        :class="{'bg-carbon-black text-warm-white': activeCategory === category.id, 'bg-gray-300 text-warm-white': activeCategory !== category.id}"
                         class="px-4 py-2 rounded-full border border-medium-gray transition-colors">
                         {{ category.name }}
                     </button>
                 </div>
-
                 <!-- Menu Items -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <div v-for="item in filteredMenu"
@@ -621,7 +626,7 @@
         <!-- Promos Section -->
         <section id="promos" class="py-16 bg-warm-white px-4">
             <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Promociones</h2>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-comforter">Promociones</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div v-for="promo in promos"
                         class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray flex flex-col">
@@ -647,7 +652,7 @@
         <!-- Carousel Section -->
         <section id="galeria" class="py-16 bg-gray-100 px-4">
             <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-japanese">Galería</h2>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-comforter">Galería</h2>
                 <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">Descubre la experiencia SENDA a través
                     de nuestras imágenes</p>
 
@@ -847,23 +852,23 @@
 
                 const carouselImages = ref([
                     {
-                        src: 'assets/tori.jpg',
+                        src: 'assets/carrousel/16.59.36.jpeg',
                         alt: 'SENDA Sushi - Imagen 1'
                     },
                     {
-                        src: 'assets/tori.jpg',
+                        src: 'assets/carrousel/17.13.13.jpeg',
                         alt: 'SENDA Sushi - Imagen 2'
                     },
                     {
-                        src: 'assets/tori.jpg',
+                        src: 'assets/carrousel/17.13.56.jpeg',
                         alt: 'SENDA Sushi - Imagen 3'
                     },
                     {
-                        src: 'assets/tori.jpg',
+                        src: 'assets/carrousel/17.14.31.jpeg',
                         alt: 'SENDA Sushi - Imagen 4'
                     },
                     {
-                        src: 'assets/tori.jpg',
+                        src: 'assets/carrousel/17.17.27.jpeg',
                         alt: 'SENDA Sushi - Imagen 5'
                     }
                 ]);
