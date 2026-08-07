@@ -67,7 +67,7 @@
 
         .sticky-header.scrolled .nav-item,
         .sticky-header.scrolled .dropdown button {
-            color: #0B0B0B !important;
+            /* color: #0B0B0B !important; */
         }
 
         .sticky-header.scrolled .logo h1 {
@@ -86,7 +86,7 @@
 
         /* Forzar el cambio de color del texto japonés cuando el header hace scroll */
         .sticky-header.scrolled .logo-text {
-            color: #0B0B0B !important;
+            /* color: #0B0B0B !important; */
         }
 
         /* Asegurar que el texto mantenga el color blanco cuando no hay scroll */
@@ -472,22 +472,22 @@
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-8 items-center">
                     <a href="#"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Inicio</a>
+                        class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Inicio</a>
 
                     <a href="#menu"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Menú</a>
+                        class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Menú</a>
 
                     <a href="#promos"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Promociones</a>
+                        class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Promociones</a>
 
                     <a href="#galeria"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Galería</a>
+                        class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Galería</a>
 
                     <a href="#nosotros"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Nosotros</a>
+                        class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Nosotros</a>
 
                     <a href="#location"
-                        class="nav-item text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Ubicación</a>
+                        class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Ubicación</a>
                 </nav>
 
                 <!-- WhatsApp Button (Desktop) -->
@@ -559,10 +559,10 @@
 
             <!-- Hero Content -->
             <div class="container mx-auto text-center relative z-10">
-                <h2 class="text-4xl md:text-6xl font-bold mb-6 font-comforter text-warm-white">Elegí la SENDA correcta 道
-                </h2>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 font-comforter text-warm-white">Elegí la SENDA correcta 道
+                </h1>
                 <p
-                    class="text-xl md:text-2xl text-warm-white text-opacity-90 max-w-2xl mx-auto mb-10 font-comforter-brush">
+                    class="text-2xl md:text-4xl text-warm-white text-opacity-90 max-w-2xl mx-auto mb-10 font-comforter-brush">
                     Tu camino directo
                     al buen sushi</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -580,7 +580,7 @@
         <!-- Menu Section -->
         <section id="menu" class="py-16 px-4 bg-gray-100">
             <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-comforter">Nuestro Menú</h2>
+                <h2 class="text-6xl md:text-6xl text-center mb-4 font-comforter">Nuestro Menú</h2>
 
                 <!-- Category Filters -->
                 <div class="flex flex-wrap justify-center gap-3 mb-12">
@@ -626,7 +626,7 @@
         <!-- Promos Section -->
         <section id="promos" class="py-16 bg-warm-white px-4">
             <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-comforter">Promociones</h2>
+                <h2 class="text-6xl md:text-6xl text-center mb-12 font-comforter">Promociones</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div v-for="promo in promos"
                         class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray flex flex-col">
@@ -652,7 +652,7 @@
         <!-- Carousel Section -->
         <section id="galeria" class="py-16 bg-gray-100 px-4">
             <div class="container mx-auto">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 font-comforter">Galería</h2>
+                <h2 class="text-6xl md:text-6xl text-center mb-4 font-comforter">Galería</h2>
                 <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">Descubre la experiencia SENDA a través
                     de nuestras imágenes</p>
 
@@ -687,7 +687,7 @@
             <div class="container mx-auto">
                 <div class="flex flex-col md:flex-row items-center gap-12">
                     <div class="md:w-1/2">
-                        <h2 class="text-3xl md:text-4xl font-bold mb-6 font-japanese">Nuestra historia</h2>
+                        <h2 class="text-6xl md:text-6xl mb-6 font-comforter">Nuestra historia</h2>
                         <p class="text-medium-gray mb-6"><b> Senda nace de la necesidad de experimentar la cocina del
                                 oriente en primera persona.</b> Elegimos el camino de la simpleza.
                             Piezas creativas, sabores nítidos y prolijos. </br>Escogimos el arco <b>Torii</b> como
@@ -711,7 +711,7 @@
         <!-- Location Section -->
         <section id="location" class="py-16 bg-gray-100 px-4">
             <div class="container">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 font-japanese">Visitanos</h2>
+                <h2 class="text-6xl md:text-6xl text-center mb-12 font-comforter">Visitanos</h2>
                 <div class="flex flex-col md:flex-row gap-12">
                     <div
                         class="md:w-1/2 bg-warm-white h-96 rounded-2xl flex items-center justify-center border border-medium-gray">
