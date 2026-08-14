@@ -59,8 +59,6 @@
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
 
-            border-bottom: 1px solid rgba(255, 255, 255, .08);
-
             box-shadow:
                 0 10px 30px rgba(0, 0, 0, .25);
         }
@@ -404,7 +402,607 @@
             width: 100%;
         }
 
+
+        /* =========================================================
+           SENDA MENU REDESIGN · ALTERNATIVA 2 · MOBILE FIRST
+           Accordion + compact list + search + filters + detail sheet
+           ========================================================= */
+
+        .senda-menu {
+            background: #F1F2F3;
+        }
+
+        .menu-intro {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .menu-search {
+            position: relative;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .menu-search input {
+            width: 100%;
+            min-height: 52px;
+            padding: 0.85rem 3rem 0.85rem 1rem;
+            background: #F7F7F5;
+            border: 1px solid #D1D5DB;
+            border-radius: 9999px;
+            outline: none;
+            color: #0B0B0B;
+            transition: all .25s ease;
+        }
+
+        .menu-search input:focus {
+            border-color: #F4511E;
+            box-shadow: 0 0 0 3px rgba(244, 81, 30, .10);
+        }
+
+        .menu-search-icon {
+            position: absolute;
+            right: 1.1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            pointer-events: none;
+        }
+
+        .menu-search-clear {
+            position: absolute;
+            right: 2.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border: 0;
+            background: transparent;
+            color: #6B7280;
+            cursor: pointer;
+        }
+
+        .menu-category-scroll {
+            display: flex;
+            gap: .55rem;
+            overflow-x: auto;
+            padding: .15rem .1rem .65rem;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .menu-category-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .menu-filter-btn,
+        .menu-category-btn {
+            flex: 0 0 auto;
+            min-height: 40px;
+            border-radius: 9999px;
+            border: 1px solid #D1D5DB;
+            padding: .55rem .9rem;
+            background: #F7F7F5;
+            color: #252525;
+            font-size: .78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s ease;
+            white-space: nowrap;
+        }
+
+        .menu-category-btn.active,
+        .menu-filter-btn.active {
+            background: #0B0B0B;
+            border-color: #0B0B0B;
+            color: #F7F7F5;
+        }
+
+        .menu-filter-btn.has-filter {
+            background: #FFF0EA;
+            border-color: #F4511E;
+            color: #D93E12;
+        }
+
+        .menu-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .menu-filter-summary {
+            font-size: .78rem;
+            color: #6B7280;
+        }
+
+        .menu-filter-panel {
+            max-width: 980px;
+            margin: .8rem auto 0;
+            padding: 1rem;
+            background: #F7F7F5;
+            border: 1px solid #D1D5DB;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .05);
+        }
+
+        .filter-group+.filter-group {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .filter-group-title {
+            margin-bottom: .65rem;
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #6B7280;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            min-height: 36px;
+            padding: .45rem .7rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 9999px;
+            background: #FFFFFF;
+            color: #252525;
+            font-size: .75rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .filter-chip.active {
+            border-color: #F4511E;
+            background: #FFF0EA;
+            color: #D93E12;
+            font-weight: 700;
+        }
+
+        .menu-accordion-list {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .menu-category-block {
+            overflow: hidden;
+            background: #F7F7F5;
+            border: 1px solid #D1D5DB;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .04);
+        }
+
+        .menu-category-block+.menu-category-block {
+            margin-top: .7rem;
+        }
+
+        .menu-category-header {
+            width: 100%;
+            min-height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: .8rem 1rem;
+            border: 0;
+            background: transparent;
+            color: #0B0B0B;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .menu-category-header:hover {
+            background: rgba(244, 81, 30, .035);
+        }
+
+        .menu-category-header-left {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .menu-category-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #FFF0EA;
+            color: #F4511E;
+        }
+
+        .menu-category-name {
+            font-size: .9rem;
+            font-weight: 800;
+            letter-spacing: .02em;
+        }
+
+        .menu-category-count {
+            margin-left: .35rem;
+            font-size: .72rem;
+            font-weight: 500;
+            color: #9CA3AF;
+        }
+
+        .menu-category-chevron {
+            transition: transform .25s ease;
+            color: #6B7280;
+        }
+
+        .menu-category-chevron.open {
+            transform: rotate(180deg);
+            color: #F4511E;
+        }
+
+        .menu-category-body {
+            padding: 0 .65rem .65rem;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .compact-product {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .8rem .35rem;
+            border-bottom: 1px solid #E5E7EB;
+            cursor: pointer;
+            text-align: left;
+            background: transparent;
+            transition: background .2s ease;
+        }
+
+        .compact-product:last-child {
+            border-bottom: 0;
+        }
+
+        .compact-product:hover,
+        .compact-product:focus-visible {
+            background: rgba(244, 81, 30, .035);
+            outline: none;
+        }
+
+        .compact-product-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .compact-product-title-row {
+            display: flex;
+            align-items: baseline;
+            gap: .45rem;
+            flex-wrap: wrap;
+        }
+
+        .compact-product-title {
+            font-size: .86rem;
+            font-weight: 800;
+            color: #0B0B0B;
+        }
+
+        .compact-product-subtitle {
+            font-size: .7rem;
+            font-weight: 600;
+            color: #9CA3AF;
+        }
+
+        .compact-product-description {
+            margin-top: .2rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: .7rem;
+            line-height: 1.4;
+            color: #6B7280;
+        }
+
+        .compact-product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .25rem;
+            margin-top: .35rem;
+        }
+
+        .compact-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: .16rem .38rem;
+            border-radius: 9999px;
+            font-size: .58rem;
+            font-weight: 700;
+        }
+
+        .compact-product-action {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: .35rem;
+        }
+
+        .compact-product-price {
+            font-size: .78rem;
+            font-weight: 800;
+            color: #F4511E;
+            white-space: nowrap;
+        }
+
+        .compact-product-plus {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 0;
+            background: #0B0B0B;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-more-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: .7rem .5rem .25rem;
+            border: 0;
+            background: transparent;
+            color: #F4511E;
+            font-size: .75rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .menu-empty-state {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            text-align: center;
+            border: 1px dashed #D1D5DB;
+            border-radius: 1rem;
+            color: #6B7280;
+            background: #F7F7F5;
+        }
+
+        /* Product detail bottom sheet */
+        .menu-detail-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            background: rgba(0, 0, 0, .55);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .menu-detail-sheet {
+            width: 100%;
+            max-width: 760px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: #F7F7F5;
+            border-radius: 1.25rem 1.25rem 0 0;
+            box-shadow: 0 -15px 50px rgba(0, 0, 0, .25);
+            padding: 1.25rem;
+            animation: menuSheetIn .25s ease-out;
+        }
+
+        @keyframes menuSheetIn {
+            from {
+                transform: translateY(100%);
+                opacity: .6;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .menu-detail-handle {
+            width: 42px;
+            height: 4px;
+            margin: 0 auto 1rem;
+            border-radius: 9999px;
+            background: #D1D5DB;
+        }
+
+        .menu-detail-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .menu-detail-close {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+            border: 1px solid #D1D5DB;
+            border-radius: 50%;
+            background: #FFFFFF;
+            color: #0B0B0B;
+            cursor: pointer;
+        }
+
+        .menu-detail-kicker {
+            margin-bottom: .25rem;
+            font-size: .65rem;
+            font-weight: 800;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: #F4511E;
+        }
+
+        .menu-detail-title {
+            font-size: 1.35rem;
+            line-height: 1.15;
+            font-weight: 800;
+            color: #0B0B0B;
+        }
+
+        .menu-detail-subtitle {
+            margin-top: .2rem;
+            color: #6B7280;
+            font-size: .8rem;
+            font-weight: 600;
+        }
+
+        .menu-detail-description {
+            margin-top: 1rem;
+            color: #4B5563;
+            font-size: .85rem;
+            line-height: 1.65;
+        }
+
+        .menu-detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem;
+            margin-top: .9rem;
+        }
+
+        .menu-detail-options {
+            margin-top: 1.2rem;
+        }
+
+        .menu-detail-options-title {
+            margin-bottom: .55rem;
+            font-size: .75rem;
+            font-weight: 800;
+            color: #0B0B0B;
+        }
+
+        .menu-option-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
+        .menu-option {
+            min-height: 40px;
+            padding: .5rem .8rem;
+            border: 1px solid #D1D5DB;
+            border-radius: .75rem;
+            background: #FFFFFF;
+            color: #252525;
+            font-size: .75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .menu-option.active {
+            background: #0B0B0B;
+            color: #FFFFFF;
+            border-color: #0B0B0B;
+        }
+
+        .menu-detail-footer {
+            position: sticky;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            margin-top: 1.25rem;
+            padding-top: .9rem;
+            background: linear-gradient(to bottom, rgba(247, 247, 245, 0), #F7F7F5 18%);
+        }
+
+        .menu-detail-price {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #F4511E;
+            white-space: nowrap;
+        }
+
+        .menu-detail-order {
+            flex: 1;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            padding: .75rem 1rem;
+            border-radius: 9999px;
+            background: #0B0B0B;
+            color: #FFFFFF;
+            font-size: .78rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform .2s ease, background .2s ease;
+        }
+
+        .menu-detail-order:hover {
+            background: #F4511E;
+            transform: translateY(-1px);
+        }
+
+        .menu-lock-scroll {
+            overflow: hidden;
+        }
+
+        @media (min-width: 769px) {
+            .menu-detail-overlay {
+                align-items: center;
+                padding: 1.5rem;
+            }
+
+            .menu-detail-sheet {
+                border-radius: 1.25rem;
+                max-height: 82vh;
+                box-shadow: 0 20px 70px rgba(0, 0, 0, .3);
+            }
+
+            .menu-category-header {
+                min-height: 64px;
+                padding-left: 1.15rem;
+                padding-right: 1.15rem;
+            }
+
+            .menu-category-body {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .compact-product {
+                padding: .9rem .5rem;
+            }
+
+            .compact-product-description {
+                -webkit-line-clamp: 2;
+            }
+        }
+
+
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: opacity .2s ease;
+        }
+
+        .fade-enter-from,
+        .fade-leave-to {
+            opacity: 0;
+        }
+
         /* Footer Background Image */
+
         .footer-bg {
             background-image: url('assets/pie_de_pagina.jpg');
             background-size: cover;
@@ -498,8 +1096,6 @@
                         class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Inicio</a>
                     <a href="#menu"
                         class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Menú</a>
-                    <a href="#promos"
-                        class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Promociones</a>
                     <a href="#galeria"
                         class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Galería</a>
                     <a href="#nosotros"
@@ -538,9 +1134,6 @@
                     <a href="#menu"
                         class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
                         @click="closeMobileMenu">Menú</a>
-                    <a href="#promos"
-                        class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
-                        @click="closeMobileMenu">Promociones</a>
                     <a href="#galeria"
                         class="text-warm-white hover:text-torii-red transition-colors py-2 border-b border-gray-700"
                         @click="closeMobileMenu">Galería</a>
@@ -589,76 +1182,250 @@
             </div>
         </section>
 
-        <!-- Menu Section -->
-        <section id="menu" class="py-16 px-4 bg-gray-100">
+        <!-- Menu Section · Mobile First redesign -->
+        <section id="menu" class="senda-menu py-14 md:py-20 px-4">
             <div class="container mx-auto">
-                <h2 class="text-6xl md:text-6xl text-center mb-4 font-comforter">Nuestro Menú</h2>
+                <div class="menu-intro text-center mb-7 md:mb-9">
+                    <h2 class="text-5xl md:text-6xl mb-3 font-comforter">Nuestro Menú</h2>
+                    <p class="text-sm md:text-base text-medium-gray max-w-2xl mx-auto">
+                        Encontrá tu próximo favorito. Buscá, filtrá y descubrí nuestro menú.
+                    </p>
+                </div>
 
-                <!-- Category Filters -->
-                <div class="flex flex-wrap justify-center gap-3 mb-12">
-                    <button v-for="category in categories" @click="setActiveCategory(category.id)"
-                        :class="{'bg-carbon-black text-warm-white': activeCategory === category.id, 'bg-gray-300 text-warm-white': activeCategory !== category.id}"
-                        class="px-4 py-2 rounded-full border border-medium-gray transition-colors">
-                        {{ category.name }}
+                <!-- Search -->
+                <div class="menu-search mb-4">
+                    <input v-model="menuSearch" type="search" placeholder="Buscar un plato o ingrediente..."
+                        aria-label="Buscar un plato o ingrediente">
+                    <button v-if="menuSearch" @click="clearMenuSearch" class="menu-search-clear"
+                        aria-label="Limpiar búsqueda" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <span class="menu-search-icon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+
+                <!-- Primary category navigation -->
+                <div class="menu-category-scroll max-w-5xl mx-auto mb-4">
+                    <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)"
+                        type="button" class="menu-category-btn" :class="{ 'active': selectedCategory === category.id }">
+                        {{ category.icon }} {{ category.name }}
                     </button>
                 </div>
-                <!-- Menu Items -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div v-for="item in filteredMenu"
-                        class="bg-warm-white rounded-2xl p-6 shadow-md menu-item-card border border-medium-gray">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold text-carbon-black">{{ item.name }}</h3>
-                                <h5 class="text-xl font-bold text-carbon-black"><b>{{ item.secondname }}</b></h5>
-                                <p class="text-sm text-medium-gray japanese-accent">{{ item.contents
-                                    }}</p>
+
+                <!-- Filters -->
+                <div class="menu-filter-bar mb-3">
+                    <div class="menu-filter-summary">
+                        <span v-if="menuSearch">
+                            {{ searchResultCount }} resultado<span v-if="searchResultCount !== 1">s</span>
+                        </span>
+                        <span v-else>
+                            {{ totalVisibleProducts }} platos disponibles
+                        </span>
+                    </div>
+
+                    <button type="button" @click="showFilterPanel = !showFilterPanel" class="menu-filter-btn"
+                        :class="{ 'has-filter': activeFeatureFilters.length > 0 }">
+                        <i class="fas fa-sliders mr-1"></i>
+                        Filtrar
+                        <span v-if="activeFeatureFilters.length > 0">
+                            ({{ activeFeatureFilters.length }})
+                        </span>
+                    </button>
+                </div>
+
+                <div v-if="showFilterPanel" class="menu-filter-panel">
+                    <div class="filter-group">
+                        <div class="filter-group-title">Características</div>
+                        <div class="filter-options">
+                            <button v-for="flag in availableFlags" :key="flag" type="button" class="filter-chip"
+                                :class="{ 'active': activeFeatureFilters.includes(flag) }"
+                                @click="toggleFeatureFilter(flag)">
+                                <i class="fas"
+                                    :class="activeFeatureFilters.includes(flag) ? 'fa-check-circle' : 'fa-circle'">
+                                </i>
+                                {{ flag }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-4">
+                        <button type="button" @click="clearAllFilters"
+                            class="text-xs font-bold text-medium-gray hover:text-torii-red transition-colors">
+                            Limpiar filtros
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Accordion categories -->
+                <div class="menu-accordion-list mt-5">
+                    <template v-if="visibleCategoryGroups.length">
+                        <div v-for="group in visibleCategoryGroups" :key="group.id" class="menu-category-block">
+
+                            <button type="button" class="menu-category-header" @click="toggleAccordion(group.id)"
+                                :aria-expanded="openAccordions.includes(group.id)">
+
+                                <span class="menu-category-header-left">
+                                    <span class="menu-category-icon">
+                                        {{ group.icon }}
+                                    </span>
+
+                                    <span>
+                                        <span class="menu-category-name">
+                                            {{ group.name }}
+                                        </span>
+                                        <span class="menu-category-count">
+                                            {{ group.items.length }} plato<span v-if="group.items.length !== 1">s</span>
+                                        </span>
+                                    </span>
+                                </span>
+
+                                <i class="fas fa-chevron-down menu-category-chevron"
+                                    :class="{ 'open': openAccordions.includes(group.id) }">
+                                </i>
+                            </button>
+
+                            <div v-if="openAccordions.includes(group.id)" class="menu-category-body">
+                                <button v-for="item in group.visibleItems" :key="item.name" type="button"
+                                    class="compact-product" @click="openProduct(item)">
+
+                                    <div class="compact-product-info">
+                                        <div class="compact-product-title-row">
+                                            <span class="compact-product-title">{{ item.name }}</span>
+                                            <span v-if="item.secondname && item.secondname.trim()"
+                                                class="compact-product-subtitle">
+                                                {{ item.secondname }}
+                                            </span>
+                                        </div>
+
+                                        <p class="compact-product-description">
+                                            {{ item.contents }}
+                                        </p>
+
+                                        <div v-if="item.flags && item.flags.length" class="compact-product-tags">
+                                            <span v-for="flag in item.flags.slice(0, 3)" :key="flag" class="compact-tag"
+                                                :class="getFlagClass(flag)">
+                                                {{ flag }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="compact-product-action">
+                                        <span class="compact-product-price">{{ item.price }}</span>
+                                        <span class="compact-product-plus" aria-hidden="true">
+                                            <i class="fas fa-plus text-xs"></i>
+                                        </span>
+                                    </div>
+                                </button>
+
+                                <button v-if="group.items.length > productPreviewLimit && !menuSearch" type="button"
+                                    class="menu-more-btn" @click="toggleCategoryExpanded(group.id)">
+                                    {{ expandedCategories.includes(group.id) ? 'Ver menos' : `Ver los
+                                    ${group.items.length} platos` }}
+                                    <i class="fas ml-2"
+                                        :class="expandedCategories.includes(group.id) ? 'fa-chevron-up' : 'fa-chevron-down'">
+                                    </i>
+                                </button>
                             </div>
                         </div>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span v-for="flag in item.flags" class="text-xs px-2 py-1 rounded-full japanese-accent"
-                                :class="{'bg-red-100 text-red-800': flag === 'Picante', 'bg-green-100 text-green-800': flag === 'Veggie', 'bg-amber-300 text-amber-600': flag === 'Premium', 'bg-orange-200 text-orange-600 border': flag === 'Tempura', 'bg-cyan-200 text-zinc-400': flag === 'Exclusivo', 'bg-emerald-400 text-white': flag === 'Fresh', 'bg-amber-800 text-white': flag === 'Flameado', 'bg-yellow-300 text-black': flag === 'Bestseller', 'bg-green-900 text-green-800': flag === 'Promo'}">
+                    </template>
+
+                    <div v-else class="menu-empty-state">
+                        <div class="text-2xl mb-2">🍣</div>
+                        <p class="font-bold text-carbon-black mb-1">No encontramos ese plato</p>
+                        <p class="text-sm mb-4">
+                            Probá con otro nombre, ingrediente o quitá algún filtro.
+                        </p>
+                        <button type="button" @click="clearAllFilters"
+                            class="bg-carbon-black text-warm-white px-5 py-2 rounded-full text-xs font-bold">
+                            Ver todo el menú
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product detail bottom sheet / desktop modal -->
+            <transition name="fade">
+                <div v-if="selectedProduct" class="menu-detail-overlay" @click.self="closeProduct"
+                    @keydown.esc="closeProduct">
+
+                    <div class="menu-detail-sheet" role="dialog" aria-modal="true">
+                        <div class="menu-detail-handle"></div>
+
+                        <div class="menu-detail-header">
+                            <div>
+                                <div class="menu-detail-kicker">
+                                    {{ selectedProduct.subcategory || selectedProduct.type }}
+                                </div>
+                                <h3 class="menu-detail-title">
+                                    {{ selectedProduct.name }}
+                                </h3>
+                                <p v-if="selectedProduct.secondname && selectedProduct.secondname.trim()"
+                                    class="menu-detail-subtitle">
+                                    {{ selectedProduct.secondname }}
+                                </p>
+                            </div>
+
+                            <button type="button" class="menu-detail-close" @click="closeProduct"
+                                aria-label="Cerrar detalle">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <p class="menu-detail-description">
+                            {{ selectedProduct.contents }}
+                        </p>
+
+                        <div v-if="selectedProduct.flags && selectedProduct.flags.length" class="menu-detail-tags">
+                            <span v-for="flag in selectedProduct.flags" :key="flag" class="compact-tag"
+                                :class="getFlagClass(flag)">
                                 {{ flag }}
                             </span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-torii-red font-bold">{{ item.price }}</span>
-                            <span class="text-torii-red font-bold"></span>
 
+                        <div v-if="selectedProduct.options && selectedProduct.options.length"
+                            class="menu-detail-options">
 
-                            <a :href="item.whatsappLink"
-                                class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm flex items-center">
-                                <i class="fab fa-whatsapp mr-2"></i> Pedir
+                            <div class="menu-detail-options-title">
+                                Presentación
+                            </div>
+
+                            <div class="menu-option-list">
+                                <button v-for="option in selectedProduct.options" :key="option" type="button"
+                                    class="menu-option" :class="{ 'active': selectedOption === option }"
+                                    @click="selectedOption = option">
+                                    {{ option }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div v-if="selectedProduct.variants && selectedProduct.variants.length"
+                            class="menu-detail-options">
+                            <div class="menu-detail-options-title">
+                                Elegí una opción
+                            </div>
+                            <div class="menu-option-list">
+                                <button v-for="variant in selectedProduct.variants" :key="variant.label" type="button"
+                                    class="menu-option" :class="{ 'active': selectedVariantLabel === variant.label }"
+                                    @click="selectVariant(variant)">
+                                    {{ variant.label }} · {{ variant.price }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="menu-detail-footer">
+                            <span class="menu-detail-price">
+                                {{ selectedProductPrice }}
+                            </span>
+
+                            <a :href="productWhatsappLink" target="_blank" rel="noopener" class="menu-detail-order">
+                                <i class="fab fa-whatsapp"></i>
+                                Pedir por WhatsApp
                             </a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Promos Section -->
-        <section id="promos" class="py-16 bg-warm-white px-4">
-            <div class="container mx-auto">
-                <h2 class="text-6xl md:text-6xl text-center mb-12 font-comforter">Promociones</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div v-for="promo in promos"
-                        class="bg-warm-white rounded-2xl overflow-hidden shadow-lg menu-item-card border border-medium-gray flex flex-col">
-                        <div class="p-6 flex-grow">
-                            <h1 class="text-2xl mb-2 text-carbon-black font-bold ">{{ promo.name }}</h1>
-                            <h2 class="text-xl mb-2 text-carbon-black font-bold ">{{ promo.secondname }}</h2>
-                            <h3 class="text-lg mb-2 text-carbon-black">{{ promo.pieces }}</h3>
-                            <p class="text-medium-gray mb-4">{{ promo.description }}</p>
-
-
-                        </div>
-                        <div class="p-4 pt-0 flex">
-                            <span class="text-2xl font-bold text-torii-red">{{ promo.price }}</span>
-                        </div>
-                        <div class="p-4 pt-0 flex justify-end"><a :href="promo.whatsappLink"
-                                class="bg-carbon-black text-warm-white px-4 py-2 rounded-full text-sm"><i
-                                    class="fab fa-whatsapp mr-2"></i>Pedir</a></div>
-                    </div>
-                </div>
-            </div>
+            </transition>
         </section>
 
         <!-- Carousel Section -->
@@ -799,67 +1566,35 @@
         createApp({
             setup() {
                 const scrolled = ref(false);
-                const activeCategory = ref('all');
+
+                // Menu UX state · Alternative 2
+                const selectedCategory = ref('all');
+                const menuSearch = ref('');
+                const showFilterPanel = ref(false);
+                const activeFeatureFilters = ref([]);
+                const openAccordions = ref([]);
+                const expandedCategories = ref([]);
+                const selectedProduct = ref(null);
+                const selectedOption = ref('');
+                const selectedVariantLabel = ref('');
+
                 const mobileMenuOpen = ref(false);
                 const mobileMenuDropdownOpen = ref(false);
                 const currentSlide = ref(0);
                 let autoplayInterval = null;
 
                 const menuCategories = ref([
-                    { id: 'clasico', name: 'Clásico' },
-                    { id: 'hot', name: 'Hot' },
-                    { id: 'veggie', name: 'Línea veggie' },
-                    {
-                        id: 'salad-bowls', name: 'Salad Bowls'
-                    },
+                    { id: 'entradas', name: 'Entradas', icon: '🥟' },
+                    { id: 'sushi', name: 'Sushi', icon: '🍣' },
+                    { id: 'cocina', name: 'Cocina', icon: '🍜' },
+                    { id: 'rolls', name: 'Rolls', icon: '🍱' },
+                    { id: 'combos', name: 'Combos', icon: '🎎' },
+                    { id: 'extras', name: 'Salsas y extras', icon: '🥢' }
                 ]);
 
                 const categories = ref([
-                    { id: 'all', name: 'Todo' },
+                    { id: 'all', name: 'Todo', icon: '●' },
                     ...menuCategories.value
-                ]);
-
-                const promos = ref([
-                    {
-                        name: 'Clásico',
-                        secondname: 'Camino simple',
-                        pieces: '30 piezas',
-                        description: '3 niguiris de salmón, 3 nigiris de langostinos, 4 sashimis, 10 california, 5 vegetarianos, 5 spicy tuna',
-                        price: '$XXXX',
-                        whatsappLink: 'https://wa.me/+541140587888'
-                    },
-                    {
-                        name: 'Salmón',
-                        secondname: 'Doble paso',
-                        pieces: '30 piezas',
-                        description: '4 nigiris de salmón, 3 geishas, 3 sashimi, 5 philadelphia, 5 Buenos Aires, 5 New York, 5 SENDA',
-                        price: '$XXXX',
-                        whatsappLink: 'https://wa.me/+541140587888'
-                    },
-                    {
-                        name: 'Veggie',
-                        secondname: 'Jardín Zen',
-                        pieces: '20 piezas',
-                        description: '5 ZEN, 5 Praga, 5 wasabi, 5 maki veggie',
-                        price: '$XXXX',
-                        whatsappLink: 'https://wa.me/+541140587888'
-                    },
-                    {
-                        name: 'Camino propio',
-                        secondname: 'A elección del cliente',
-                        pieces: '',
-                        description: '',
-                        price: '$XXXX',
-                        whatsappLink: 'https://wa.me/+541140587888'
-                    },
-                    {
-                        name: 'Premium',
-                        secondname: 'Experiencia Umami',
-                        pieces: '20 piezas',
-                        description: '20 piezas of sushi vegetariano',
-                        price: '$XXXX',
-                        whatsappLink: 'https://wa.me/+541140587888'
-                    }
                 ]);
 
                 const carouselImages = ref([
@@ -887,193 +1622,1818 @@
 
                 const menuItems = ref([
                     {
-                        name: 'Philadelphia Roll 2.0',
-                        secondname: 'Dreams Roll',
-                        type: 'Clásico',
-                        contents: 'Delicado roll con salmón fresco y queso crema, coronado con guacamole suave que realza cada bocado.',
-                        price: '$XXXX',
-                        flags: ['Bestseller', 'Premium'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+54+541140587888'
+                        "name": "Harumakis x3",
+                        "secondname": "Carne o verdura",
+                        "type": "Entrada",
+                        "contents": "Harumakis de carne o verdura.",
+                        "price": "$8.000",
+                        "flags": [],
+                        "options": [
+                            "3 unidades"
+                        ],
+                        "category": "entradas",
+                        "subcategory": "Entradas",
+                        "pieces": "3 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'California Roll',
-                        secondname: 'Avocado Roll',
-                        type: 'Clásico',
-                        contents: 'La clásica combinación de kani kama, palta y pepino rallado, fresca y ligera, con un toque crocante irresistible.',
-                        price: '$XXXX',
-                        flags: ['Bestseller', 'Fresh'],
-                        options: ['4 piezas', '8 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Gyozas x5",
+                        "secondname": "De cerdo",
+                        "type": "Entrada",
+                        "contents": "Gyozas rellenas de cerdo.",
+                        "price": "$11.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "entradas",
+                        "subcategory": "Entradas",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Buenos Aires Roll',
-                        secondname: 'Top Roll',
-                        type: 'Clásico',
-                        contents: 'Langostinos en tempura y queso crema, cubiertos de salmón fresco con salsa spicy mayo, intenso y sabroso.',
-                        price: '$XXXX',
-                        flags: ['Tempura'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Langostino crunchy x6",
+                        "secondname": "Con guacamole",
+                        "type": "Entrada",
+                        "contents": "Langostinos crocantes acompañados de guacamole.",
+                        "price": "$13.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "6 unidades"
+                        ],
+                        "category": "entradas",
+                        "subcategory": "Entradas",
+                        "pieces": "6 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'New York Salmon',
-                        secondname: 'Salmon Dreams',
-                        type: 'Clásico',
-                        contents: 'Salmón fresco y rodajas de palta en un clásico roll premium, combinación cremosa y de sabor elegante.',
-                        price: '$XXXX',
-                        flags: ['Premium', 'Fresh'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Tempura x5",
+                        "secondname": "Salmón con salsa Bs As",
+                        "type": "Entrada",
+                        "contents": "Salmón en tempura con salsa Bs As.",
+                        "price": "$14.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "entradas",
+                        "subcategory": "Entradas",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Nigiris',
-                        secondname: 'Nigiri Dreams',
-                        type: 'Clásico',
-                        contents: 'Tradicional nigiri japonés: arroz sazonado y cortes de salmón fresco, bocado simple y elegante en su esencia.',
-                        price: '$XXXX',
-                        flags: ['Premium'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Tempura x5",
+                        "secondname": "Langostino con salsa teriyaki",
+                        "type": "Entrada",
+                        "contents": "Langostino en tempura con salsa teriyaki.",
+                        "price": "$14.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "entradas",
+                        "subcategory": "Entradas",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Sashimi',
-                        secondname: 'Tataki Supreme',
-                        type: 'Clásico',
-                        contents: 'Delicadas rodajas de salmón fresco, finamente cortadas para resaltar su suavidad y pureza de sabor.',
-                        price: '$XXXX',
-                        flags: ['Premium', 'Fresh'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Colchón de arroz frito x4",
+                        "secondname": "Topping de tartar de salmón y salsa Senda",
+                        "type": "Entrada",
+                        "contents": "Colchón de arroz frito con topping de tartar de salmón y salsa Senda.",
+                        "price": "$14.000",
+                        "flags": [],
+                        "options": [
+                            "4 unidades"
+                        ],
+                        "category": "entradas",
+                        "subcategory": "Entradas",
+                        "pieces": "4 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'SENDA Roll',
-                        secondname: '    ',
-                        type: 'Clásico',
-                        contents: 'Roll especial con langostinos tsurai, palta y queso crema, coronado con cebiche fresco que sorprende al paladar.',
-                        price: '$XXXX',
-                        flags: ['Premium', 'Exclusivo'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Sashimi x3",
+                        "secondname": "Salmón",
+                        "type": "Corte",
+                        "contents": "Cortes de salmón fresco.",
+                        "price": "$10.000",
+                        "flags": [],
+                        "options": [
+                            "3 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "3 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Spicy Tuna Roll',
-                        secondname: 'Tuna Fire',
-                        type: 'Clásico',
-                        contents: 'Atún fresco acompañado de pepino y salsa spicy, combinación intensa y picante que despierta los sentidos.',
-                        price: '$XXXX',
-                        flags: ['Picante', 'Premium', 'Fresh'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'clasico',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Sashimi x3",
+                        "secondname": "Atún rojo",
+                        "type": "Corte",
+                        "contents": "Cortes de atún rojo fresco.",
+                        "price": "$10.000",
+                        "flags": [],
+                        "options": [
+                            "3 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "3 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Philadelphia Hot Roll',
-                        secondname: 'Sabroso Hot Roll',
-                        type: 'Hot',
-                        contents: 'Roll rebozado y crujiente, con salmón fresco, palta y queso crema, sabor cálido con contraste perfecto.',
-                        price: '$XXXX',
-                        flags: ['Tempura'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'hot',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Sashimi x3",
+                        "secondname": "Pulpo",
+                        "type": "Corte",
+                        "contents": "Cortes de pulpo.",
+                        "price": "$10.000",
+                        "flags": [],
+                        "options": [
+                            "3 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "3 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Flameado Roll',
-                        secondname: 'Volcano Roll',
-                        type: 'Hot',
-                        contents: 'Roll con relleno de salmón crispy y palta, cubierto de salmón flameado, aroma intenso y textura única.',
-                        price: '$XXXX',
-                        flags: ['Premium', 'Flameado'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'hot',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Sashimi DELUXE",
+                        "secondname": "Salmón, atún, pulpo, flameado y langostino",
+                        "type": "Corte",
+                        "contents": "Selección deluxe de salmón, atún, pulpo, flameado y langostino.",
+                        "price": "$15.000",
+                        "flags": [
+                            "Flameado"
+                        ],
+                        "options": [
+                            "3 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "3 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Crunchy Roll',
-                        secondname: '',
-                        type: 'Hot',
-                        contents: 'Salmón fresco, queso crema y ciboulette, envueltos en un roll con crocante irresistible en cada mordida.',
-                        price: '$XXXX',
-                        flags: ['Tempura', 'Bestseller'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'hot',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Nigiris x5",
+                        "secondname": "Atún rojo con ralladura de lima",
+                        "type": "Nigiri",
+                        "contents": "Atún rojo con ralladura de lima.",
+                        "price": "$12.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Senda Acevichado',
-                        secondname: 'Acevichado Loco',
-                        type: 'Hot',
-                        contents: 'Roll con pescado blanco y palta, coronado con batata frita crocante y salsa acevichada fresca y vibrante.',
-                        price: '$XXXX',
-                        flags: ['Picante', 'Premium'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'hot',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Nigiris x5",
+                        "secondname": "Pulpo",
+                        "type": "Nigiri",
+                        "contents": "Nigiri de pulpo.",
+                        "price": "$12.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Hot Dog Sushi',
-                        secondname: 'Tokyo Dog',
-                        type: 'Hot',
-                        contents: 'Una fusión urbana: hot dog de sushi con salmón fresco, salsa teriyaki y ciboulette, original y divertido.',
-                        price: '$XXXX',
-                        flags: ['Bestseller'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'hot',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Nigiris x5",
+                        "secondname": "Salmón",
+                        "type": "Nigiri",
+                        "contents": "Nigiri de salmón.",
+                        "price": "$12.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Vegetariano',
-                        secondname: 'Green Garden Roll',
-                        type: 'Veggie',
-                        contents: 'Una opción fresca con palta cremosa, pepino crocante y zanahoria en tiras, equilibrio natural y saludable.',
-                        price: '$XXXX',
-                        flags: ['Veggie', 'Fresh'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'veggie',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Nigiris x5",
+                        "secondname": "Salmón flameado con salsa acevichada y batata frita",
+                        "type": "Nigiri",
+                        "contents": "Salmón flameado con salsa acevichada y batata frita.",
+                        "price": "$12.000",
+                        "flags": [
+                            "Flameado"
+                        ],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'SENDA Salmón Bowl',
-                        secondname: 'Samurai Bowl',
-                        type: 'Salad Bowls',
-                        contents: 'Bowl fresco con salmón, palta, mango y verdeo, mezcla colorida y deliciosa para una experiencia diferente.',
-                        price: '$XXXX',
-                        flags: ['Fresh', 'Premium'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'salad-bowls',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Nigiris x5",
+                        "secondname": "Salmón ahumado",
+                        "type": "Nigiri",
+                        "contents": "Nigiri de salmón ahumado.",
+                        "price": "$12.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Spicy Tuna Bowl',
-                        secondname: 'Tuna Fire Bowl',
-                        type: 'Salad Bowls',
-                        contents: 'Atún fresco, palta, pepino y cebolla morada, unidos en un bowl vibrante con un toque picante especial.',
-                        price: '$XXXX',
-                        flags: ['Picante', 'Fresh'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'salad-bowls',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Nigiris x5",
+                        "secondname": "Langostino",
+                        "type": "Nigiri",
+                        "contents": "Nigiri de langostino.",
+                        "price": "$12.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     },
                     {
-                        name: 'Ebi Tempura Bowl',
-                        secondname: 'Golden Ebi Bowl',
-                        type: 'Salad Bowls',
-                        contents: 'Arroz acompañado de langostinos crocantes en tempura, zanahoria, palta y jengibre rallado, fresco y sabroso.',
-                        price: '$XXXX',
-                        flags: ['Tempura'],
-                        options: ['6 piezas', '12 piezas'],
-                        category: 'salad-bowls',
-                        whatsappLink: 'https://wa.me/+541140587888'
+                        "name": "Nigiris x5",
+                        "secondname": "Palta flameada con salsa thai",
+                        "type": "Nigiri",
+                        "contents": "Palta flameada con salsa thai.",
+                        "price": "$12.000",
+                        "flags": [
+                            "Veggie",
+                            "Flameado"
+                        ],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Geishas",
+                        "secondname": "Atún rojo, palta, philadelphia y ciboulette",
+                        "type": "Geisha",
+                        "contents": "Atún rojo, palta, philadelphia y ciboulette.",
+                        "price": "$13.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Geishas",
+                        "secondname": "Pulpo, palta con teriyaki flameado",
+                        "type": "Geisha",
+                        "contents": "Pulpo y palta con teriyaki flameado.",
+                        "price": "$13.000",
+                        "flags": [
+                            "Flameado"
+                        ],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Geishas",
+                        "secondname": "Salmón, palta y philadelphia",
+                        "type": "Geisha",
+                        "contents": "Salmón, palta y philadelphia.",
+                        "price": "$13.000",
+                        "flags": [],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Geishas",
+                        "secondname": "Langostino crunchy, palta y philadelphia envuelto en salmón",
+                        "type": "Geisha",
+                        "contents": "Langostino crunchy, palta y philadelphia envuelto en salmón.",
+                        "price": "$13.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Cortes",
+                        "pieces": "5 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tokyo",
+                        "secondname": "Salmón, palta, philadelphia, pepino con salsa teriyaki",
+                        "type": "Sushi Burrito",
+                        "contents": "Salmón, palta, philadelphia y pepino con salsa teriyaki.",
+                        "price": "$15.000",
+                        "flags": [],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Sushi Burrito",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Crunchy",
+                        "secondname": "Langostino apanado, kanikama y hongo cocinados, palta, ciboulette con salsa acevichada",
+                        "type": "Sushi Burrito",
+                        "contents": "Langostino apanado, kanikama y hongo cocinados, palta, ciboulette con salsa acevichada.",
+                        "price": "$15.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Sushi Burrito",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Veggie",
+                        "secondname": "Zanahoria, pepino, palta, huevo, philadelphia y sésamo tostado",
+                        "type": "Sushi Burrito",
+                        "contents": "Zanahoria, pepino, palta, huevo, philadelphia y sésamo tostado.",
+                        "price": "$15.000",
+                        "flags": [
+                            "Veggie"
+                        ],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Sushi Burrito",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Temaki",
+                        "secondname": "Atún rojo, philadelphia picante, pepino y ciboulette",
+                        "type": "Temaki",
+                        "contents": "Atún rojo, philadelphia picante, pepino y ciboulette.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Temaki",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Temaki",
+                        "secondname": "Salmón, philadelphia y palta",
+                        "type": "Temaki",
+                        "contents": "Salmón, philadelphia y palta.",
+                        "price": "$10.000",
+                        "flags": [],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Temaki",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Temaki",
+                        "secondname": "Pulpo, palta, pasta de ají amarillo con limón y cilantro",
+                        "type": "Temaki",
+                        "contents": "Pulpo, palta, pasta de ají amarillo con limón y cilantro.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Temaki",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tiradito",
+                        "secondname": "Salmón",
+                        "type": "Tiradito",
+                        "contents": "Salmón con jugo de lima y mango, pasta de ají amarillo y palta flameada.",
+                        "price": "$15.000",
+                        "flags": [
+                            "Flameado",
+                            "Picante"
+                        ],
+                        "options": [
+                            "6 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Tiradito",
+                        "pieces": "6 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tiradito",
+                        "secondname": "Atún rojo",
+                        "type": "Tiradito",
+                        "contents": "Atún rojo en salsa de soja alimonada y miso, con láminas de pepino y ciboulette.",
+                        "price": "$17.000",
+                        "flags": [],
+                        "options": [
+                            "6 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Tiradito",
+                        "pieces": "6 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tiradito",
+                        "secondname": "Pulpo",
+                        "type": "Tiradito",
+                        "contents": "Pulpo con espuma de aceituna, limón y aceite de oliva.",
+                        "price": "$17.000",
+                        "flags": [],
+                        "options": [
+                            "6 unidades"
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Tiradito",
+                        "pieces": "6 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Ceviche",
+                        "secondname": "Salmón",
+                        "type": "Ceviche",
+                        "contents": "Cebolla morada en pluma, palta, ají dulce, jugo de limón, cilantro y lluvia de batatas fritas.",
+                        "price": "$17.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Ceviche",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Ceviche",
+                        "secondname": "Atún rojo",
+                        "type": "Ceviche",
+                        "contents": "Cebolla morada en pluma, boniato, palta, ají dulce, pepino y cilantro.",
+                        "price": "$17.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Ceviche",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Ceviche",
+                        "secondname": "Pulpo",
+                        "type": "Ceviche",
+                        "contents": "Cebolla morada en pluma, boniato, palta, ají dulce, pepino y cilantro.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Ceviche",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tartar",
+                        "secondname": "Atún rojo",
+                        "type": "Tartar",
+                        "contents": "Colchón de palta y atún marinado, coronado con ciboulette.",
+                        "price": "$17.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Tartar",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tartar",
+                        "secondname": "Salmón",
+                        "type": "Tartar",
+                        "contents": "Colchón de palta, salmón crudo y ahumado, ciboulette, coronado con ralladura de lima.",
+                        "price": "$17.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Tartar",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tartar",
+                        "secondname": "Pulpo",
+                        "type": "Tartar",
+                        "contents": "Colchón de palta, pulpo marinado en soja, pizca de sriracha, ciboulette, coronado con pepino.",
+                        "price": "$17.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Picante"
+                            ]
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Tartar",
+                        "pieces": [
+                            "Picante"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Sushi Bowl",
+                        "secondname": "Salmón",
+                        "type": "Sushi Bowl",
+                        "contents": "Arroz dulce, palta, philadelphia, salmón grille, ciboulette y salsa acevichada.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Sushi Bowl",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Sushi Bowl",
+                        "secondname": "Tropical",
+                        "type": "Sushi Bowl",
+                        "contents": "Arroz dulce, palta, philadelphia, salmón fresco, mango e hilos de batata frita.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Sushi Bowl",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Sushi Bowl",
+                        "secondname": "Langostino crunchy",
+                        "type": "Sushi Bowl",
+                        "contents": "Arroz dulce, palta, philadelphia, langostino crunchy, zanahoria tare y lluvia de batata frita.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Tempura"
+                            ]
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Sushi Bowl",
+                        "pieces": [
+                            "Tempura"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Sushi Bowl",
+                        "secondname": "Atún rojo",
+                        "type": "Sushi Bowl",
+                        "contents": "Arroz dulce, palta, philadelphia, atún rojo, pepino y salsa de ostras.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "sushi",
+                        "subcategory": "Sushi Bowl",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Sushi Bowl",
+                        "secondname": "Vegetariano",
+                        "type": "Sushi Bowl",
+                        "contents": "Arroz dulce, palta, philadelphia, zanahoria tare, hongo rehogado en aceite de sésamo y arvejas.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Veggie"
+                            ]
+                        ],
+                        "category": "sushi",
+                        "subcategory": "Sushi Bowl",
+                        "pieces": [
+                            "Veggie"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wok",
+                        "secondname": "Pollo teriyaki",
+                        "type": "Wok",
+                        "contents": "Zanahoria, brote de soja, huevo, verdeo y salsa de soja.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Wok",
+                        "pieces": "",
+                        "variants": [
+                            {
+                                "label": "Pollo teriyaki",
+                                "price": "$18.000"
+                            }
+                        ],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wok",
+                        "secondname": "Langostinos",
+                        "type": "Wok",
+                        "contents": "Zanahoria, brote de soja, huevo, verdeo y salsa de soja.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Wok",
+                        "pieces": "",
+                        "variants": [
+                            {
+                                "label": "Langostinos",
+                                "price": "$18.000"
+                            }
+                        ],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wok",
+                        "secondname": "Salmón grille",
+                        "type": "Wok",
+                        "contents": "Zanahoria, brote de soja, huevo, verdeo y salsa de soja.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Wok",
+                        "pieces": "",
+                        "variants": [
+                            {
+                                "label": "Salmón grille",
+                                "price": "$18.000"
+                            }
+                        ],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wok",
+                        "secondname": "Vegetales",
+                        "type": "Wok",
+                        "contents": "Zanahoria, brote de soja, huevo, verdeo y salsa de soja.",
+                        "price": "$18.000",
+                        "flags": [
+                            "Veggie"
+                        ],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Wok",
+                        "pieces": "",
+                        "variants": [
+                            {
+                                "label": "Vegetales",
+                                "price": "$18.000"
+                            }
+                        ],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wok",
+                        "secondname": "Lomo",
+                        "type": "Wok",
+                        "contents": "Zanahoria, brote de soja, huevo, verdeo y salsa de soja.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Wok",
+                        "pieces": "",
+                        "variants": [
+                            {
+                                "label": "Lomo",
+                                "price": "$18.000"
+                            }
+                        ],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wok",
+                        "secondname": "Mixto: salmón grille y langostinos",
+                        "type": "Wok",
+                        "contents": "Zanahoria, brote de soja, huevo, verdeo y salsa de soja.",
+                        "price": "$20.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Wok",
+                        "pieces": "",
+                        "variants": [
+                            {
+                                "label": "Mixto: salmón grille y langostinos",
+                                "price": "$20.000"
+                            }
+                        ],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Lomo salteado",
+                        "secondname": "",
+                        "type": "Cocina",
+                        "contents": "Lomo salteado con cebolla morada, morrón rojo y amarillo, y cilantro, sobre un colchón de arroz blanco con aceite de sésamo.",
+                        "price": "$20.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Lomo salteado",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Chow Fan",
+                        "secondname": "Pollo",
+                        "type": "Chow Fan",
+                        "contents": "Arroz sofrito, huevo, zanahoria, arvejas y verdeo.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Chow Fan",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Chow Fan",
+                        "secondname": "Vegetales + 2 harumakis (carne o verdura)",
+                        "type": "Chow Fan",
+                        "contents": "Arroz sofrito, huevo, zanahoria, arvejas y verdeo, acompañado de 2 harumakis.",
+                        "price": "$18.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Veggie"
+                            ]
+                        ],
+                        "category": "cocina",
+                        "subcategory": "Chow Fan",
+                        "pieces": [
+                            "Veggie"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Cerdo Tonkatsu",
+                        "secondname": "",
+                        "type": "Cocina",
+                        "contents": "Apanado en panko, frito con salsa tonkatsu y arroz blanco.",
+                        "price": "$18.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [],
+                        "category": "cocina",
+                        "subcategory": "Cerdo Tonkatsu",
+                        "pieces": "",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Hot Dog",
+                        "secondname": "Salmón",
+                        "type": "Hot Dog",
+                        "contents": "Roll de arroz en panko, frito, relleno de palta y philadelphia. Fresco o grille, con lluvia de ciboulette.",
+                        "price": "$15.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Tempura"
+                            ]
+                        ],
+                        "category": "cocina",
+                        "subcategory": "Hot Dog",
+                        "pieces": [
+                            "Tempura"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Hot Dog",
+                        "secondname": "Langostino crunchy",
+                        "type": "Hot Dog",
+                        "contents": "Roll de arroz en panko, frito, relleno de palta y philadelphia, con lluvia de batata frita.",
+                        "price": "$15.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Tempura"
+                            ]
+                        ],
+                        "category": "cocina",
+                        "subcategory": "Hot Dog",
+                        "pieces": [
+                            "Tempura"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Hot Dog",
+                        "secondname": "Atún rojo",
+                        "type": "Hot Dog",
+                        "contents": "Roll de arroz en panko, frito, relleno de palta y philadelphia, con lluvia de pepino dulce.",
+                        "price": "$15.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Tempura"
+                            ]
+                        ],
+                        "category": "cocina",
+                        "subcategory": "Hot Dog",
+                        "pieces": [
+                            "Tempura"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Hot Dog",
+                        "secondname": "Kani",
+                        "type": "Hot Dog",
+                        "contents": "Kanikama, champignon sofrito, salsa spicy y lluvia de batata frita.",
+                        "price": "$15.000",
+                        "flags": [],
+                        "options": [
+                            [
+                                "Tempura",
+                                "Picante"
+                            ]
+                        ],
+                        "category": "cocina",
+                        "subcategory": "Hot Dog",
+                        "pieces": [
+                            "Tempura",
+                            "Picante"
+                        ],
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Baos",
+                        "secondname": "Pulled Pork occidental",
+                        "type": "Bao",
+                        "contents": "Bondiola de cerdo desmenuzada, braseada con soja, verduras, con rodajas de pepino encurtido.",
+                        "price": "$16.000",
+                        "flags": [],
+                        "options": [
+                            "2 unidades"
+                        ],
+                        "category": "cocina",
+                        "subcategory": "Baos",
+                        "pieces": "2 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Baos",
+                        "secondname": "Lango fusion",
+                        "type": "Bao",
+                        "contents": "Langostinos y champignon a la plancha con aceite de sésamo, con finas rodajas de rabanito.",
+                        "price": "$16.000",
+                        "flags": [],
+                        "options": [
+                            "2 unidades"
+                        ],
+                        "category": "cocina",
+                        "subcategory": "Baos",
+                        "pieces": "2 unidades",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "New York",
+                        "secondname": "Salmón y palta",
+                        "type": "Roll clásico",
+                        "contents": "Salmón y palta.",
+                        "price": "$8.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll clásicos",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "New York phila",
+                        "secondname": "Salmón, palta y philadelphia",
+                        "type": "Roll clásico",
+                        "contents": "Salmón, palta y philadelphia.",
+                        "price": "$8.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll clásicos",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Lango cheese",
+                        "secondname": "Langostino y philadelphia con sésamo",
+                        "type": "Roll clásico",
+                        "contents": "Langostino y philadelphia con sésamo.",
+                        "price": "$8.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll clásicos",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Salmón grille",
+                        "secondname": "Salmón grille con cobertura de palta",
+                        "type": "Roll clásico",
+                        "contents": "Salmón grille con cobertura de palta.",
+                        "price": "$8.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll clásicos",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Avocado tuna",
+                        "secondname": "Atún, verdeo, jugo de limón, con cobertura de palta",
+                        "type": "Roll clásico",
+                        "contents": "Atún, verdeo, jugo de limón, con cobertura de palta.",
+                        "price": "$8.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll clásicos",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Spicy tuna",
+                        "secondname": "Atún, verdeo, jugo de limón, con cobertura de palta y salsa spicy",
+                        "type": "Roll clásico",
+                        "contents": "Atún, verdeo, jugo de limón, con cobertura de palta y salsa spicy.",
+                        "price": "$8.500",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll clásicos",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Zen",
+                        "secondname": "Zanahoria tare, philadelphia, con cobertura de palta flameada en salsa thai",
+                        "type": "Roll veggie",
+                        "contents": "Zanahoria tare, philadelphia, con cobertura de palta flameada en salsa thai.",
+                        "price": "$8.500",
+                        "flags": [
+                            "Veggie",
+                            "Flameado"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll veggie",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Praga",
+                        "secondname": "Palta, philadelphia, cobertura de mango, salsa mango y lluvia de batata",
+                        "type": "Roll veggie",
+                        "contents": "Palta, philadelphia, cobertura de mango, salsa mango y lluvia de batata.",
+                        "price": "$8.500",
+                        "flags": [
+                            "Veggie"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll veggie",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wasabi",
+                        "secondname": "Tomate asado, philadelphia, ciboulette, cobertura de palta y mayo wasabi",
+                        "type": "Roll veggie",
+                        "contents": "Tomate asado, philadelphia, ciboulette, cobertura de palta y mayo wasabi.",
+                        "price": "$8.500",
+                        "flags": [
+                            "Veggie"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll veggie",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Cheese",
+                        "secondname": "Salmón, philadelphia, verdeo",
+                        "type": "Tamago Roll",
+                        "contents": "Salmón, philadelphia y verdeo. Sin arroz ni alga; roll envuelto en huevo dulce.",
+                        "price": "$9.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Tamago Roll",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Sweet palmi",
+                        "secondname": "Salmón, palmito, mango, con lluvia de almendras y salsa teriyaki",
+                        "type": "Tamago Roll",
+                        "contents": "Salmón, palmito, mango, lluvia de almendras y salsa teriyaki. Sin arroz ni alga; roll envuelto en huevo dulce.",
+                        "price": "$9.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Tamago Roll",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "chill",
+                        "secondname": "Atún rojo, philadelphia picante y tira de pepino",
+                        "type": "Tamago Roll",
+                        "contents": "Atún rojo, philadelphia picante y tira de pepino. Sin arroz ni alga; roll envuelto en huevo dulce.",
+                        "price": "$9.500",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Tamago Roll",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Senda",
+                        "secondname": "Langostino, palta, philadelphia, con cobertura de salmón y salsa teriyaki",
+                        "type": "Roll premium",
+                        "contents": "Langostino, palta, philadelphia, con cobertura de salmón y salsa teriyaki",
+                        "price": "$9.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Amai",
+                        "secondname": "Langostino crunchy, philadelphia, cobertura de salmón y salsa acevichada",
+                        "type": "Roll premium",
+                        "contents": "Langostino crunchy, philadelphia, cobertura de salmón y salsa acevichada",
+                        "price": "$9.500",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Flameado",
+                        "secondname": "Langostino, philadelphia, con cobertura de salmón flameado con mayo wasabi",
+                        "type": "Roll premium",
+                        "contents": "Langostino, philadelphia, con cobertura de salmón flameado con mayo wasabi",
+                        "price": "$9.500",
+                        "flags": [
+                            "Flameado"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tori",
+                        "secondname": "Salmón, philadelphia con lluvia de verdeo",
+                        "type": "Roll premium",
+                        "contents": "Salmón, philadelphia con lluvia de verdeo",
+                        "price": "$9.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Umi",
+                        "secondname": "Salmón, philadelphia con cobertura de mango, salsa teriyaki y almendras picadas",
+                        "type": "Roll premium",
+                        "contents": "Salmón, philadelphia con cobertura de mango, salsa teriyaki y almendras picadas",
+                        "price": "$9.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Crunchy",
+                        "secondname": "Salmón crunchy, palta con salsa acevichada y lluvia de batata frita",
+                        "type": "Roll premium",
+                        "contents": "Salmón crunchy, palta con salsa acevichada y lluvia de batata frita",
+                        "price": "$9.500",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Nach",
+                        "secondname": "Salmón, palta coronado de salsa curry y diamante de langostino",
+                        "type": "Roll premium",
+                        "contents": "Salmón, palta coronado de salsa curry y diamante de langostino",
+                        "price": "$9.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Palmi",
+                        "secondname": "Salmón, palmito, envuelto en palta",
+                        "type": "Roll premium",
+                        "contents": "Salmón, palmito, envuelto en palta",
+                        "price": "$9.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tataki",
+                        "secondname": "Hongo, philadelphia, coronado con kanikama spicy",
+                        "type": "Roll premium",
+                        "contents": "Hongo, philadelphia, coronado con kanikama spicy",
+                        "price": "$9.500",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll premium",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Ahumado",
+                        "secondname": "Palta, pepino con cobertura de salmón ahumado",
+                        "type": "Roll supreme",
+                        "contents": "Palta, pepino con cobertura de salmón ahumado",
+                        "price": "$10.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll supreme",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Acevichado",
+                        "secondname": "Langostino tempura, palta, con topping de pulpo en salsa acevichada",
+                        "type": "Roll supreme",
+                        "contents": "Langostino tempura, palta, con topping de pulpo en salsa acevichada",
+                        "price": "$10.500",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll supreme",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Caviar",
+                        "secondname": "Philadelphia, palta con topping de tartar de salmón y caviar",
+                        "type": "Roll supreme",
+                        "contents": "Philadelphia, palta con topping de tartar de salmón y caviar",
+                        "price": "$10.500",
+                        "flags": [],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll supreme",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Octopus",
+                        "secondname": "Pulpo, con cobertura de palta flameada con salsa thai y teriyaki",
+                        "type": "Roll supreme",
+                        "contents": "Pulpo, con cobertura de palta flameada con salsa thai y teriyaki",
+                        "price": "$10.500",
+                        "flags": [
+                            "Flameado"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll supreme",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Red hot",
+                        "secondname": "Palta, boniato, con topping spicy de tartar de atún",
+                        "type": "Roll supreme",
+                        "contents": "Palta, boniato, con topping spicy de tartar de atún",
+                        "price": "$10.500",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll supreme",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Golden",
+                        "secondname": "Langostino, palta, cubierto de salmón flameado, jalapeño en tempura y caviar",
+                        "type": "Roll supreme",
+                        "contents": "Langostino, palta, cubierto de salmón flameado, jalapeño en tempura y caviar",
+                        "price": "$10.500",
+                        "flags": [
+                            "Flameado",
+                            "Tempura",
+                            "Picante"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Roll supreme",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Mystic",
+                        "secondname": "Salmón crunchy con philadelphia",
+                        "type": "Hot Roll",
+                        "contents": "Roll relleno, apanado en panko frito.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Hot Roll",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Tokio",
+                        "secondname": "Langostino, palta y philadelphia",
+                        "type": "Hot Roll",
+                        "contents": "Roll relleno, apanado en panko frito.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Hot Roll",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Mex",
+                        "secondname": "Kanikama, philadelphia con topping de guacamole",
+                        "type": "Hot Roll",
+                        "contents": "Roll relleno, apanado en panko frito.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Hot Roll",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Azteca",
+                        "secondname": "Tiras de salmón, salmón ahumado, philadelphia con topping guacamole y maíz cancha",
+                        "type": "Hot Roll sin arroz",
+                        "contents": "Apanado en panko, frito.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Tempura",
+                            "Sin arroz"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Hot Roll sin arroz",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Bs As",
+                        "secondname": "Tiras de salmón, palta, philadelphia, coronado con ciboulette y salsa de ostras",
+                        "type": "Hot Roll sin arroz",
+                        "contents": "Apanado en panko, frito.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Tempura",
+                            "Sin arroz"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Hot Roll sin arroz",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Italia",
+                        "secondname": "Tiras de salmón ahumado, muzzarella, albahaca, coronado de tomate asado",
+                        "type": "Hot Roll sin arroz",
+                        "contents": "Apanado en panko, frito.",
+                        "price": "$10.000",
+                        "flags": [
+                            "Tempura",
+                            "Sin arroz"
+                        ],
+                        "options": [
+                            "5 piezas"
+                        ],
+                        "category": "rolls",
+                        "subcategory": "Hot Roll sin arroz",
+                        "pieces": "5 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Camino simple x 15",
+                        "secondname": "",
+                        "type": "Combo",
+                        "contents": "2 Nigiris lango, 5 lango cheese, 4 california, 4 tuna spicy.",
+                        "price": "$23.000",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "15 piezas"
+                        ],
+                        "category": "combos",
+                        "subcategory": "Combos",
+                        "pieces": "15 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Camino simple x 30",
+                        "secondname": "",
+                        "type": "Combo",
+                        "contents": "4 Nigiri lango, 2 nigiri salmón, 5 california, 5 zen, 5 lango cheese, 5 avocado tuna y 5 makis grille.",
+                        "price": "$43.000",
+                        "flags": [
+                            "Veggie"
+                        ],
+                        "options": [
+                            "30 piezas"
+                        ],
+                        "category": "combos",
+                        "subcategory": "Combos",
+                        "pieces": "30 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Doble paso x 15",
+                        "secondname": "",
+                        "type": "Combo",
+                        "contents": "2 Nigiri salmón, 3 geishas, 5 New York phila, 4 Umi, 2 Maki.",
+                        "price": "$26.000",
+                        "flags": [],
+                        "options": [
+                            "15 piezas"
+                        ],
+                        "category": "combos",
+                        "subcategory": "Combos",
+                        "pieces": "15 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Doble paso x 30",
+                        "secondname": "",
+                        "type": "Combo",
+                        "contents": "2 Nigiri salmón, 3 geishas, 5 senda, 5 New York phila, 5 New York, 5 maki, 5 hot mystic.",
+                        "price": "$54.000",
+                        "flags": [
+                            "Tempura"
+                        ],
+                        "options": [
+                            "30 piezas"
+                        ],
+                        "category": "combos",
+                        "subcategory": "Combos",
+                        "pieces": "30 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Gran paso x15",
+                        "secondname": "",
+                        "type": "Combo",
+                        "contents": "2 Nigiris salmón ahumado, 5 tori, 5 octopus, 3 maki de atún rojo.",
+                        "price": "$29.000",
+                        "flags": [],
+                        "options": [
+                            "15 piezas"
+                        ],
+                        "category": "combos",
+                        "subcategory": "Combos",
+                        "pieces": "15 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Gran paso x30",
+                        "secondname": "",
+                        "type": "Combo",
+                        "contents": "2 Nigiris salmón, 3 geishas, 5 tori, 5 octopus, 5 maki atún rojo, 5 golden, 5 New York phila.",
+                        "price": "$56.000",
+                        "flags": [
+                            "Flameado",
+                            "Tempura"
+                        ],
+                        "options": [
+                            "30 piezas"
+                        ],
+                        "category": "combos",
+                        "subcategory": "Combos",
+                        "pieces": "30 piezas",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Senda",
+                        "secondname": "",
+                        "type": "Salsa",
+                        "contents": "Salsa Senda.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 porción"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Salsas",
+                        "pieces": "1 porción",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Acevichada",
+                        "secondname": "",
+                        "type": "Salsa",
+                        "contents": "Salsa Senda.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 porción"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Salsas",
+                        "pieces": "1 porción",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Agridulce",
+                        "secondname": "",
+                        "type": "Salsa",
+                        "contents": "Salsa Senda.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 porción"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Salsas",
+                        "pieces": "1 porción",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Mayo spicy",
+                        "secondname": "",
+                        "type": "Salsa",
+                        "contents": "Salsa Senda.",
+                        "price": "$1.500",
+                        "flags": [
+                            "Picante"
+                        ],
+                        "options": [
+                            "1 porción"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Salsas",
+                        "pieces": "1 porción",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Mango",
+                        "secondname": "",
+                        "type": "Salsa",
+                        "contents": "Salsa Senda.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 porción"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Salsas",
+                        "pieces": "1 porción",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Teriyaki",
+                        "secondname": "",
+                        "type": "Salsa",
+                        "contents": "Salsa Senda.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 porción"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Salsas",
+                        "pieces": "1 porción",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Bs As",
+                        "secondname": "",
+                        "type": "Salsa",
+                        "contents": "Salsa Senda.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 porción"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Salsas",
+                        "pieces": "1 porción",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Palitos chinos",
+                        "secondname": "",
+                        "type": "Extra",
+                        "contents": "Extra para acompañar el pedido.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Extras",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Wasabi",
+                        "secondname": "",
+                        "type": "Extra",
+                        "contents": "Extra para acompañar el pedido.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Extras",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
+                    },
+                    {
+                        "name": "Gari (jengibre)",
+                        "secondname": "",
+                        "type": "Extra",
+                        "contents": "Extra para acompañar el pedido.",
+                        "price": "$1.500",
+                        "flags": [],
+                        "options": [
+                            "1 unidad"
+                        ],
+                        "category": "extras",
+                        "subcategory": "Extras",
+                        "pieces": "1 unidad",
+                        "variants": [],
+                        "whatsappLink": "https://wa.me/+541140587888"
                     }
-
                 ]);
 
                 const schedules = ref([
@@ -1086,15 +3446,217 @@
                     { icon: 'fab fa-facebook', link: 'https://www.facebook.com/share/1EiV5XMfN6/' }
                 ]);
 
-                const filteredMenu = computed(() => {
-                    if (activeCategory.value === 'all') {
-                        return menuItems.value;
-                    }
-                    return menuItems.value.filter(item => item.category === activeCategory.value);
+                const availableFlags = computed(() => {
+                    const priority = [
+                        'Veggie',
+                        'Picante',
+                        'Tempura',
+                        'Flameado',
+                        'Sin arroz'
+                    ];
+
+                    const flags = [...new Set(
+                        menuItems.value.flatMap(item => item.flags || [])
+                    )];
+
+                    return priority.filter(flag => flags.includes(flag));
                 });
 
-                const setActiveCategory = (categoryId) => {
-                    activeCategory.value = categoryId;
+                const normalizedSearch = computed(() =>
+                    menuSearch.value.trim().toLowerCase()
+                );
+
+                const matchesMenuFilters = (item) => {
+                    const categoryMatches =
+                        selectedCategory.value === 'all' ||
+                        item.category === selectedCategory.value;
+
+                    const searchText = [
+                        item.name,
+                        item.secondname,
+                        item.type,
+                        item.contents,
+                        item.subcategory,
+                        item.pieces,
+                        ...(item.flags || [])
+                    ].join(' ').toLowerCase();
+
+                    const searchMatches =
+                        !normalizedSearch.value ||
+                        searchText.includes(normalizedSearch.value);
+
+                    const featureMatches =
+                        activeFeatureFilters.value.length === 0 ||
+                        activeFeatureFilters.value.every(flag =>
+                            (item.flags || []).includes(flag)
+                        );
+
+                    return categoryMatches && searchMatches && featureMatches;
+                };
+
+                const menuGroups = computed(() => {
+                    return menuCategories.value.map(category => {
+                        const items = menuItems.value.filter(item =>
+                            item.category === category.id &&
+                            matchesMenuFilters(item)
+                        );
+
+                        return {
+                            ...category,
+                            items
+                        };
+                    }).filter(group => group.items.length > 0);
+                });
+
+                const visibleCategoryGroups = computed(() => {
+                    return menuGroups.value.map(group => {
+                        const isExpanded = expandedCategories.value.includes(group.id);
+                        const shouldShowAll =
+                            !!normalizedSearch.value ||
+                            activeFeatureFilters.value.length > 0 ||
+                            isExpanded;
+
+                        return {
+                            ...group,
+                            visibleItems: shouldShowAll
+                                ? group.items
+                                : group.items.slice(0, productPreviewLimit)
+                        };
+                    });
+                });
+
+                const totalVisibleProducts = computed(() =>
+                    menuGroups.value.reduce((total, group) => total + group.items.length, 0)
+                );
+
+                const searchResultCount = computed(() => totalVisibleProducts.value);
+
+                const productPreviewLimit = 5;
+
+                const selectedVariant = computed(() => {
+                    if (!selectedProduct.value || !selectedProduct.value.variants?.length) return null;
+                    return selectedProduct.value.variants.find(v => v.label === selectedVariantLabel.value)
+                        || selectedProduct.value.variants[0];
+                });
+
+                const selectedProductPrice = computed(() =>
+                    selectedVariant.value?.price || selectedProduct.value?.price || ''
+                );
+
+                const productWhatsappLink = computed(() => {
+                    if (!selectedProduct.value) return '#';
+
+                    const option = selectedVariant.value
+                        ? ` - ${selectedVariant.value.label}`
+                        : (selectedOption.value ? ` - ${selectedOption.value}` : '');
+
+                    const text = encodeURIComponent(
+                        `Hola SENDA, quiero pedir ${selectedProduct.value.name}${option}. Precio: ${selectedProductPrice.value}`
+                    );
+
+                    return `https://wa.me/541140587888?text=${text}`;
+                });
+
+                const selectVariant = (variant) => {
+                    selectedVariantLabel.value = variant.label;
+                };
+
+                const selectCategory = (categoryId) => {
+                    selectedCategory.value = categoryId;
+
+                    if (categoryId !== 'all' && !openAccordions.value.includes(categoryId)) {
+                        openAccordions.value = [categoryId];
+                    }
+
+                    if (categoryId === 'all' && !openAccordions.value.length) {
+                        openAccordions.value = ['entradas'];
+                    }
+                };
+
+                const toggleAccordion = (categoryId) => {
+                    if (openAccordions.value.includes(categoryId)) {
+                        openAccordions.value = openAccordions.value.filter(
+                            id => id !== categoryId
+                        );
+                    } else {
+                        // One open category at a time for a cleaner mobile-first experience.
+                        openAccordions.value = [categoryId];
+                    }
+                };
+
+                const toggleCategoryExpanded = (categoryId) => {
+                    if (expandedCategories.value.includes(categoryId)) {
+                        expandedCategories.value = expandedCategories.value.filter(
+                            id => id !== categoryId
+                        );
+                    } else {
+                        expandedCategories.value = [
+                            ...expandedCategories.value,
+                            categoryId
+                        ];
+                    }
+                };
+
+                const toggleFeatureFilter = (flag) => {
+                    if (activeFeatureFilters.value.includes(flag)) {
+                        activeFeatureFilters.value =
+                            activeFeatureFilters.value.filter(item => item !== flag);
+                    } else {
+                        activeFeatureFilters.value = [
+                            ...activeFeatureFilters.value,
+                            flag
+                        ];
+                    }
+
+                    // When filtering, open the first matching category.
+                    const firstGroup = menuGroups.value[0];
+                    if (firstGroup) {
+                        openAccordions.value = [firstGroup.id];
+                    }
+                };
+
+                const clearMenuSearch = () => {
+                    menuSearch.value = '';
+                };
+
+                const clearAllFilters = () => {
+                    menuSearch.value = '';
+                    selectedCategory.value = 'all';
+                    activeFeatureFilters.value = [];
+                    expandedCategories.value = [];
+                    showFilterPanel.value = false;
+                    openAccordions.value = ['entradas'];
+                };
+
+                const openProduct = (item) => {
+                    selectedProduct.value = item;
+                    selectedOption.value =
+                        item.options && item.options.length
+                            ? item.options[0]
+                            : '';
+                    selectedVariantLabel.value =
+                        item.variants && item.variants.length
+                            ? item.variants[0].label
+                            : '';
+                    document.body.classList.add('menu-lock-scroll');
+                };
+
+                const closeProduct = () => {
+                    selectedProduct.value = null;
+                    selectedOption.value = '';
+                    selectedVariantLabel.value = '';
+                    document.body.classList.remove('menu-lock-scroll');
+                };
+
+                const getFlagClass = (flag) => {
+                    const classes = {
+                        'Picante': 'bg-red-100 text-red-800',
+                        'Veggie': 'bg-green-100 text-green-800',
+                        'Tempura': 'bg-orange-200 text-orange-700',
+                        'Flameado': 'bg-amber-800 text-white',
+                    };
+
+                    return classes[flag] || 'bg-gray-200 text-gray-700';
                 };
 
                 const toggleMobileMenu = () => {
@@ -1115,7 +3677,8 @@
 
                 const scrollToCategory = (categoryId) => {
                     closeMobileMenu();
-                    setActiveCategory(categoryId);
+                    selectCategory(categoryId);
+
                     const menuSection = document.getElementById('menu');
                     if (menuSection) {
                         menuSection.scrollIntoView({ behavior: 'smooth' });
@@ -1169,19 +3732,45 @@
 
                 return {
                     scrolled,
-                    activeCategory,
-                    mobileMenuOpen,
-                    mobileMenuDropdownOpen,
-                    currentSlide,
-                    menuCategories,
+
+                    // Menu redesign
+                    selectedCategory,
+                    menuSearch,
+                    showFilterPanel,
+                    activeFeatureFilters,
+                    openAccordions,
+                    expandedCategories,
+                    selectedProduct,
+                    selectedOption,
                     categories,
-                    promos,
+                    availableFlags,
+                    visibleCategoryGroups,
+                    totalVisibleProducts,
+                    searchResultCount,
+                    productPreviewLimit,
+                    productWhatsappLink,
+                    selectedProductPrice,
+                    selectedVariantLabel,
+                    selectVariant,
+                    selectCategory,
+                    toggleAccordion,
+                    toggleCategoryExpanded,
+                    toggleFeatureFilter,
+                    clearMenuSearch,
+                    clearAllFilters,
+                    openProduct,
+                    closeProduct,
+                    getFlagClass,
+
+                    // Existing site state
+                    menuCategories,
                     carouselImages,
                     menuItems,
                     schedules,
                     socialLinks,
-                    filteredMenu,
-                    setActiveCategory,
+                    mobileMenuOpen,
+                    mobileMenuDropdownOpen,
+                    currentSlide,
                     toggleMobileMenu,
                     toggleMobileMenuDropdown,
                     closeMobileMenu,
