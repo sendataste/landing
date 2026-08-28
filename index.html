@@ -46,7 +46,7 @@
         "@type": "Restaurant",
         "name": "Senda Sushi - Villa Devoto",
         "url": "https://sendasushi.com.ar",
-        "logo": "https://sendasushi.com.ar/assets/logo.png",
+        "logo": "https://sendasushi.com.ar/assets/logo_cuadrado_transparente.png",
         "servesCuisine": "Sushi",
         "priceRange": "$$",
         "address": {
@@ -242,177 +242,178 @@
                     </div>
                 </div>
 
-                <!-- Accordion categories -->
-                <div class="menu-accordion-list mt-5">
-                    <template v-if="visibleCategoryGroups.length">
-                        <div v-for="group in visibleCategoryGroups" :key="group.id" class="menu-category-block">
+<!-- Accordion categories -->
+<div class="menu-accordion-list mt-5">
+    <template v-if="visibleCategoryGroups.length">
+        <div v-for="group in visibleCategoryGroups" :key="group.id" class="menu-category-block">
 
-                            <button type="button" class="menu-category-header" @click="toggleAccordion(group.id)"
-                                :aria-expanded="openAccordions.includes(group.id)">
+            <button type="button" class="menu-category-header" @click="toggleAccordion(group.id)"
+                :aria-expanded="openAccordions.includes(group.id)">
 
-                                <span class="menu-category-header-left">
-                                    <span class="menu-category-icon">
-                                        {{ group.icon }}
-                                    </span>
+                <span class="menu-category-header-left">
+                    <span class="menu-category-icon">
+                        {{ group.icon }}
+                    </span>
 
-                                    <span>
-                                        <span class="menu-category-name">
-                                            {{ group.name }}
-                                        </span>
-                                        <span class="menu-category-count">
-                                            {{ group.items.length }} plato<span v-if="group.items.length !== 1">s</span>
-                                        </span>
-                                    </span>
-                                </span>
+                    <span>
+                        <span class="menu-category-name">
+                            {{ group.name }}
+                        </span>
+                        <span class="menu-category-count">
+                            {{ group.items.length }} plato<span v-if="group.items.length !== 1">s</span>
+                        </span>
+                    </span>
+                </span>
 
-                                <i class="fas fa-chevron-down menu-category-chevron"
-                                    :class="{ 'open': openAccordions.includes(group.id) }">
-                                </i>
-                            </button>
+                <i class="fas fa-chevron-down menu-category-chevron"
+                    :class="{ 'open': openAccordions.includes(group.id) }">
+                </i>
+            </button>
 
-                            <div v-if="openAccordions.includes(group.id)" class="menu-category-body">
-                                <template v-for="item in group.visibleItems" :key="item.name">
-                                    <button v-for="item in group.visibleItems" :key="item.name" type="button"
-                                        class="compact-product"
-                                        @click.prevent="(e) => { if (item && item.name) openProduct(item); }">
-                                        <!-- contenido -->
-                                        <div class="compact-product-info">
-                                            <div class="compact-product-title-row">
-                                                <span class="compact-product-title">{{ item.name }}</span>
-                                                <span v-if="item.secondname && item.secondname.trim()"
-                                                    class="compact-product-subtitle">
-                                                    {{ item.secondname }}
-                                                </span>
-                                            </div>
+<div v-if="openAccordions.includes(group.id)" class="menu-category-body">
+    <!-- ✅ CORREGIDO: @click simple y directo -->
+    <button v-for="item in group.visibleItems" 
+            :key="item.name" 
+            type="button"
+            class="compact-product"
+            @click="openProduct(item)">
+        <div class="compact-product-info">
+            <div class="compact-product-title-row">
+                <span class="compact-product-title">{{ item.name }}</span>
+                <span v-if="item.secondname && item.secondname.trim()"
+                    class="compact-product-subtitle">
+                    {{ item.secondname }}
+                </span>
+            </div>
 
-                                            <p class="compact-product-description">
-                                                {{ item.contents }}
-                                            </p>
+            <p class="compact-product-description">
+                {{ item.contents }}
+            </p>
 
-                                            <div v-if="item.flags && item.flags.length" class="compact-product-tags">
-                                                <span v-for="flag in item.flags.slice(0, 3)" :key="flag"
-                                                    class="compact-tag" :class="getFlagClass(flag)">
-                                                    {{ flag }}
-                                                </span>
-                                            </div>
-                                        </div>
+            <div v-if="item.flags && item.flags.length" class="compact-product-tags">
+                <span v-for="flag in item.flags.slice(0, 3)" :key="flag"
+                    class="compact-tag" :class="getFlagClass(flag)">
+                    {{ flag }}
+                </span>
+            </div>
+        </div>
 
-                                        <div class="compact-product-action">
-                                            <span class="compact-product-price">{{ item.price }}</span>
-                                            <span class="compact-product-plus" aria-hidden="true">
-                                                <i class="fas fa-plus text-xs"></i>
-                                            </span>
-                                        </div>
-                                    </button>
-                                </template>
+        <div class="compact-product-action">
+            <span class="compact-product-price">{{ item.price }}</span>
+            <span class="compact-product-plus" aria-hidden="true">
+                <i class="fas fa-plus text-xs"></i>
+            </span>
+        </div>
+    </button>
 
-                                <button v-if="group.items.length > productPreviewLimit && !menuSearch" type="button"
-                                    class="menu-more-btn" @click="toggleCategoryExpanded(group.id)">
-                                    {{ expandedCategories.includes(group.id) ? 'Ver menos' : `Ver los
-                                    ${group.items.length} platos` }}
-                                    <i class="fas ml-2"
-                                        :class="expandedCategories.includes(group.id) ? 'fa-chevron-up' : 'fa-chevron-down'">
-                                    </i>
-                                </button>
-                            </div>
-                        </div>
-                    </template>
+    <button v-if="group.items.length > productPreviewLimit && !menuSearch" type="button"
+        class="menu-more-btn" @click="toggleCategoryExpanded(group.id)">
+        {{ expandedCategories.includes(group.id) ? 'Ver menos' : `Ver los ${group.items.length} platos` }}
+        <i class="fas ml-2"
+            :class="expandedCategories.includes(group.id) ? 'fa-chevron-up' : 'fa-chevron-down'">
+        </i>
+    </button>
+</div>
+        </div>
+    </template>
 
-                    <div v-else class="menu-empty-state">
-                        <div class="text-2xl mb-2">🍣</div>
-                        <p class="font-bold text-carbon-black mb-1">No encontramos ese plato</p>
-                        <p class="text-sm mb-4">
-                            Probá con otro nombre, ingrediente o quitá algún filtro.
-                        </p>
-                        <button type="button" @click="clearAllFilters"
-                            class="bg-carbon-black text-warm-white px-5 py-2 rounded-full text-xs font-bold">
-                            Ver todo el menú
-                        </button>
+    <div v-else class="menu-empty-state">
+        <div class="text-2xl mb-2">🍣</div>
+        <p class="font-bold text-carbon-black mb-1">No encontramos ese plato</p>
+        <p class="text-sm mb-4">
+            Probá con otro nombre, ingrediente o quitá algún filtro.
+        </p>
+        <button type="button" @click="clearAllFilters"
+            class="bg-carbon-black text-warm-white px-5 py-2 rounded-full text-xs font-bold">
+            Ver todo el menú
+        </button>
+    </div>
+</div>
+            </div>
+
+<!-- Product detail bottom sheet / desktop modal -->
+<transition name="fade">
+    <div v-if="isModalOpen && selectedProduct && selectedProduct.name" 
+         class="menu-detail-overlay" 
+         @click.self="closeProduct" 
+         @keydown.esc="closeProduct">
+        <div class="menu-detail-sheet" role="dialog" aria-modal="true">
+            <div class="menu-detail-handle"></div>
+
+            <div class="menu-detail-header">
+                <div>
+                    <div class="menu-detail-kicker">
+                        {{ selectedProduct.subcategory || selectedProduct.type }}
                     </div>
+                    <h3 class="menu-detail-title">
+                        {{ selectedProduct.name }}
+                    </h3>
+                    <p v-if="selectedProduct.secondname && selectedProduct.secondname.trim()"
+                        class="menu-detail-subtitle">
+                        {{ selectedProduct.secondname }}
+                    </p>
+                </div>
+
+                <button type="button" class="menu-detail-close" @click="closeProduct"
+                    aria-label="Cerrar detalle">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <p class="menu-detail-description">
+                {{ selectedProduct.contents }}
+            </p>
+
+            <div v-if="selectedProduct.flags && selectedProduct.flags.length" class="menu-detail-tags">
+                <span v-for="flag in selectedProduct.flags" :key="flag" class="compact-tag"
+                    :class="getFlagClass(flag)">
+                    {{ flag }}
+                </span>
+            </div>
+
+            <div v-if="selectedProduct.options && selectedProduct.options.length"
+                class="menu-detail-options">
+
+                <div class="menu-detail-options-title">
+                    Presentación
+                </div>
+
+                <div class="menu-option-list">
+                    <button v-for="option in selectedProduct.options" :key="option" type="button"
+                        class="menu-option" :class="{ 'active': selectedOption === option }"
+                        @click="selectedOption = option">
+                        {{ option }}
+                    </button>
                 </div>
             </div>
 
-            <!-- Product detail bottom sheet / desktop modal -->
-            <transition name="fade">
-                <div v-if="selectedProduct && selectedProduct.name" v-show="selectedProduct && selectedProduct.name"
-                    class="menu-detail-overlay" @click.self="closeProduct" @keydown.esc="closeProduct">
-                    <div class="menu-detail-sheet" role="dialog" aria-modal="true">
-                        <div class="menu-detail-handle"></div>
-
-                        <div class="menu-detail-header">
-                            <div>
-                                <div class="menu-detail-kicker">
-                                    {{ selectedProduct.subcategory || selectedProduct.type }}
-                                </div>
-                                <h3 class="menu-detail-title">
-                                    {{ selectedProduct.name }}
-                                </h3>
-                                <p v-if="selectedProduct.secondname && selectedProduct.secondname.trim()"
-                                    class="menu-detail-subtitle">
-                                    {{ selectedProduct.secondname }}
-                                </p>
-                            </div>
-
-                            <button type="button" class="menu-detail-close" @click="closeProduct"
-                                aria-label="Cerrar detalle">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-
-                        <p class="menu-detail-description">
-                            {{ selectedProduct.contents }}
-                        </p>
-
-                        <div v-if="selectedProduct.flags && selectedProduct.flags.length" class="menu-detail-tags">
-                            <span v-for="flag in selectedProduct.flags" :key="flag" class="compact-tag"
-                                :class="getFlagClass(flag)">
-                                {{ flag }}
-                            </span>
-                        </div>
-
-                        <div v-if="selectedProduct.options && selectedProduct.options.length"
-                            class="menu-detail-options">
-
-                            <div class="menu-detail-options-title">
-                                Presentación
-                            </div>
-
-                            <div class="menu-option-list">
-                                <button v-for="option in selectedProduct.options" :key="option" type="button"
-                                    class="menu-option" :class="{ 'active': selectedOption === option }"
-                                    @click="selectedOption = option">
-                                    {{ option }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div v-if="selectedProduct.variants && selectedProduct.variants.length"
-                            class="menu-detail-options">
-                            <div class="menu-detail-options-title">
-                                Elegí una opción
-                            </div>
-                            <div class="menu-option-list">
-                                <button v-for="variant in selectedProduct.variants" :key="variant.label" type="button"
-                                    class="menu-option" :class="{ 'active': selectedVariantLabel === variant.label }"
-                                    @click="selectVariant(variant)">
-                                    {{ variant.label }} · {{ variant.price }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="menu-detail-footer">
-                            <span class="menu-detail-price">
-                                {{ selectedProductPrice }}
-                            </span>
-
-                            <a :href="productWhatsappLink" target="_blank" rel="noopener" class="menu-detail-order">
-                                <i class="fab fa-whatsapp"></i>
-                                Pedir por WhatsApp
-                            </a>
-                        </div>
-                    </div>
+            <div v-if="selectedProduct.variants && selectedProduct.variants.length"
+                class="menu-detail-options">
+                <div class="menu-detail-options-title">
+                    Elegí una opción
                 </div>
-            </transition>
+                <div class="menu-option-list">
+                    <button v-for="variant in selectedProduct.variants" :key="variant.label" type="button"
+                        class="menu-option" :class="{ 'active': selectedVariantLabel === variant.label }"
+                        @click="selectVariant(variant)">
+                        {{ variant.label }} · {{ variant.price }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="menu-detail-footer">
+                <span class="menu-detail-price">
+                    {{ selectedProductPrice }}
+                </span>
+
+                <a :href="productWhatsappLink" target="_blank" rel="noopener" class="menu-detail-order">
+                    <i class="fab fa-whatsapp"></i>
+                    Pedir por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+</transition>
         </section>
 
         <!-- Carousel Section -->
