@@ -929,7 +929,211 @@ const app = createApp({
             }
         };
 
+        // ========== REVIEWS ==========
+        const reviews = ref([]);
+        const reviewsLoaded = ref(false);
+        const reviewPage = ref(0);
+        const reviewsPerView = ref(1); 
+         
+        let reviewAutoplay = null;
+        let reviewAutoplayResume = null;
+        const reviewAutoplayInterval = 5000; // 5 segundos
+
+        const updateReviewsPerView = () => {
+            if (window.innerWidth >= 1024) reviewsPerView.value = 3;
+            else if (window.innerWidth >= 640) reviewsPerView.value = 2;
+            else reviewsPerView.value = 1;
+            // Al cambiar el tamaño, reseteamos a la primera página
+            reviewPage.value = 0;
+        };
+
+        // Solo reviews >= 4 estrellas
+        const filteredReviews = computed(() => {
+            return reviews.value.filter(r => r.starsNumber >= 4);
+        });
+
+        const averageRating = computed(() => {
+            if (!filteredReviews.value.length) return 0;
+            const total = filteredReviews.value.reduce((s, r) => s + r.starsNumber, 0);
+            return total / filteredReviews.value.length;
+        });
+
+        // Agrupar las reviews en páginas de N cards
+        const reviewPages = computed(() => {
+            const perView = reviewsPerView.value;
+            const pages = [];
+            const list = filteredReviews.value;
+            for (let i = 0; i < list.length; i += perView) {
+                pages.push(list.slice(i, i + perView));
+            }
+            return pages;
+        });
+
+        const totalReviewPages = computed(() => reviewPages.value.length);
+
+        // Dots inteligentes para mobile: siempre 5 como máximo (incluye flechas)
+        // Muestra: [1] […] [actual] […] [última]
+        const mobileDots = computed(() => {
+            const total = totalReviewPages.value;
+            const current = reviewPage.value;
+            if (total <= 5) {
+                // Si hay pocas páginas, mostrarlas todas
+                return Array.from({ length: total }, (_, i) => ({
+                    label: String(i + 1),
+                    page: i,
+                    active: i === current,
+                    ellipsis: false
+                }));
+            }
+
+            const dots = [];
+            const first = 0;
+            const last = total - 1;
+
+            // Siempre mostramos la primera
+            dots.push({
+                label: '1',
+                page: first,
+                active: current === first,
+                ellipsis: false
+            });
+
+            // Rango alrededor del actual
+            let start = Math.max(1, current - 1);
+            let end = Math.min(last - 1, current + 1);
+
+            // Si estamos cerca del inicio
+            if (current <= 1) {
+                start = 1;
+                end = 3;
+            }
+            // Si estamos cerca del final
+            if (current >= last - 1) {
+                start = last - 3;
+                end = last - 1;
+            }
+
+            // Elipsis antes
+            if (start > 1) {
+                dots.push({ label: '…', page: null, active: false, ellipsis: true });
+            }
+
+            // Páginas del medio
+            for (let i = start; i <= end; i++) {
+                dots.push({
+                    label: String(i + 1),
+                    page: i,
+                    active: i === current,
+                    ellipsis: false
+                });
+            }
+
+            // Elipsis después
+            if (end < last - 1) {
+                dots.push({ label: '…', page: null, active: false, ellipsis: true });
+            }
+
+            // Siempre mostramos la última
+            dots.push({
+                label: String(last + 1),
+                page: last,
+                active: current === last,
+                ellipsis: false
+            });
+
+            return dots;
+        });
+
+        const nextReviewPage = () => {
+            const max = totalReviewPages.value - 1;
+            if (max < 0) return;
+            reviewPage.value = reviewPage.value >= max ? 0 : reviewPage.value + 1;
+            pauseReviewAutoplayTemporarily();
+        };
+
+        const prevReviewPage = () => {
+            const max = totalReviewPages.value - 1;
+            if (max < 0) return;
+            reviewPage.value = reviewPage.value <= 0 ? max : reviewPage.value - 1;
+            pauseReviewAutoplayTemporarily();
+        };
+
+        const goToReviewPage = (index) => {
+            if (index === reviewPage.value) return;
+            reviewPage.value = index;
+            pauseReviewAutoplayTemporarily();
+        };
+        // ----- Autoplay del carrusel de reviews -----
+        const stopReviewAutoplay = () => {
+            if (reviewAutoplay) {
+                clearInterval(reviewAutoplay);
+                reviewAutoplay = null;
+            }
+        };
+
+        let reviewAutoplayTicking = false;
+
+        const startReviewAutoplay = () => {
+            stopReviewAutoplay();
+            if (totalReviewPages.value <= 1) return;
+            reviewAutoplay = setInterval(() => {
+                reviewAutoplayTicking = true;
+                const max = totalReviewPages.value - 1;
+                reviewPage.value = reviewPage.value >= max ? 0 : reviewPage.value + 1;
+                reviewAutoplayTicking = false;
+            }, reviewAutoplayInterval);
+        };
+
+        const pauseReviewAutoplayTemporarily = () => {
+            if (reviewAutoplayTicking) return; // ignorar si viene del propio autoplay
+            stopReviewAutoplay();
+            if (reviewAutoplayResume) clearTimeout(reviewAutoplayResume);
+            reviewAutoplayResume = setTimeout(() => {
+                startReviewAutoplay();
+            }, 8000);
+        };
+
+        const truncateText = (text, max) => {
+            if (!text) return '';
+            const clean = text.replace(/\s+/g, ' ').trim();
+            if (clean.length <= max) return clean;
+            return clean.slice(0, max).trim() + '…';
+        };
+
+        const loadReviews = async () => {
+            try {
+                if (window.SENDA_REVIEWS) {
+                    reviews.value = window.SENDA_REVIEWS.reviews.map(r => ({
+                        ...r,
+                        starsNumber: parseInt((r.stars || '').replace(/\D/g, ''), 10) || 0
+                    }));
+                    reviewsLoaded.value = true;
+                    updateReviewsPerView();
+                    setTimeout(startReviewAutoplay, 300); // 👈 nuevo
+                    return;
+                }
+
+                const res = await fetch('senda-sushi-reviews-full.json');
+                if (!res.ok) throw new Error('No se pudo cargar el JSON');
+                const data = await res.json();
+                reviews.value = (data.reviews || []).map(r => ({
+                    ...r,
+                    starsNumber: parseInt((r.stars || '').replace(/\D/g, ''), 10) || 0
+                }));
+                reviewsLoaded.value = true;
+                updateReviewsPerView();
+                setTimeout(startReviewAutoplay, 300); // 👈 nuevo
+            } catch (err) {
+                console.error('Error cargando reviews:', err);
+                reviewsLoaded.value = true;
+            }
+        };
+
         onMounted(() => {
+            loadReviews();
+            updateReviewsPerView();
+            window.addEventListener('resize', updateReviewsPerView);
+
             console.log('🚀 onMounted - selectedProduct inicial:', selectedProduct.value);
             console.log('🚀 onMounted - isModalOpen inicial:', isModalOpen.value);
 
@@ -942,12 +1146,26 @@ const app = createApp({
             isModalOpen.value = false;
             console.log('✅ Forzado selectedProduct a null:', selectedProduct.value);
             console.log('✅ Forzado isModalOpen a false:', isModalOpen.value);
+
+            // Arrancar autoplay de reviews cuando terminen de cargarse
+            watch(totalReviewPages, (n) => {
+                if (n > 1) {
+                    startReviewAutoplay();
+                } else {
+                    stopReviewAutoplay();
+                }
+            });
         });
 
         onUnmounted(() => {
             if (autoplayInterval) {
                 clearInterval(autoplayInterval);
             }
+
+            window.removeEventListener('resize', updateReviewsPerView);
+
+            stopReviewAutoplay();
+            if (reviewAutoplayResume) clearTimeout(reviewAutoplayResume);
         });
 
         return {
@@ -998,7 +1216,23 @@ const app = createApp({
             scrollToCategory,
             nextSlide,
             prevSlide,
-            goToSlide
+            goToSlide, 
+
+            // Reviews
+            reviews,
+            reviewsLoaded,
+            reviewPage,
+            reviewPages,
+            totalReviewPages,
+            filteredReviews,
+            averageRating,
+            nextReviewPage,
+            prevReviewPage,
+            goToReviewPage,
+            truncateText,
+            mobileDots,
+            startReviewAutoplay,
+            stopReviewAutoplay,
         };
     }
 });

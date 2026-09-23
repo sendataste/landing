@@ -36,8 +36,8 @@
     <link rel="stylesheet" href="styles.css">
     <meta property="og:title" content="Senda Sushi - Villa Devoto">
     <meta property="og:description" content="Delivery y Take Away de Sushi en Buenos Aires">
-    <meta property="og:image" content="https://tusitio.com/ruta/a/tu-logo.png">
-    <meta property="og:url" content="https://tusitio.com">
+    <meta property="og:image" content="https://sendasushi.com.ar/assets/logo_cuadrado_transparente.png">
+    <meta property="og:url" content="https://sendasushi.com.ar">
     <meta name="description"
         content="Senda Sushi - Delivery de sushi en Villa Devoto, Buenos Aires. Harumakis, Tempura y más.">
     <script type="application/ld+json">
@@ -473,6 +473,120 @@
                             alt="SENDA Sushi">
                     </div>
                 </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section id="reviews" class="py-16 bg-warm-white px-4">
+            <div class="container mx-auto">
+                <h2 class="text-6xl md:text-6xl text-center mb-4 font-comforter">Lo que dicen</h2>
+                <p class="text-center text-medium-gray max-w-2xl mx-auto mb-10">
+                    Opiniones reales de nuestros clientes en Google
+                </p>
+
+                <!-- Rating summary -->
+                <div v-if="reviewsLoaded" class="flex flex-col items-center justify-center mb-10">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-4xl font-bold text-carbon-black">
+                            {{ averageRating.toFixed(1) }}
+                        </span>
+                        <div class="flex flex-col">
+                            <div class="flex text-subtle-gold text-lg">
+                                <i v-for="n in 5" :key="n" class="fas"
+                                :class="n <= Math.round(averageRating) ? 'fa-star' : 'fa-star-o'"></i>
+                            </div>
+                            <span class="text-xs text-medium-gray">
+                                {{ filteredReviews.length }} reseñas destacadas
+                            </span>
+                        </div>
+                    </div>
+                    <a href="https://www.google.com/maps/place/Senda+Sushi/@-34.5886408,-58.508417,17z"
+                    target="_blank" rel="noopener"
+                    class="text-sm text-torii-red hover:underline font-medium">
+                        Ver todas en Google Maps <i class="fas fa-external-link-alt text-xs ml-1"></i>
+                    </a>
+                </div>
+
+                <!-- Reviews carousel -->
+                <div v-if="reviewsLoaded && filteredReviews.length" class="reviews-carousel-wrapper">
+                    <div class="reviews-carousel relative max-w-6xl mx-auto">
+                        <div class="reviews-track"
+                            :style="{ transform: `translateX(-${reviewPage * 100}%)` }">
+                            <div v-for="(page, pageIndex) in reviewPages"
+                                :key="pageIndex"
+                                class="review-page">
+                                <div v-for="review in page" :key="review.reviewId" class="review-card">
+                                    <div class="review-card-header">
+                                        <img :src="review.avatar" :alt="review.author"
+                                            class="review-avatar"
+                                            onerror="this.style.display='none'">
+                                        <div class="review-meta">
+                                            <h4 class="review-author">{{ review.author }}</h4>
+                                            <span class="review-date">{{ review.date }}</span>
+                                            <div class="review-stars text-subtle-gold">
+                                                <i v-for="n in 5" :key="n" class="fas"
+                                                :class="n <= review.starsNumber ? 'fa-star' : 'fa-star-o'"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p class="review-text">{{ truncateText(review.text, 180) }}</p>
+
+                                    <div class="review-footer">
+                                        <a :href="review.alternativeLink" target="_blank" rel="noopener"
+                                        class="review-link">
+                                            <i class="fab fa-google mr-1"></i>
+                                            Ver reseña original
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button @click="prevReviewPage" class="carousel-btn prev" aria-label="Anterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button @click="nextReviewPage" class="carousel-btn next" aria-label="Siguiente">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Dots: versión desktop (todos) + versión mobile (solo 3) -->
+                    <div class="reviews-dots reviews-dots-desktop">
+                        <span v-for="(page, index) in reviewPages" :key="index"
+                            @click="goToReviewPage(index)"
+                            class="carousel-dot"
+                            :class="{ 'active': reviewPage === index }"></span>
+                    </div>
+
+                    <div class="reviews-dots-mobile">
+                        <span class="dot-arrow"
+                            :class="{ 'disabled': reviewPage === 0 }"
+                            @click="prevReviewPage">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                        <span v-for="(dot, i) in mobileDots" :key="'m'+i"
+                            class="carousel-dot"
+                            :class="{ 'active': dot.active, 'ellipsis': dot.ellipsis }"
+                            @click="dot.page !== null && goToReviewPage(dot.page)">
+                            {{ dot.label }}
+                        </span>
+                        <span class="dot-arrow"
+                            :class="{ 'disabled': reviewPage === totalReviewPages - 1 }"
+                            @click="nextReviewPage">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Loading / empty state -->
+                <div v-else-if="!reviewsLoaded" class="text-center text-medium-gray py-10">
+                    <i class="fas fa-spinner fa-spin text-2xl"></i>
+                    <p class="mt-2 text-sm">Cargando reseñas...</p>
+                </div>
+                <div v-else class="text-center text-medium-gray py-10">
+                    <p>No hay reseñas disponibles por el momento.</p>
+                </div>
+            </div>
         </section>
 
         <!-- Location Section -->

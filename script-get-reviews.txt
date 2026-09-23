@@ -1,0 +1,81 @@
+(async function scrapeGoogleReviewsFull() {
+  // Extraer place_id tipo ChIJ desde el HTML
+  const html = document.documentElement.innerHTML;
+  const chijMatch = html.match(/"(ChIJ[A-Za-z0-9_-]{20,})"/);
+  const chijPlaceId = chijMatch ? chijMatch[1] : null;
+  const urlPlaceId = (location.href.match(/!1s(0x[0-9a-f]+:0x[0-9a-f]+)/i) || [])[1] || '';
+
+  const reviews = [];
+  const nodes = document.querySelectorAll('div[data-review-id][aria-label]');
+
+  nodes.forEach((node) => {
+    const reviewId = node.getAttribute('data-review-id') || '';
+
+    // Autor
+    const author = node.querySelector('.d4r55')?.textContent.trim() || '';
+
+    // Avatar
+    const avatarEl =
+      node.querySelector('img.NBa7we') ||
+      node.querySelector('img[src*="googleusercontent"]') ||
+      node.querySelector('button img') ||
+      node.querySelector('img');
+    const avatarSrc = avatarEl?.src || '';
+    const avatarSrcset = avatarEl?.srcset || '';
+    const avatarAlt = avatarEl?.alt || '';
+
+    // Versión grande del avatar (cambia =s48-... por =s256-...)
+    const avatarLarge = avatarSrc.replace(/=s\d+/, '=s256');
+
+    // Texto, estrellas, fecha, respuesta del dueño
+    const text = node.querySelector('.wiI7pd, .MyEned span')?.textContent.trim() || '';
+    const stars = node.querySelector('[role="img"][aria-label*="estrella"]')?.getAttribute('aria-label') || '';
+    const date = node.querySelector('.rsqaWe')?.textContent.trim() || '';
+    const ownerReply = node.querySelector('.CDe7pd')?.textContent.trim() || '';
+
+    // Links
+    const reviewLink = (chijPlaceId && reviewId)
+      ? `https://search.google.com/local/reviews?placeid=${chijPlaceId}&reviewId=${reviewId}`
+      : '';
+    const altLink = reviewId
+      ? `https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1s${reviewId}!2m1!1s0x0:0x0!3m1!1s${urlPlaceId}`
+      : '';
+
+    if (text || author) {
+      reviews.push({
+        reviewId,
+        author,
+        avatar: avatarLarge,
+        avatarSmall: avatarSrc,
+        avatarSrcset,
+        avatarAlt,
+        stars,
+        date,
+        text,
+        ownerReply,
+        reviewLink,
+        alternativeLink: altLink,
+      });
+    }
+  });
+
+  const result = {
+    business: document.querySelector('h1')?.textContent.trim() || '',
+    rating: document.querySelector('div.F7nice span[aria-hidden="true"]')?.textContent.trim() || '',
+    totalReviews: document.querySelector('div.F7nice span:last-child')?.textContent.trim() || '',
+    chijPlaceId,
+    urlPlaceId,
+    scrapedAt: new Date().toISOString(),
+    url: location.href,
+    reviews,
+  };
+
+  const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'senda-sushi-reviews-full.json';
+  a.click();
+
+  console.log(`✅ ${reviews.length} reseñas con avatar`, result);
+  return result;
+})();
