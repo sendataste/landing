@@ -33,10 +33,12 @@ const app = createApp({
         // Nuevas categorías según segmentación
         const menuCategories = ref([
             { id: 'entradas', name: 'Entradas', icon: '🥟' },
+            { id: 'platos', name: 'Platos', icon: '🍜' },
+            { id: 'cortes', name: 'Cortes', icon: '🔪' },
             { id: 'sushi', name: 'Sushi', icon: '🍣' },
+            { id: 'fusion', name: 'Fusión', icon: '🌶️' },
             { id: 'rolls', name: 'Rolls', icon: '🍱' },
             { id: 'tablas', name: 'Tablas', icon: '🎎' },
-            { id: 'cocina', name: 'Cocina', icon: '🍜' },
             { id: 'bebidas', name: 'Bebidas', icon: '🥤' },
             { id: 'postres', name: 'Postres y Café', icon: '🍰' },
             { id: 'extras', name: 'Salsas y Extras', icon: '🥢' }
@@ -57,10 +59,12 @@ const app = createApp({
 
         // NUEVA ESTRUCTURA DE MENÚ SEGÚN SEGMENTACIÓN
         const menuItems = ref([
-        // ========== ENTRADAS ==========
+            // ============================================================
+            // ========== ENTRADAS ==========
+            // ============================================================
             {
                 name: "Harumakis",
-                secondname: "Carne o verdura",
+                secondname: "Carne o verdura con salsa",
                 type: "Entrada",
                 contents: "Harumakis de carne o verdura con salsa.",
                 price: "$9.000",
@@ -87,7 +91,7 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
             {
-                name: "Langostino crunchy",
+                name: "Langostino Crunchy",
                 secondname: "Con salsa",
                 type: "Entrada",
                 contents: "Langostinos crocantes con salsa.",
@@ -102,38 +106,19 @@ const app = createApp({
             },
             {
                 name: "Tempura",
-                secondname: "Salmón / Langostino / Mixto",
+                secondname: "Salmón con salsa Bs As / Langostino con salsa teriyaki / Mixto",
                 type: "Entrada",
-                contents: "Salmón con salsa Bs As, Langostino con salsa teriyaki o Mixto.",
-                price: "$14.000",
+                contents: "Salmón con salsa Bs As / Langostino con salsa teriyaki / Mixto salmón y langostino.",
+                price: "$15.000",
                 flags: ["Tempura"],
                 options: ["5 unidades"],
                 category: "entradas",
                 subcategory: "Entradas",
                 pieces: "5 unidades",
                 variants: [
-                    { label: "Salmón", price: "$14.000" },
-                    { label: "Langostino", price: "$14.000" },
-                    { label: "Mixto", price: "$14.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Sashimi",
-                secondname: "Salmón / Atún rojo / Pulpo / SENDA",
-                type: "Sashimi",
-                contents: "Cortes de pescado fresco. SENDA: salmón, atún, pulpo, salmón flameado.",
-                price: "$14.000",
-                flags: ["Sin TACC"],
-                options: ["4 unidades"],
-                category: "entradas",
-                subcategory: "Cortes",
-                pieces: "4 unidades",
-                variants: [
-                    { label: "Salmón", price: "$14.000" },
-                    { label: "Atún rojo", price: "$14.000" },
-                    { label: "Pulpo", price: "$14.000" },
-                    { label: "SENDA", price: "$14.000" }
+                    { label: "Salmón", price: "$15.000" },
+                    { label: "Langostino", price: "$15.000" },
+                    { label: "Mixto", price: "$15.000" }
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
@@ -152,17 +137,129 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
 
-            // ========== SUSHI (Cortes, Sushi, Fusión, Platos) ==========
-            // --- Cortes ---
+            // ============================================================
+            // ========== PLATOS ==========
+            // ============================================================
+            {
+                name: "Sushi burrito",
+                secondname: "Crunchy / Tokyo / Veggie",
+                type: "Sushi Burrito",
+                contents: "Crunchy: langostino apanado, kanikama y hongo en aceite de sésamo, palta, ciboulette con salsa acevichada / Tokyo: salmón, palta, philadelphia, pepino con salsa teriyaki / Veggie: zanahoria, pepino, palta, huevo, philadelphia y sésamo tostado.",
+                price: "$18.000",
+                flags: ["Opción Veggie"],
+                options: ["1 unidad"],
+                category: "platos",
+                subcategory: "Platos",
+                pieces: "1 unidad",
+                variants: [
+                    { label: "Crunchy", price: "$18.000" },
+                    { label: "Tokyo", price: "$18.000" },
+                    { label: "Veggie", price: "$18.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Chow Fan",
+                secondname: "Pollo / Vegetales / Cerdo / Langostinos / Lomo / Veggie",
+                type: "Chow Fan",
+                contents: "Arroz sofrito, huevo, zanahoria, arvejas y verdeo. Pollo o Vegetales + 2 harumakis (carne o verdura). Fideos de huevo, morrón, cebolla, zanahoria, brote de soja y salsa roja.",
+                price: "$18.000",
+                flags: ["Opción Veggie"],
+                options: [],
+                category: "platos",
+                subcategory: "Platos",
+                pieces: "",
+                variants: [
+                    { label: "Pollo", price: "$18.000" },
+                    { label: "Vegetales", price: "$18.000" },
+                    { label: "Cerdo", price: "$18.000" },
+                    { label: "Langostinos", price: "$18.000" },
+                    { label: "Lomo", price: "$18.000" },
+                    { label: "Veggie", price: "$18.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Wok",
+                secondname: "Pollo teriyaki / Langostinos / Salmón grille / Vegetales / Lomo / Mixto",
+                type: "Wok",
+                contents: "Zanahoria, brote de soja, huevo, verdeo y salsa de soja. Mixto: salmón grille y langostinos.",
+                price: "$20.000",
+                flags: ["Picante", "Opción Veggie"],
+                options: [],
+                category: "platos",
+                subcategory: "Platos",
+                pieces: "",
+                variants: [
+                    { label: "Pollo teriyaki", price: "$20.000" },
+                    { label: "Langostinos", price: "$20.000" },
+                    { label: "Salmón grille", price: "$20.000" },
+                    { label: "Vegetales", price: "$20.000" },
+                    { label: "Lomo", price: "$20.000" },
+                    { label: "Mixto", price: "$22.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Cerdo Tonkatsu",
+                secondname: "",
+                type: "Plato",
+                contents: "Apanado en panko, frito con salsa tonkatsu y arroz con huevo.",
+                price: "$18.000",
+                flags: ["Tempura"],
+                options: [],
+                category: "platos",
+                subcategory: "Platos",
+                pieces: "",
+                variants: [],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Lomo salteado",
+                secondname: "",
+                type: "Plato",
+                contents: "Lomo salteado con cebolla morada, morrón rojo y amarillo, y cilantro, sobre un colchón de arroz blanco con aceite de sésamo.",
+                price: "$20.000",
+                flags: ["Picante"],
+                options: [],
+                category: "platos",
+                subcategory: "Platos",
+                pieces: "",
+                variants: [],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+
+            // ============================================================
+            // ========== CORTES ==========
+            // ============================================================
+            {
+                name: "Temakis",
+                secondname: "Salmón / Langostino / Atún rojo / Pulpo",
+                type: "Temaki",
+                contents: "Salmón, philadelphia y palta / Langostino sellado en soja, palta, philadelphia y verdeo / Atún rojo, philadelphia picante, negui y pepino / Pulpo, palta, cremoso de ají amarillo, cilantro.",
+                price: "$10.000",
+                flags: ["Sin TACC", "Opción Veggie"],
+                options: ["1 unidad"],
+                category: "cortes",
+                subcategory: "Cortes",
+                pieces: "1 unidad",
+                variants: [
+                    { label: "Salmón", price: "$10.000" },
+                    { label: "Langostino", price: "$10.000" },
+                    { label: "Atún rojo", price: "$10.000" },
+                    { label: "Pulpo", price: "$10.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
             {
                 name: "Nigiris",
                 secondname: "Atún rojo / Salmón / Salmón flameado / Salmón ahumado / Langostino / Palta flameada",
                 type: "Nigiri",
-                contents: "Nigiris de diferentes variedades.",
+                contents: "Atún rojo cremoso de ají amarillo con ralladura de lima / Salmón / Salmón flameado con mayonesa acevichada y hondashi / Salmón ahumado / Langostino / Palta flameada con salsa thai.",
                 price: "$12.000",
                 flags: ["Sin TACC", "Opción Veggie"],
                 options: ["5 unidades"],
-                category: "sushi",
+                category: "cortes",
                 subcategory: "Cortes",
                 pieces: "5 unidades",
                 variants: [
@@ -176,6 +273,25 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
             {
+                name: "Sashimis",
+                secondname: "Salmón / Atún rojo / Pulpo / SENDA",
+                type: "Sashimi",
+                contents: "Salmón / Atún rojo / Pulpo / SENDA: salmón, atún, pulpo, salmón flameado.",
+                price: "$15.000",
+                flags: ["Sin TACC"],
+                options: ["4 unidades"],
+                category: "cortes",
+                subcategory: "Cortes",
+                pieces: "4 unidades",
+                variants: [
+                    { label: "Salmón", price: "$15.000" },
+                    { label: "Atún rojo", price: "$15.000" },
+                    { label: "Pulpo", price: "$15.000" },
+                    { label: "SENDA", price: "$15.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
                 name: "Geishas",
                 secondname: "Atún rojo / Pulpo / Salmón / Langostino crunchy",
                 type: "Geisha",
@@ -183,7 +299,7 @@ const app = createApp({
                 price: "$13.000",
                 flags: ["Sin TACC"],
                 options: ["5 unidades"],
-                category: "sushi",
+                category: "cortes",
                 subcategory: "Cortes",
                 pieces: "5 unidades",
                 variants: [
@@ -198,11 +314,11 @@ const app = createApp({
                 name: "Tiraditos",
                 secondname: "Salmón / Atún rojo / Pulpo",
                 type: "Tiradito",
-                contents: "Salmón con jugo de lima y mango, cremoso de ají amarillo y palta flameada / Atún rojo en salsa de soja alimonada, mirin, con cebolla morada en pluma / Pulpo con espuma de aceituna, ralladura de lima y aceite de oliva.",
+                contents: "Salmón: jugo de lima y mango, cremoso de ají amarillo y palta flameada / Atún rojo: en salsa de soja alimonada, mirin, con cebolla morada en pluma / Pulpo: espuma de aceituna, ralladura de lima y aceite de oliva.",
                 price: "$16.000",
                 flags: [],
                 options: ["6 unidades"],
-                category: "sushi",
+                category: "cortes",
                 subcategory: "Cortes",
                 pieces: "6 unidades",
                 variants: [
@@ -212,27 +328,10 @@ const app = createApp({
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
-            {
-                name: "Temaki",
-                secondname: "Salmón / Langostino / Atún rojo / Pulpo",
-                type: "Temaki",
-                contents: "Salmón, philadelphia y palta / Langostino sellado en soja, palta, philadelphia y verdeo / Atún rojo, philadelphia picante, negui y pepino / Pulpo, palta, cremoso de ají amarillo, cilantro.",
-                price: "$10.000",
-                flags: ["Sin TACC", "Opción Veggie"],
-                options: ["1 unidad"],
-                category: "sushi",
-                subcategory: "Cortes",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Salmón", price: "$10.000" },
-                    { label: "Langostino", price: "$10.000" },
-                    { label: "Atún rojo", price: "$10.000" },
-                    { label: "Pulpo", price: "$10.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
 
-            // --- Sushi ---
+            // ============================================================
+            // ========== SUSHI ==========
+            // ============================================================
             {
                 name: "Hot dogs",
                 secondname: "Salmón / Langostino crunchy / Atún rojo / Kani",
@@ -272,48 +371,10 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
             {
-                name: "Sushi bowls",
-                secondname: "Tropical / Salmón / Langostino crunchy / Atún rojo / Vegetariano",
-                type: "Sushi Bowl",
-                contents: "Arroz dulce, palta, philadelphia y diferentes toppings. Tropical: salmón fresco, mango, hilos de batata frita / Salmón: salmón grille y negui / Langostino crunchy: zanahoria tare y lluvia de batata frita / Atún rojo: pepino y salsa de ostras / Vegetariano: zanahoria tare, hongo rehogado en aceite de sésamo.",
-                price: "$20.000",
-                flags: ["Opción Veggie"],
-                options: [],
-                category: "sushi",
-                subcategory: "Sushi",
-                pieces: "",
-                variants: [
-                    { label: "Tropical", price: "$20.000" },
-                    { label: "Salmón", price: "$20.000" },
-                    { label: "Langostino crunchy", price: "$20.000" },
-                    { label: "Atún rojo", price: "$20.000" },
-                    { label: "Vegetariano", price: "$20.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Sushi burrito",
-                secondname: "Crunchy / Tokyo / Veggie",
-                type: "Sushi Burrito",
-                contents: "Crunchy: langostino apanado, kanikama y hongo en aceite de sésamo, palta, ciboulette con salsa acevichada / Tokyo: salmón, palta, philadelphia, pepino con salsa teriyaki / Veggie: zanahoria, pepino, palta, huevo, philadelphia y sésamo tostado.",
-                price: "$18.000",
-                flags: ["Opción Veggie"],
-                options: ["1 unidad"],
-                category: "sushi",
-                subcategory: "Sushi",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Crunchy", price: "$18.000" },
-                    { label: "Tokyo", price: "$18.000" },
-                    { label: "Veggie", price: "$18.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
                 name: "Sushi Burger",
                 secondname: "Salmón / Langostino / Mixto / Kanikama / Veggie",
                 type: "Sushi Burger",
-                contents: "Todas las burger vienen con chips de pepino. Salmón crudo y ahumado con palta alimonada / Langostino: philadelphia hashi, negui y chips de pepino / Mixto: salmón y lango, philadelphia hashi, champignon y negui / Kanikama: kani en finos hilos, langostino crunch y palta / Veggie: palta alimonada, champignon, tomate asado.",
+                contents: "Todas las burger vienen con chips de pepino. Salmón: salmón crudo y ahumado con palta alimonada / Langostino: philadelphia hashi, negui y chips de pepino / Mixto: salmón y lango, philadelphia hashi, champignon y negui / Kanikama: kani en finos hilos, langostino crunch y palta / Veggie: palta alimonada, champignon, tomate asado.",
                 price: "$20.000",
                 flags: ["Opción Veggie"],
                 options: ["1 unidad"],
@@ -329,17 +390,39 @@ const app = createApp({
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
-
-            // --- Fusión ---
             {
-                name: "Tartar",
+                name: "Sushi bowls",
+                secondname: "Tropical / Salmón / Langostino crunchy / Atún rojo / Vegetariano",
+                type: "Sushi Bowl",
+                contents: "Tropical: arroz dulce, palta, philadelphia, salmón fresco, mango e hilos de batata frita / Salmón: arroz dulce, palta, philadelphia, salmón grille y negui / Langostino crunchy: arroz dulce, palta, philadelphia, langostino crunchy, zanahoria tare y lluvia de batata frita / Atún rojo: arroz dulce, palta, philadelphia, atún rojo, pepino y salsa de ostras / Vegetariano: arroz dulce, palta, philadelphia, zanahoria tare, hongo rehogado en aceite de sésamo.",
+                price: "$20.000",
+                flags: ["Opción Veggie"],
+                options: [],
+                category: "sushi",
+                subcategory: "Sushi",
+                pieces: "",
+                variants: [
+                    { label: "Tropical", price: "$20.000" },
+                    { label: "Salmón", price: "$20.000" },
+                    { label: "Langostino crunchy", price: "$20.000" },
+                    { label: "Atún rojo", price: "$20.000" },
+                    { label: "Vegetariano", price: "$20.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+
+            // ============================================================
+            // ========== FUSIÓN ==========
+            // ============================================================
+            {
+                name: "Tartares",
                 secondname: "Salmón / Atún rojo / Pulpo",
                 type: "Tartar",
                 contents: "Salmón: colchón de palta, salmón crudo, ahumado, aceite de oliva, soja y ciboulette con ralladura de lima / Atún rojo: colchón de palta, atún marinado en aceite de sésamo y jengibre, con sésamo / Pulpo: colchón de palta, marinado en cremoso picante de ají amarillo coronado con brunoise de pepino.",
                 price: "$23.000",
                 flags: [],
                 options: [],
-                category: "sushi",
+                category: "fusion",
                 subcategory: "Fusión",
                 pieces: "",
                 variants: [
@@ -350,14 +433,14 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
             {
-                name: "Ceviche",
+                name: "Ceviches",
                 secondname: "Salmón o mixto / Pulpo o atún rojo",
                 type: "Ceviche",
                 contents: "Salmón o mixto con langostino: cebolla morada en pluma, palta, ají dulce, jugo de limón, cilantro y cancha / Pulpo o atún rojo: cebolla morada en pluma, palta, cilantro, jugo de limón, ají dulce, rodajas de boniato y cancha.",
                 price: "$23.000",
                 flags: ["Picante"],
                 options: [],
-                category: "sushi",
+                category: "fusion",
                 subcategory: "Fusión",
                 pieces: "",
                 variants: [
@@ -374,7 +457,7 @@ const app = createApp({
                 price: "$16.000",
                 flags: ["Picante"],
                 options: ["2 unidades"],
-                category: "sushi",
+                category: "fusion",
                 subcategory: "Fusión",
                 pieces: "2 unidades",
                 variants: [
@@ -384,79 +467,9 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
 
-            // --- Platos ---
-            {
-                name: "Wok",
-                secondname: "Pollo teriyaki / Langostinos / Salmón grille / Vegetales / Lomo / Mixto",
-                type: "Wok",
-                contents: "Zanahoria, brote de soja, huevo, verdeo y salsa de soja. Mixto: salmón grille y langostinos.",
-                price: "$20.000",
-                flags: ["Picante", "Opción Veggie"],
-                options: [],
-                category: "sushi",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [
-                    { label: "Pollo teriyaki", price: "$20.000" },
-                    { label: "Langostinos", price: "$20.000" },
-                    { label: "Salmón grille", price: "$20.000" },
-                    { label: "Vegetales", price: "$20.000" },
-                    { label: "Lomo", price: "$20.000" },
-                    { label: "Mixto", price: "$22.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Cerdo Tonkatsu",
-                secondname: "",
-                type: "Plato",
-                contents: "Apanado en panko, frito con salsa tonkatsu y arroz con huevo.",
-                price: "$18.000",
-                flags: ["Tempura"],
-                options: [],
-                category: "sushi",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Lomo salteado",
-                secondname: "",
-                type: "Plato",
-                contents: "Lomo salteado con cebolla morada, morrón rojo y amarillo, y cilantro, sobre un colchón de arroz blanco con aceite de sésamo.",
-                price: "$20.000",
-                flags: ["Picante"],
-                options: [],
-                category: "sushi",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Chow Fan",
-                secondname: "Pollo / Vegetales / Cerdo / Langostinos / Lomo / Veggie",
-                type: "Chow Fan",
-                contents: "Arroz sofrito, huevo, zanahoria, arvejas y verdeo. Pollo o Vegetales + 2 harumakis (carne o verdura). Fideos de huevo, morrón, cebolla, zanahoria, brote de soja y salsa roja.",
-                price: "$18.000",
-                flags: ["Opción Veggie"],
-                options: [],
-                category: "sushi",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [
-                    { label: "Pollo", price: "$18.000" },
-                    { label: "Vegetales", price: "$18.000" },
-                    { label: "Cerdo", price: "$18.000" },
-                    { label: "Langostinos", price: "$18.000" },
-                    { label: "Lomo", price: "$18.000" },
-                    { label: "Veggie", price: "$18.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-
+            // ============================================================
             // ========== ROLLS ==========
+            // ============================================================
             {
                 name: "Rolls clásicos",
                 secondname: "New York / Philadelphia / New York phila / California / Lango cheese / Salmón grille / Avocado tuna / Spicy tuna",
@@ -599,7 +612,9 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
 
-            // ========== TABLAS (COMBOS) ==========
+            // ============================================================
+            // ========== TABLAS ==========
+            // ============================================================
             {
                 name: "Camino Simple",
                 secondname: "x15 / x30 / x50",
@@ -654,97 +669,10 @@ const app = createApp({
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
-            {
-                name: "Omakase",
-                secondname: "x15 / x30",
-                type: "Tabla",
-                contents: "x15: 5 maki langostino, 5 zen, 5 california / x30: 5 maki langostino, 5 wasabi, 5 california, 5 new york, 5 zen, 5 tori.",
-                price: "$23.000",
-                flags: ["Picante"],
-                options: ["15 piezas", "30 piezas"],
-                category: "tablas",
-                subcategory: "Tablas",
-                pieces: "15/30 piezas",
-                variants: [
-                    { label: "x15", price: "$23.000" },
-                    { label: "x30", price: "$48.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
 
-            // ========== COCINA ==========
-            {
-                name: "Wok",
-                secondname: "Pollo teriyaki / Langostinos / Salmón grille / Vegetales / Lomo / Mixto",
-                type: "Wok",
-                contents: "Zanahoria, brote de soja, huevo, verdeo y salsa de soja. Mixto: salmón grille y langostinos.",
-                price: "$20.000",
-                flags: ["Picante", "Opción Veggie"],
-                options: [],
-                category: "cocina",
-                subcategory: "Cocina",
-                pieces: "",
-                variants: [
-                    { label: "Pollo teriyaki", price: "$20.000" },
-                    { label: "Langostinos", price: "$20.000" },
-                    { label: "Salmón grille", price: "$20.000" },
-                    { label: "Vegetales", price: "$20.000" },
-                    { label: "Lomo", price: "$20.000" },
-                    { label: "Mixto", price: "$22.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Cerdo Tonkatsu",
-                secondname: "",
-                type: "Plato",
-                contents: "Apanado en panko, frito con salsa tonkatsu y arroz con huevo.",
-                price: "$18.000",
-                flags: ["Tempura"],
-                options: [],
-                category: "cocina",
-                subcategory: "Cocina",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Lomo salteado",
-                secondname: "",
-                type: "Plato",
-                contents: "Lomo salteado con cebolla morada, morrón rojo y amarillo, y cilantro, sobre un colchón de arroz blanco con aceite de sésamo.",
-                price: "$20.000",
-                flags: ["Picante"],
-                options: [],
-                category: "cocina",
-                subcategory: "Cocina",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Chow Fan",
-                secondname: "Pollo / Vegetales / Cerdo / Langostinos / Lomo / Veggie",
-                type: "Chow Fan",
-                contents: "Arroz sofrito, huevo, zanahoria, arvejas y verdeo. Pollo o Vegetales + 2 harumakis (carne o verdura). Fideos de huevo, morrón, cebolla, zanahoria, brote de soja y salsa roja.",
-                price: "$18.000",
-                flags: ["Opción Veggie"],
-                options: [],
-                category: "cocina",
-                subcategory: "Cocina",
-                pieces: "",
-                variants: [
-                    { label: "Pollo", price: "$18.000" },
-                    { label: "Vegetales", price: "$18.000" },
-                    { label: "Cerdo", price: "$18.000" },
-                    { label: "Langostinos", price: "$18.000" },
-                    { label: "Lomo", price: "$18.000" },
-                    { label: "Veggie", price: "$18.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-
+            // ============================================================
             // ========== BEBIDAS ==========
+            // ============================================================
             {
                 name: "Gaseosas",
                 secondname: "Coca / Coca Zero / Sprite / Fanta / Paso de los Toros Pomelo / Agua Tónica",
@@ -819,7 +747,7 @@ const app = createApp({
             },
             {
                 name: "Vino Blanco",
-                secondname: "Bodega Putruele 500ml / Cordero con piel de lobo 750ml / Lola torrontés 750ml / Puerta Alta Torrontés 750ml",
+                secondname: "Bodega Putruele 500ml / Cordero con piel de lobo 750ml / Lola Torrontés 750ml / Puerta Alta Torrontés 750ml",
                 type: "Bebida",
                 contents: "Vinos blancos.",
                 price: "$10.000",
@@ -872,7 +800,9 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
 
+            // ============================================================
             // ========== POSTRES Y CAFÉ ==========
+            // ============================================================
             {
                 name: "Cheesecake japonés",
                 secondname: "",
@@ -930,7 +860,9 @@ const app = createApp({
                 whatsappLink: "https://wa.me/+541140587888"
             },
 
-            // ========== EXTRAS (Salsas) ==========
+            // ============================================================
+            // ========== SALSAS Y EXTRAS ==========
+            // ============================================================
             {
                 name: "Salsas",
                 secondname: "Senda / Acevichada / Agridulce / Mayo spicy / Mango / Teriyaki / Maracuyá / Bs As",
