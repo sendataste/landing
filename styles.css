@@ -746,10 +746,15 @@ section {
     inset: 0;
     z-index: 120;
     background: rgba(0, 0, 0, .55);
-    display: flex;
+    display: none;                /* 👈 OCULTO POR DEFECTO */
     align-items: flex-end;
     justify-content: center;
     padding: 0;
+}
+
+/* Solo se muestra cuando Vue agrega la clase .is-visible */
+.menu-detail-overlay.is-visible {
+    display: flex;
 }
 
 .menu-detail-sheet {
@@ -919,7 +924,8 @@ section {
 }
 
 @media (min-width: 769px) {
-    .menu-detail-overlay {
+    .menu-detail-overlay.is-visible {
+        display: flex;
         align-items: center;
         padding: 1.5rem;
     }
@@ -1027,16 +1033,6 @@ section {
     .gap-12 {
         gap: 2rem;
     }
-}
-.menu-detail-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 120;
-    background: rgba(0, 0, 0, .55);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 0;
 }
 
 /* Nuevos estilos para filtros de segmentación */

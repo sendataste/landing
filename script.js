@@ -21,27 +21,26 @@ const app = createApp({
         const expandedCategories = ref([]);
         const selectedProduct = ref(null);
         const isModalOpen = ref(false);
+        const modalVisible = ref(false);  
 
         const selectedOption = ref('');
         const selectedVariantLabel = ref('');
 
         const mobileMenuOpen = ref(false);
+        const isPageReady = ref(false);
         const mobileMenuDropdownOpen = ref(false);
         const currentSlide = ref(0);
         let autoplayInterval = null;
 
         // Nuevas categorías según segmentación
-        const menuCategories = ref([
+       const menuCategories = ref([
             { id: 'entradas', name: 'Entradas', icon: '🥟' },
             { id: 'platos', name: 'Platos', icon: '🍜' },
             { id: 'cortes', name: 'Cortes', icon: '🔪' },
             { id: 'sushi', name: 'Sushi', icon: '🍣' },
             { id: 'fusion', name: 'Fusión', icon: '🌶️' },
             { id: 'rolls', name: 'Rolls', icon: '🍱' },
-            { id: 'tablas', name: 'Tablas', icon: '🎎' },
-            { id: 'bebidas', name: 'Bebidas', icon: '🥤' },
-            { id: 'postres', name: 'Postres y Café', icon: '🍰' },
-            { id: 'extras', name: 'Salsas y Extras', icon: '🥢' }
+            { id: 'tablas', name: 'Tablas', icon: '🎎' }
         ]);
 
         const categories = ref([
@@ -61,6 +60,7 @@ const app = createApp({
         const menuItems = ref([
             // ============================================================
             // ========== ENTRADAS ==========
+            // Harumakis, Gyozas, Langostino Crunchy, Tempura, Colchón de arroz frito
             // ============================================================
             {
                 name: "Harumakis",
@@ -139,6 +139,7 @@ const app = createApp({
 
             // ============================================================
             // ========== PLATOS ==========
+            // Sushi burrito, Chow Fan, Wok, Cerdo Tonkatsu, Lomo salteado
             // ============================================================
             {
                 name: "Sushi burrito",
@@ -231,6 +232,7 @@ const app = createApp({
 
             // ============================================================
             // ========== CORTES ==========
+            // Temakis, Nigiris, Sashimis, Geishas, Tiraditos
             // ============================================================
             {
                 name: "Temakis",
@@ -331,6 +333,7 @@ const app = createApp({
 
             // ============================================================
             // ========== SUSHI ==========
+            // Hot dogs, Super Dog, Sushi Burger, Sushi bowls
             // ============================================================
             {
                 name: "Hot dogs",
@@ -413,6 +416,7 @@ const app = createApp({
 
             // ============================================================
             // ========== FUSIÓN ==========
+            // Tartares, Ceviches, Baos
             // ============================================================
             {
                 name: "Tartares",
@@ -469,6 +473,7 @@ const app = createApp({
 
             // ============================================================
             // ========== ROLLS ==========
+            // Rolls clásicos, Rolls veggie, Tamago rolls, Rolls Premium, Rolls supreme, Hot rolls, Hot rolls sin arroz
             // ============================================================
             {
                 name: "Rolls clásicos",
@@ -614,6 +619,7 @@ const app = createApp({
 
             // ============================================================
             // ========== TABLAS ==========
+            // Camino Simple, Doble Paso, Gran Paso
             // ============================================================
             {
                 name: "Camino Simple",
@@ -666,243 +672,6 @@ const app = createApp({
                     { label: "x15", price: "$30.000" },
                     { label: "x30", price: "$60.000" },
                     { label: "x60", price: "$105.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-
-            // ============================================================
-            // ========== BEBIDAS ==========
-            // ============================================================
-            {
-                name: "Gaseosas",
-                secondname: "Coca / Coca Zero / Sprite / Fanta / Paso de los Toros Pomelo / Agua Tónica",
-                type: "Bebida",
-                contents: "Gaseosas en lata o botella.",
-                price: "$3.500",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas sin alcohol",
-                pieces: "",
-                variants: [
-                    { label: "Coca", price: "$3.500" },
-                    { label: "Coca Zero", price: "$3.500" },
-                    { label: "Sprite", price: "$3.500" },
-                    { label: "Fanta", price: "$3.500" },
-                    { label: "Paso de los Toros Pomelo", price: "$3.500" },
-                    { label: "Agua Tónica", price: "$3.500" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Agua",
-                secondname: "Sin gas / Con gas",
-                type: "Bebida",
-                contents: "Agua mineral.",
-                price: "$3.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas sin alcohol",
-                pieces: "",
-                variants: [
-                    { label: "Sin gas", price: "$3.000" },
-                    { label: "Con gas", price: "$3.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Agua saborizada",
-                secondname: "Pomelo / Manzana",
-                type: "Bebida",
-                contents: "Agua saborizada.",
-                price: "$3.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas sin alcohol",
-                pieces: "",
-                variants: [
-                    { label: "Pomelo", price: "$3.000" },
-                    { label: "Manzana", price: "$3.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Cerveza",
-                secondname: "Asahi japonesa / Corona",
-                type: "Bebida",
-                contents: "Cerveza importada.",
-                price: "$5.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas con alcohol",
-                pieces: "",
-                variants: [
-                    { label: "Asahi japonesa", price: "$5.000" },
-                    { label: "Corona", price: "$6.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Vino Blanco",
-                secondname: "Bodega Putruele 500ml / Cordero con piel de lobo 750ml / Lola Torrontés 750ml / Puerta Alta Torrontés 750ml",
-                type: "Bebida",
-                contents: "Vinos blancos.",
-                price: "$10.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas con alcohol",
-                pieces: "",
-                variants: [
-                    { label: "Bodega Putruele 500ml", price: "$10.000" },
-                    { label: "Cordero con piel de lobo 750ml", price: "$13.000" },
-                    { label: "Lola Torrontés 750ml", price: "$13.000" },
-                    { label: "Puerta Alta Torrontés 750ml", price: "$13.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Vino Rosa",
-                secondname: "Bodega Putruele 500ml",
-                type: "Bebida",
-                contents: "Vino rosado.",
-                price: "$10.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas con alcohol",
-                pieces: "",
-                variants: [
-                    { label: "Bodega Putruele 500ml", price: "$10.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Vino Malbec",
-                secondname: "Malbicho 750ml / Aristides 750ml / Puerta Alta Malbec 750ml / Puerta Alta Malbec Reserva 750ml",
-                type: "Bebida",
-                contents: "Vinos Malbec.",
-                price: "$12.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas con alcohol",
-                pieces: "",
-                variants: [
-                    { label: "Malbicho 750ml", price: "$12.000" },
-                    { label: "Aristides 750ml", price: "$15.000" },
-                    { label: "Puerta Alta Malbec 750ml", price: "$17.000" },
-                    { label: "Puerta Alta Malbec Reserva 750ml", price: "$20.000" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-
-            // ============================================================
-            // ========== POSTRES Y CAFÉ ==========
-            // ============================================================
-            {
-                name: "Cheesecake japonés",
-                secondname: "",
-                type: "Postre",
-                contents: "Cheesecake estilo japonés.",
-                price: "$3.700",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Postres",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Brownie chocolate",
-                secondname: "",
-                type: "Postre",
-                contents: "Brownie de chocolate.",
-                price: "$3.000",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Postres",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Cookie vainilla & chips chocolate",
-                secondname: "",
-                type: "Postre",
-                contents: "Cookie de vainilla con chips de chocolate.",
-                price: "$2.500",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Postres",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Café",
-                secondname: "",
-                type: "Café",
-                contents: "Café.",
-                price: "$4.000",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Café",
-                pieces: "",
-                variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-
-            // ============================================================
-            // ========== SALSAS Y EXTRAS ==========
-            // ============================================================
-            {
-                name: "Salsas",
-                secondname: "Senda / Acevichada / Agridulce / Mayo spicy / Mango / Teriyaki / Maracuyá / Bs As",
-                type: "Salsa",
-                contents: "Salsas para acompañar tu pedido.",
-                price: "$1.500",
-                flags: ["Picante"],
-                options: ["1 porción"],
-                category: "extras",
-                subcategory: "Salsas",
-                pieces: "1 porción",
-                variants: [
-                    { label: "Senda", price: "$1.500" },
-                    { label: "Acevichada", price: "$1.500" },
-                    { label: "Agridulce", price: "$1.500" },
-                    { label: "Mayo spicy", price: "$1.500" },
-                    { label: "Mango", price: "$1.500" },
-                    { label: "Teriyaki", price: "$1.500" },
-                    { label: "Maracuyá", price: "$1.500" },
-                    { label: "Bs As", price: "$1.500" }
-                ],
-                whatsappLink: "https://wa.me/+541140587888"
-            },
-            {
-                name: "Extras",
-                secondname: "Palitos chinos / Wasabi / Gari / Soja / Galleta de la fortuna",
-                type: "Extra",
-                contents: "Extras para acompañar el pedido.",
-                price: "$1.500",
-                flags: [],
-                options: ["1 unidad"],
-                category: "extras",
-                subcategory: "Extras",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Palitos chinos", price: "$1.500" },
-                    { label: "Wasabi", price: "$1.500" },
-                    { label: "Gari (gengibre)", price: "$1.500" },
-                    { label: "Soja", price: "$1.500" },
-                    { label: "Galleta de la fortuna", price: "$1.500" }
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             }
@@ -1103,25 +872,54 @@ const app = createApp({
             openAccordions.value = ['entradas'];
         };
 
-        const openProduct = (item) => {
+        const openProduct = (item, event) => {
+            // ✅ Bloqueo 1: la página debe estar lista
+            if (!isPageReady.value) {
+                console.warn('⏳ Página aún no lista, ignorando click');
+                return;
+            }
+
+            // ✅ Bloqueo 2: validar item
             if (!item || typeof item !== 'object' || !item.name) {
                 console.warn('⚠️ openProduct recibió un item inválido:', item);
                 return;
             }
 
+            // ✅ Bloqueo 3: si viene un evento, verificar que sea un click real del usuario
+            if (event) {
+                if (event.type !== 'click') return;
+                if (event.isTrusted === false && event.detail === 0) {
+                    console.warn('🚫 Click sintético ignorado');
+                    return;
+                }
+            }
+
             console.log('✅ Abriendo producto:', item.name);
-            isModalOpen.value = true;
+
+            // Seteamos primero el producto, y en el siguiente frame mostramos el modal
             selectedProduct.value = item;
             selectedOption.value = item.options && item.options.length ? item.options[0] : '';
             selectedVariantLabel.value = item.variants && item.variants.length ? item.variants[0].label : '';
+
+            requestAnimationFrame(() => {
+                isModalOpen.value = true;
+                modalVisible.value = true;
+            });
+
             document.body.classList.add('menu-lock-scroll');
         };
 
         const closeProduct = () => {
+            modalVisible.value = false;
             isModalOpen.value = false;
-            selectedProduct.value = null;
-            selectedOption.value = '';
-            selectedVariantLabel.value = '';
+
+            // Esperamos a que termine la transición antes de limpiar el producto
+            setTimeout(() => {
+                selectedProduct.value = null;
+                selectedOption.value = '';
+                selectedVariantLabel.value = '';
+            }, 250);
+
             document.body.classList.remove('menu-lock-scroll');
         };
 
@@ -1417,6 +1215,18 @@ const app = createApp({
             console.log('✅ Forzado selectedProduct a null:', selectedProduct.value);
             console.log('✅ Forzado isModalOpen a false:', isModalOpen.value);
 
+            // ✅ Habilitar clicks de productos SOLO después de que el DOM esté estable.
+            // Usamos doble rAF + setTimeout para asegurarnos de que cualquier
+            // evento sintético disparado durante el renderizado ya haya pasado.
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        isPageReady.value = true;
+                        console.log('🔓 isPageReady = true · clicks de productos habilitados');
+                    }, 400);
+                });
+            });
+
             // Arrancar autoplay de reviews cuando terminen de cargarse
             watch(totalReviewPages, (n) => {
                 if (n > 1) {
@@ -1440,6 +1250,8 @@ const app = createApp({
 
         return {
             scrolled,
+            isPageReady,
+            modalVisible,
 
             // Menu redesign
             selectedCategory,

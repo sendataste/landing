@@ -279,12 +279,13 @@
             </button>
 
 <div v-if="openAccordions.includes(group.id)" class="menu-category-body">
-    <!-- ✅ CORREGIDO: @click simple y directo -->
+    <!-- ✅ CORREGIDO: click.prevent.stop + disabled hasta que la página esté lista -->
     <button v-for="item in group.visibleItems" 
             :key="item.name" 
             type="button"
             class="compact-product"
-            @click="openProduct(item)">
+            :disabled="!isPageReady"
+            @click.prevent.stop="openProduct(item, $event)">
         <div class="compact-product-info">
             <div class="compact-product-title-row">
                 <span class="compact-product-title">{{ item.name }}</span>
@@ -341,11 +342,12 @@
 
 <!-- Product detail bottom sheet / desktop modal -->
 <transition name="fade">
-    <div v-if="isModalOpen && selectedProduct && selectedProduct.name" 
-         class="menu-detail-overlay" 
-         @click.self="closeProduct" 
+    <div v-show="modalVisible && selectedProduct && selectedProduct.name"
+         class="menu-detail-overlay"
+         :class="{ 'is-visible': modalVisible }"
+         @click.self="closeProduct"
          @keydown.esc="closeProduct">
-        <div class="menu-detail-sheet" role="dialog" aria-modal="true">
+        <div v-if="selectedProduct" class="menu-detail-sheet" role="dialog" aria-modal="true">
             <div class="menu-detail-handle"></div>
 
             <div class="menu-detail-header">
@@ -362,7 +364,7 @@
                     </p>
                 </div>
 
-                <button type="button" class="menu-detail-close" @click="closeProduct"
+                <button type="button" class="menu-detail-close" @click.prevent.stop="closeProduct"
                     aria-label="Cerrar detalle">
                     <i class="fas fa-times"></i>
                 </button>
@@ -422,6 +424,8 @@
         </div>
     </div>
 </transition>
+
+
         </section>
 
         <!-- Carousel Section -->
