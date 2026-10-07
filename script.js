@@ -32,6 +32,39 @@ const app = createApp({
         const currentSlide = ref(0);
         let autoplayInterval = null;
 
+        // ========== CARRITO ==========
+        const CART_STORAGE_KEY = 'senda_cart_v1';
+
+        const cart = ref([]);
+        const cartOpen = ref(false);
+
+        // Cargar carrito desde localStorage
+        const loadCartFromStorage = () => {
+            try {
+                const raw = localStorage.getItem(CART_STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed)) {
+                        cart.value = parsed;
+                    }
+                }
+            } catch (e) {
+                console.warn('No se pudo leer el carrito:', e);
+            }
+        };
+
+        // Guardar carrito
+        const persistCart = () => {
+            try {
+                localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart.value));
+            } catch (e) {
+                console.warn('No se pudo guardar el carrito:', e);
+            }
+        };
+
+        // Observar cambios y persistir
+        watch(cart, persistCart, { deep: true });
+
         // Nuevas categorías según segmentación
        const menuCategories = ref([
             { id: 'entradas', name: 'Entradas', icon: '🥟' },
@@ -1131,6 +1164,108 @@ const app = createApp({
             reviewPage.value = index;
             pauseReviewAutoplayTemporarily();
         };
+
+        // Genera una clave única por producto + variante + opción
+const cartItemKey = (name, variant, option) => {
+    return [name, variant || '', option || ''].join('||');
+};
+
+// Cantidad total de ítems (sumando cantidades)
+const cartTotalItems = computed(() =>
+    cart.value.reduce((sum, item) => sum + item.qty, 0)
+);
+
+// Subtotal formateado (opcional, sin decimales)
+const parsePrice = (priceStr) => {
+    if (!priceStr) return 0;
+    const digits = String(priceStr).replace(/[^\d]/g, '');
+    return parseInt(digits, 10) || 0;
+};
+
+const formatPrice = (n) =>
+    '$' + n.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+
+const cartSubtotal = computed(() =>
+    cart.value.reduce((sum, item) => {
+        return sum + parsePrice(item.price) * item.qty;
+    }, 0)
+);
+
+// Agregar al carrito desde el modal de producto
+const addToCart = () => {
+    if (!selectedProduct.value) return;
+
+    const variantLabel = selectedVariant.value?.label || '';
+    const optionLabel = selectedVariant.value
+        ? '' // si hay variantes, la opción pierde relevancia
+        : (selectedOption.value || '');
+
+    const price = selectedProductPrice.value;
+    const key = cartItemKey(selectedProduct.value.name, variantLabel, optionLabel);
+
+    const existing = cart.value.find(i => i.key === key);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.value.push({
+            key,
+            name: selectedProduct.value.name,
+            variant: variantLabel,
+            option: optionLabel,
+            price,
+            qty: 1,
+            type: selectedProduct.value.subcategory || selectedProduct.value.type || ''
+        });
+    }
+
+    // Feedback + cerrar modal
+    closeProduct();
+    openCart(); // opcional: abrir el carrito para que vea que se agregó
+};
+
+// Cambiar cantidad
+const increaseQty = (item) => { item.qty += 1; };
+const decreaseQty = (item) => {
+    if (item.qty > 1) item.qty -= 1;
+    else removeFromCart(item);
+};
+const removeFromCart = (item) => {
+    cart.value = cart.value.filter(i => i.key !== item.key);
+};
+const clearCart = () => {
+    if (!cart.value.length) return;
+    if (confirm('¿Vaciar el carrito?')) {
+        cart.value = [];
+    }
+};
+
+// Abrir/cerrar drawer
+const openCart = () => { cartOpen.value = true; document.body.classList.add('menu-lock-scroll'); };
+const closeCart = () => { cartOpen.value = false; document.body.classList.remove('menu-lock-scroll'); };
+const toggleCart = () => cartOpen.value ? closeCart() : openCart();
+
+// Mensaje completo de WhatsApp con todo el pedido
+const cartWhatsappLink = computed(() => {
+    if (!cart.value.length) return '#';
+
+    const lines = ['Hola SENDA 🍣, quiero hacer el siguiente pedido:', ''];
+
+    cart.value.forEach((item, idx) => {
+        const parts = [`${idx + 1}. ${item.qty}x ${item.name}`];
+        if (item.variant) parts.push(`(${item.variant})`);
+        if (item.option) parts.push(`- ${item.option}`);
+        parts.push(`→ ${item.price} c/u`);
+        lines.push(parts.join(' '));
+    });
+
+    lines.push('');
+    lines.push(`Subtotal estimado: ${formatPrice(cartSubtotal.value)}`);
+    lines.push('');
+    lines.push('¡Gracias!');
+
+    const text = encodeURIComponent(lines.join('\n'));
+    return `https://wa.me/541173628251?text=${text}`;
+});
         // ----- Autoplay del carrusel de reviews -----
         const stopReviewAutoplay = () => {
             if (reviewAutoplay) {
@@ -1238,6 +1373,8 @@ const app = createApp({
         });
 
         onUnmounted(() => {
+            loadCartFromStorage();
+
             if (autoplayInterval) {
                 clearInterval(autoplayInterval);
             }
@@ -1315,6 +1452,22 @@ const app = createApp({
             mobileDots,
             startReviewAutoplay,
             stopReviewAutoplay,
+
+            // Cart
+            cart,
+            cartOpen,
+            cartTotalItems,
+            cartSubtotal,
+            cartWhatsappLink,
+            addToCart,
+            increaseQty,
+            decreaseQty,
+            removeFromCart,
+            clearCart,
+            openCart,
+            closeCart,
+            toggleCart,
+            formatPrice,
         };
     }
 });
