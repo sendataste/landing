@@ -1264,7 +1264,7 @@ const cartWhatsappLink = computed(() => {
     lines.push('¡Gracias!');
 
     const text = encodeURIComponent(lines.join('\n'));
-    return `https://wa.me/541173628251?text=${text}`;
+    return `https://wa.me/541140587888?text=${text}`;
 });
         // ----- Autoplay del carrusel de reviews -----
         const stopReviewAutoplay = () => {
