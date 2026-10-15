@@ -37,7 +37,7 @@ section {
 
 /* Fix for hamburger color on scroll */
 .sticky-header.scrolled .hamburger-line {
-    background-color: #0B0B0B !important;
+    background-color: #F7F7F5 !important;
 }
 
 /* Smooth transition for logo text */

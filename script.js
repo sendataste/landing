@@ -73,7 +73,9 @@ const app = createApp({
             { id: 'sushi', name: 'Sushi', icon: '🍣' },
             { id: 'fusion', name: 'Fusión', icon: '🌶️' },
             { id: 'rolls', name: 'Rolls', icon: '🍱' },
-            { id: 'tablas', name: 'Tablas', icon: '🎎' }
+            { id: 'tablas', name: 'Tablas', icon: '🎎' },
+            { id: 'bebidas', name: 'Bebidas', icon: '🥤' },
+            { id: 'postres', name: 'Postres', icon: '🍰' }
         ]);
 
         const categories = ref([
@@ -128,7 +130,7 @@ const app = createApp({
                 secondname: "Con salsa",
                 type: "Entrada",
                 contents: "Langostinos crocantes con salsa.",
-                price: "$13.000",
+                price: "$15.000",
                 flags: ["Tempura"],
                 options: ["6 unidades"],
                 category: "entradas",
@@ -160,7 +162,7 @@ const app = createApp({
                 secondname: "Topping de tartar de salmón y salsa Senda",
                 type: "Entrada",
                 contents: "Colchón de arroz frito con topping de tartar de salmón y salsa Senda.",
-                price: "$14.000",
+                price: "$15.000",
                 flags: [],
                 options: ["4 unidades"],
                 category: "entradas",
@@ -197,19 +199,19 @@ const app = createApp({
                 secondname: "Pollo / Vegetales / Cerdo / Langostinos / Lomo / Veggie",
                 type: "Chow Fan",
                 contents: "Arroz sofrito, huevo, zanahoria, arvejas y verdeo. Pollo o Vegetales + 2 harumakis (carne o verdura). Fideos de huevo, morrón, cebolla, zanahoria, brote de soja y salsa roja.",
-                price: "$18.000",
+                price: "$20.000",
                 flags: ["Opción Veggie"],
                 options: [],
                 category: "platos",
                 subcategory: "Platos",
                 pieces: "",
                 variants: [
-                    { label: "Pollo", price: "$18.000" },
-                    { label: "Vegetales", price: "$18.000" },
-                    { label: "Cerdo", price: "$18.000" },
-                    { label: "Langostinos", price: "$18.000" },
-                    { label: "Lomo", price: "$18.000" },
-                    { label: "Veggie", price: "$18.000" }
+                    { label: "Pollo", price: "$20.000" },
+                    { label: "Vegetales", price: "$20.000" }
+                    // { label: "Cerdo", price: "$20.000" },
+                    // { label: "Langostinos", price: "$20.000" },
+                    // { label: "Lomo", price: "$20.000" },
+                    // { label: "Veggie", price: "$20.000" }
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
@@ -253,7 +255,7 @@ const app = createApp({
                 secondname: "",
                 type: "Plato",
                 contents: "Lomo salteado con cebolla morada, morrón rojo y amarillo, y cilantro, sobre un colchón de arroz blanco con aceite de sésamo.",
-                price: "$20.000",
+                price: "$22.000",
                 flags: ["Picante"],
                 options: [],
                 category: "platos",
@@ -262,6 +264,26 @@ const app = createApp({
                 variants: [],
                 whatsappLink: "https://wa.me/+541140587888"
             },
+                        {
+                name: "Udon",
+                secondname: "",
+                type: "Plato",
+                contents: "Fideos de huevo, morrón, cebolla, zanahoria, brote de soja y salsa roja",
+                price: "$20.000",
+                flags: ["Picante"],
+                options: [],
+                category: "platos",
+                subcategory: "Platos",
+                pieces: "",
+                variants: [
+                    { label: "Cerdo", price: "$20.000" },
+                    { label: "Langostino", price: "$20.000" },
+                    { label: "Lomo", price: "$20.000" },
+                    { label: "Veggie", price: "$20.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            
 
             // ============================================================
             // ========== CORTES ==========
@@ -272,17 +294,17 @@ const app = createApp({
                 secondname: "Salmón / Langostino / Atún rojo / Pulpo",
                 type: "Temaki",
                 contents: "Salmón, philadelphia y palta / Langostino sellado en soja, palta, philadelphia y verdeo / Atún rojo, philadelphia picante, negui y pepino / Pulpo, palta, cremoso de ají amarillo, cilantro.",
-                price: "$10.000",
+                price: "$13.000",
                 flags: ["Sin TACC", "Opción Veggie"],
                 options: ["1 unidad"],
                 category: "cortes",
                 subcategory: "Cortes",
                 pieces: "1 unidad",
                 variants: [
-                    { label: "Salmón", price: "$10.000" },
-                    { label: "Langostino", price: "$10.000" },
-                    { label: "Atún rojo", price: "$10.000" },
-                    { label: "Pulpo", price: "$10.000" }
+                    { label: "Salmón", price: "$13.000" },
+                    { label: "Langostino", price: "$13.000" },
+                    { label: "Atún rojo", price: "$13.000" },
+                    { label: "Pulpo", price: "$13.000" }
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
@@ -291,19 +313,19 @@ const app = createApp({
                 secondname: "Atún rojo / Salmón / Salmón flameado / Salmón ahumado / Langostino / Palta flameada",
                 type: "Nigiri",
                 contents: "Atún rojo cremoso de ají amarillo con ralladura de lima / Salmón / Salmón flameado con mayonesa acevichada y hondashi / Salmón ahumado / Langostino / Palta flameada con salsa thai.",
-                price: "$12.000",
+                price: "$14.000",
                 flags: ["Sin TACC", "Opción Veggie"],
                 options: ["5 unidades"],
                 category: "cortes",
                 subcategory: "Cortes",
                 pieces: "5 unidades",
                 variants: [
-                    { label: "Atún rojo", price: "$12.000" },
-                    { label: "Salmón", price: "$12.000" },
-                    { label: "Salmón flameado", price: "$12.000" },
-                    { label: "Salmón ahumado", price: "$12.000" },
-                    { label: "Langostino", price: "$12.000" },
-                    { label: "Palta flameada", price: "$12.000" }
+                    { label: "Atún rojo", price: "$14.000" },
+                    { label: "Salmón", price: "$14.000" },
+                    { label: "Salmón flameado", price: "$14.000" },
+                    { label: "Salmón ahumado", price: "$14.000" },
+                    { label: "Langostino", price: "$14.000" },
+                    { label: "Palta flameada", price: "$14.000" }
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
@@ -312,17 +334,17 @@ const app = createApp({
                 secondname: "Salmón / Atún rojo / Pulpo / SENDA",
                 type: "Sashimi",
                 contents: "Salmón / Atún rojo / Pulpo / SENDA: salmón, atún, pulpo, salmón flameado.",
-                price: "$15.000",
+                price: "$16.000",
                 flags: ["Sin TACC"],
                 options: ["4 unidades"],
                 category: "cortes",
                 subcategory: "Cortes",
                 pieces: "4 unidades",
                 variants: [
-                    { label: "Salmón", price: "$15.000" },
-                    { label: "Atún rojo", price: "$15.000" },
-                    { label: "Pulpo", price: "$15.000" },
-                    { label: "SENDA", price: "$15.000" }
+                    { label: "Salmón", price: "$14.000" },
+                    { label: "Atún rojo", price: "$14.000" },
+                    { label: "Pulpo", price: "$14.000" },
+                    { label: "SENDA", price: "$16.000" }
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
@@ -481,8 +503,10 @@ const app = createApp({
                 subcategory: "Fusión",
                 pieces: "",
                 variants: [
-                    { label: "Salmón o mixto", price: "$23.000" },
-                    { label: "Pulpo o atún rojo", price: "$23.000" }
+                    { label: "Mixto", price: "$23.000" },
+                    { label: "Salmón", price: "$23.000" },
+                    { label: "Pulpo", price: "$23.000" },
+                    { label: "Atún rojo", price: "$23.000" }
                 ],
                 whatsappLink: "https://wa.me/+541140587888"
             },
@@ -706,6 +730,180 @@ const app = createApp({
                     { label: "x30", price: "$60.000" },
                     { label: "x60", price: "$105.000" }
                 ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            // ============================================================
+            // ========== BEBIDAS ==========
+            // Gaseosas, Aguas, Cervezas, Vinos Blancos, Vinos Rosados, Vinos Tintos
+            // ============================================================
+            {
+                name: "Gaseosas",
+                secondname: "Coca, Coca zero, Sprite, Fanta, Paso de los Toros pomelo, Agua tónica",
+                type: "Bebida",
+                contents: "Opciones: Coca, Coca zero, Sprite, Fanta, Paso de los toros pomelo, Agua tónica.",
+                price: "$3.500",
+                flags: [],
+                options: [],
+                category: "bebidas",
+                subcategory: "Bebidas",
+                pieces: "",
+                variants: [
+                    { label: "Coca", price: "$3.500" },
+                    { label: "Coca zero", price: "$3.500" },
+                    { label: "Sprite", price: "$3.500" },
+                    { label: "Fanta", price: "$3.500" },
+                    { label: "Paso de los toros pomelo", price: "$3.500" },
+                    { label: "Agua tónica", price: "$3.500" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Agua",
+                secondname: "Sin gas / Con gas / Saborizada (Pomelo, Manzana)",
+                type: "Bebida",
+                contents: "Agua mineral con o sin gas, o agua saborizada sabor pomelo o manzana.",
+                price: "$3.000",
+                flags: [],
+                options: [],
+                category: "bebidas",
+                subcategory: "Bebidas",
+                pieces: "",
+                variants: [
+                    { label: "Sin gas", price: "$3.000" },
+                    { label: "Con gas", price: "$3.000" },
+                    { label: "Saborizada Pomelo", price: "$3.000" },
+                    { label: "Saborizada Manzana", price: "$3.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Cerveza",
+                secondname: "Asahi japonesa / Corona",
+                type: "Bebida",
+                contents: "Cerveza Asahi japonesa o Cerveza Corona.",
+                price: "$5.000",
+                flags: [],
+                options: [],
+                category: "bebidas",
+                subcategory: "Bebidas",
+                pieces: "",
+                variants: [
+                    { label: "Asahi japonesa", price: "$5.000" },
+                    { label: "Corona", price: "$6.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Vino Blanco",
+                secondname: "Putruele 500ml / Cordero con piel de lobo 750ml / Lola Torrontés 750ml / Puerta Alta Torrontés 750ml",
+                type: "Vino Blanco",
+                contents: "Bodega Putruele (500ml), Cordero con piel de lobo (750ml), Lola Torrontés (750ml) o Puerta Alta Torrontés (750ml).",
+                price: "$10.000",
+                flags: [],
+                options: [],
+                category: "bebidas",
+                subcategory: "Vinos",
+                pieces: "",
+                variants: [
+                    { label: "Bodega Putruele 500ml", price: "$10.000" },
+                    { label: "Cordero con piel de lobo 750ml", price: "$13.000" },
+                    { label: "Lola Torrontés 750ml", price: "$10.000" },
+                    { label: "Puerta Alta Torrontés 750ml", price: "$10.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Vino Rosado",
+                secondname: "Bodega Putruele 500ml",
+                type: "Vino Rosado",
+                contents: "Bodega Putruele Rosado (500ml).",
+                price: "$10.000",
+                flags: [],
+                options: [],
+                category: "bebidas",
+                subcategory: "Vinos",
+                pieces: "",
+                variants: [],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Vino Tinto",
+                secondname: "Malbicho 750ml / Aristides 750ml / Puerta Alta Malbec 750ml / Puerta Alta Malbec Reserva 750ml",
+                type: "Vino Tinto",
+                contents: "Malbicho 750ml, Aristides 750ml, Puerta Alta Malbec 750ml o Puerta Alta Malbec Reserva 750ml.",
+                price: "$12.000",
+                flags: [],
+                options: [],
+                category: "bebidas",
+                subcategory: "Vinos",
+                pieces: "",
+                variants: [
+                    { label: "Malbicho 750ml", price: "$12.000" },
+                    { label: "Aristides 750ml", price: "$15.000" },
+                    { label: "Puerta Alta Malbec 750ml", price: "$17.000" },
+                    { label: "Puerta Alta Malbec Reserva 750ml", price: "$20.000" }
+                ],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+
+            // ============================================================
+            // ========== POSTRES ==========
+            // Cheesecake japonés, Brownie, Cookie, Café
+            // ============================================================
+            {
+                name: "Cheesecake japonés",
+                secondname: "",
+                type: "Postre",
+                contents: "Esponjoso y suave cheesecake al estilo japonés.",
+                price: "$3.700",
+                flags: [],
+                options: [],
+                category: "postres",
+                subcategory: "Postres",
+                pieces: "",
+                variants: [],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Brownie chocolate",
+                secondname: "",
+                type: "Postre",
+                contents: "Brownie artesanal de chocolate.",
+                price: "$3.000",
+                flags: [],
+                options: [],
+                category: "postres",
+                subcategory: "Postres",
+                pieces: "",
+                variants: [],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Cookie vainilla & chips chocolate",
+                secondname: "",
+                type: "Postre",
+                contents: "Galleta de vainilla con chispas de chocolate.",
+                price: "$2.500",
+                flags: [],
+                options: [],
+                category: "postres",
+                subcategory: "Postres",
+                pieces: "",
+                variants: [],
+                whatsappLink: "https://wa.me/+541140587888"
+            },
+            {
+                name: "Café",
+                secondname: "",
+                type: "Postre",
+                contents: "Café infusionado.",
+                price: "$4.000",
+                flags: [],
+                options: [],
+                category: "postres",
+                subcategory: "Postres",
+                pieces: "",
+                variants: [],
                 whatsappLink: "https://wa.me/+541140587888"
             }
         ]);
@@ -1191,13 +1389,12 @@ const cartSubtotal = computed(() =>
     }, 0)
 );
 
-// Agregar al carrito desde el modal de producto
 const addToCart = () => {
     if (!selectedProduct.value) return;
 
     const variantLabel = selectedVariant.value?.label || '';
     const optionLabel = selectedVariant.value
-        ? '' // si hay variantes, la opción pierde relevancia
+        ? '' 
         : (selectedOption.value || '');
 
     const price = selectedProductPrice.value;
@@ -1218,9 +1415,8 @@ const addToCart = () => {
         });
     }
 
-    // Feedback + cerrar modal
+    // Cierra el modal del producto pero deja el carrito cerrado hasta que el usuario haga click en el icono
     closeProduct();
-    openCart(); // opcional: abrir el carrito para que vea que se agregó
 };
 
 // Cambiar cantidad
