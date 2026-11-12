@@ -109,7 +109,7 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "3 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Gyozas",
@@ -123,7 +123,7 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "5 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Langostino Crunchy",
@@ -137,7 +137,7 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "6 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Tempura",
@@ -155,7 +155,7 @@ const app = createApp({
                     { label: "Langostino", price: "$15.000" },
                     { label: "Mixto", price: "$15.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Colchón de arroz frito",
@@ -169,7 +169,7 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "4 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -192,7 +192,7 @@ const app = createApp({
                     { label: "Tokyo", price: "$18.000" },
                     { label: "Veggie", price: "$18.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Chow Fan",
@@ -213,7 +213,7 @@ const app = createApp({
                     // { label: "Lomo", price: "$20.000" },
                     // { label: "Veggie", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Wok",
@@ -234,7 +234,7 @@ const app = createApp({
                     { label: "Lomo", price: "$20.000" },
                     { label: "Mixto", price: "$22.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Cerdo Tonkatsu",
@@ -248,7 +248,7 @@ const app = createApp({
                 subcategory: "Platos",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Lomo salteado",
@@ -262,7 +262,7 @@ const app = createApp({
                 subcategory: "Platos",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
                         {
                 name: "Udon",
@@ -281,7 +281,7 @@ const app = createApp({
                     { label: "Lomo", price: "$20.000" },
                     { label: "Veggie", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             
 
@@ -306,7 +306,7 @@ const app = createApp({
                     { label: "Atún rojo", price: "$13.000" },
                     { label: "Pulpo", price: "$13.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Nigiris",
@@ -327,7 +327,7 @@ const app = createApp({
                     { label: "Langostino", price: "$14.000" },
                     { label: "Palta flameada", price: "$14.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Sashimis",
@@ -346,7 +346,7 @@ const app = createApp({
                     { label: "Pulpo", price: "$14.000" },
                     { label: "SENDA", price: "$16.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Geishas",
@@ -365,7 +365,7 @@ const app = createApp({
                     { label: "Salmón", price: "$13.000" },
                     { label: "Langostino crunchy", price: "$13.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Tiraditos",
@@ -383,7 +383,7 @@ const app = createApp({
                     { label: "Atún rojo", price: "$16.000" },
                     { label: "Pulpo", price: "$16.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -407,7 +407,7 @@ const app = createApp({
                     { label: "Atún rojo", price: "$13.000" },
                     { label: "Kani", price: "$13.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Super Dog",
@@ -426,7 +426,7 @@ const app = createApp({
                     { label: "Atún rojo", price: "$19.000" },
                     { label: "Kani", price: "$19.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Sushi Burger",
@@ -446,7 +446,7 @@ const app = createApp({
                     { label: "Kanikama", price: "$20.000" },
                     { label: "Veggie", price: "$18.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Sushi bowls",
@@ -466,7 +466,7 @@ const app = createApp({
                     { label: "Atún rojo", price: "$20.000" },
                     { label: "Vegetariano", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -489,7 +489,7 @@ const app = createApp({
                     { label: "Atún rojo", price: "$23.000" },
                     { label: "Pulpo", price: "$23.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Ceviches",
@@ -508,7 +508,7 @@ const app = createApp({
                     { label: "Pulpo", price: "$23.000" },
                     { label: "Atún rojo", price: "$23.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Baos",
@@ -525,7 +525,7 @@ const app = createApp({
                     { label: "Pulled Pork", price: "$16.000" },
                     { label: "Lango fusion", price: "$16.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -553,7 +553,7 @@ const app = createApp({
                     { label: "Avocado tuna", price: "$9.500" },
                     { label: "Spicy tuna", price: "$9.500" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Rolls veggie",
@@ -571,7 +571,7 @@ const app = createApp({
                     { label: "Praga", price: "$8.500" },
                     { label: "Wasabi", price: "$8.500" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Tamago rolls",
@@ -589,7 +589,7 @@ const app = createApp({
                     { label: "Sweet palmi", price: "$10.500" },
                     { label: "Chill", price: "$10.500" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Rolls Premium",
@@ -614,7 +614,7 @@ const app = createApp({
                     { label: "Tataki", price: "$10.500" },
                     { label: "Nach", price: "$10.500" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Rolls Supreme",
@@ -635,7 +635,7 @@ const app = createApp({
                     { label: "Red hot", price: "$12.000" },
                     { label: "Golden", price: "$12.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Hot rolls",
@@ -653,7 +653,7 @@ const app = createApp({
                     { label: "Tokio", price: "$10.500" },
                     { label: "Furai", price: "$10.500" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Hot rolls sin arroz",
@@ -671,7 +671,7 @@ const app = createApp({
                     { label: "Bs As", price: "$12.000" },
                     { label: "Italian", price: "$12.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -694,7 +694,7 @@ const app = createApp({
                     { label: "x30", price: "$46.000" },
                     { label: "x50", price: "$80.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Doble Paso",
@@ -712,7 +712,7 @@ const app = createApp({
                     { label: "x30", price: "$55.000" },
                     { label: "x50", price: "$89.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Gran Paso",
@@ -730,7 +730,7 @@ const app = createApp({
                     { label: "x30", price: "$60.000" },
                     { label: "x60", price: "$105.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             // ============================================================
             // ========== BEBIDAS ==========
@@ -755,7 +755,7 @@ const app = createApp({
                     { label: "Paso de los toros pomelo", price: "$3.500" },
                     { label: "Agua tónica", price: "$3.500" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Agua",
@@ -774,7 +774,7 @@ const app = createApp({
                     { label: "Saborizada Pomelo", price: "$3.000" },
                     { label: "Saborizada Manzana", price: "$3.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Cerveza",
@@ -791,7 +791,7 @@ const app = createApp({
                     { label: "Asahi japonesa", price: "$5.000" },
                     { label: "Corona", price: "$6.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Vino Blanco",
@@ -810,7 +810,7 @@ const app = createApp({
                     { label: "Lola Torrontés 750ml", price: "$10.000" },
                     { label: "Puerta Alta Torrontés 750ml", price: "$10.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Vino Rosado",
@@ -824,7 +824,7 @@ const app = createApp({
                 subcategory: "Vinos",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Vino Tinto",
@@ -843,7 +843,7 @@ const app = createApp({
                     { label: "Puerta Alta Malbec 750ml", price: "$17.000" },
                     { label: "Puerta Alta Malbec Reserva 750ml", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -862,7 +862,7 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Brownie chocolate",
@@ -876,7 +876,7 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Cookie vainilla & chips chocolate",
@@ -890,7 +890,7 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Café",
@@ -904,7 +904,7 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541140587888"
+                whatsappLink: "https://wa.me/+541161123904"
             }
         ]);
 
@@ -1031,7 +1031,7 @@ const app = createApp({
                 `Hola SENDA, quiero pedir ${selectedProduct.value.name}${option}. Precio: ${selectedProductPrice.value}`
             );
 
-            return `https://wa.me/541140587888?text=${text}`;
+            return `https://wa.me/541161123904?text=${text}`;
         });
 
         const selectVariant = (variant) => {
@@ -1460,7 +1460,7 @@ const cartWhatsappLink = computed(() => {
     lines.push('¡Gracias!');
 
     const text = encodeURIComponent(lines.join('\n'));
-    return `https://wa.me/541140587888?text=${text}`;
+    return `https://wa.me/541161123904?text=${text}`;
 });
         // ----- Autoplay del carrusel de reviews -----
         const stopReviewAutoplay = () => {
