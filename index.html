@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENDA Sushi | Tu camino al Torii</title>
-    
+
     <!-- FAVICON -->
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
     <link rel="manifest" href="assets/site.webmanifest">
-    
+    <script src="config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -95,11 +95,47 @@
                         class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Nosotros</a>
                     <a href="#location"
                         class="text-warm-white hover:text-torii-red transition-colors nav-item-highlight">Ubicación</a>
-                </nav>  
+                </nav>
 
                 <!-- WhatsApp Button (Desktop) - Derecha -->
-                <div class="hidden md:block flex-shrink-0">
+                <!-- <div class="hidden md:block flex-shrink-0">
                     <a href="https://wa.me/+541161123904"
+                        class="bg-black bg-opacity-50 text-warm-white px-4 py-2 rounded-full flex items-center hover:bg-opacity-90 transition-all">
+                        <i class="fab fa-whatsapp mr-2"></i> Pedir
+                    </a>
+                </div> -->
+                <!-- Desktop: reemplazá el bloque del WhatsApp por este -->
+                <div class="hidden md:flex items-center gap-3 flex-shrink-0">
+                    <!-- Botón cuenta -->
+                    <button v-if="!currentUser" @click="openAuthModal"
+                        class="text-warm-white hover:text-torii-red transition-colors text-sm font-medium">
+                        <i class="fas fa-user mr-1"></i> Ingresar
+                    </button>
+
+                    <!-- Avatar cuando logueado -->
+                    <div v-else class="relative">
+                        <button @click="toggleUserMenu" class="flex items-center gap-2">
+                            <img :src="currentUser.user_metadata?.avatar_url || 'assets/logo_cuadrado_transparente.png'"
+                                class="w-9 h-9 rounded-full object-cover border-2 border-torii-red" alt="Avatar">
+                            <span class="text-warm-white text-sm hidden lg:inline">
+                                {{ currentUser.user_metadata?.full_name || currentUser.email }}
+                            </span>
+                        </button>
+
+                        <div v-if="userMenuOpen"
+                            class="absolute right-0 mt-2 w-56 bg-carbon-black rounded-lg shadow-xl py-2 border border-gray-700">
+                            <button @click="openOrdersModal"
+                                class="block w-full text-left px-4 py-2 text-warm-white text-sm hover:bg-torii-red">
+                                <i class="fas fa-receipt mr-2"></i> Mis pedidos
+                            </button>
+                            <button @click="signOut"
+                                class="w-full text-left px-4 py-2 text-warm-white text-sm hover:bg-torii-red">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+                            </button>
+                        </div>
+                    </div>
+
+                    <a :href="whatsappLink"
                         class="bg-black bg-opacity-50 text-warm-white px-4 py-2 rounded-full flex items-center hover:bg-opacity-90 transition-all">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir
                     </a>
@@ -135,11 +171,30 @@
                         @click="closeMobileMenu">Nosotros</a>
                     <a href="#location" class="text-warm-white hover:text-torii-red transition-colors py-2"
                         @click="closeMobileMenu">Ubicación</a>
-                    <a href="https://wa.me/+541161123904"
+                    <a :href="whatsappLink"
                         class="bg-torii-red text-warm-white px-4 py-2 rounded-full text-center flex items-center justify-center mt-4"
                         @click="closeMobileMenu">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir por WhatsApp
                     </a>
+                </div>
+                <!-- Botones de cuenta en mobile -->
+                <div class="container mx-auto px-4 flex flex-col space-y-4 pb-4">
+                    <template v-if="!currentUser">
+                        <button @click="closeMobileMenu(); openAuthModal()"
+                            class="text-warm-white hover:text-torii-red transition-colors py-2 text-left border-t border-gray-700 pt-4">
+                            <i class="fas fa-user mr-2"></i> Ingresar
+                        </button>
+                    </template>
+                    <template v-else>
+                        <button @click="closeMobileMenu(); openOrdersModal()"
+                            class="text-warm-white hover:text-torii-red transition-colors py-2 text-left border-t border-gray-700 pt-4">
+                            <i class="fas fa-receipt mr-2"></i> Mis pedidos
+                        </button>
+                        <button @click="closeMobileMenu(); signOut()"
+                            class="text-warm-white hover:text-torii-red transition-colors py-2 text-left">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión ({{ currentUser.email }})
+                        </button>
+                    </template>
                 </div>
             </div>
         </header>
@@ -167,7 +222,7 @@
                     <a href="#menu"
                         class="bg-black bg-opacity-50 text-warm-white px-8 py-4 rounded-full text-lg font-medium hover:bg-opacity-90 transition-all">Ver
                         Menú</a>
-                    <a href="https://wa.me/+541161123904"
+                    <a :href="whatsappLink"
                         class="border-2 border-warm-white text-warm-white px-8 py-4 rounded-full text-lg font-medium flex items-center justify-center hover:bg-warm-white hover:bg-opacity-10 transition-all">
                         <i class="fab fa-whatsapp mr-2"></i> Pedir por WhatsApp
                     </a>
@@ -250,180 +305,176 @@
                     </div>
                 </div>
 
-<!-- Accordion categories -->
-<div class="menu-accordion-list mt-5">
-    <template v-if="visibleCategoryGroups.length">
-        <div v-for="group in visibleCategoryGroups" :key="group.id" class="menu-category-block">
+                <!-- Accordion categories -->
+                <div class="menu-accordion-list mt-5">
+                    <template v-if="visibleCategoryGroups.length">
+                        <div v-for="group in visibleCategoryGroups" :key="group.id" class="menu-category-block">
 
-            <button type="button" class="menu-category-header" @click="toggleAccordion(group.id)"
-                :aria-expanded="openAccordions.includes(group.id)">
+                            <button type="button" class="menu-category-header" @click="toggleAccordion(group.id)"
+                                :aria-expanded="openAccordions.includes(group.id)">
 
-                <span class="menu-category-header-left">
-                    <span class="menu-category-icon">
-                        {{ group.icon }}
-                    </span>
+                                <span class="menu-category-header-left">
+                                    <span class="menu-category-icon">
+                                        {{ group.icon }}
+                                    </span>
 
-                    <span>
-                        <span class="menu-category-name">
-                            {{ group.name }}
-                        </span>
-                        <span class="menu-category-count">
-                            {{ group.items.length }} plato<span v-if="group.items.length !== 1">s</span>
-                        </span>
-                    </span>
-                </span>
+                                    <span>
+                                        <span class="menu-category-name">
+                                            {{ group.name }}
+                                        </span>
+                                        <span class="menu-category-count">
+                                            {{ group.items.length }} plato<span v-if="group.items.length !== 1">s</span>
+                                        </span>
+                                    </span>
+                                </span>
 
-                <i class="fas fa-chevron-down menu-category-chevron"
-                    :class="{ 'open': openAccordions.includes(group.id) }">
-                </i>
-            </button>
+                                <i class="fas fa-chevron-down menu-category-chevron"
+                                    :class="{ 'open': openAccordions.includes(group.id) }">
+                                </i>
+                            </button>
 
-<div v-if="openAccordions.includes(group.id)" class="menu-category-body">
-    <!-- ✅ CORREGIDO: click.prevent.stop + disabled hasta que la página esté lista -->
-    <button v-for="item in group.visibleItems" 
-            :key="item.name" 
-            type="button"
-            class="compact-product"
-            :disabled="!isPageReady"
-            @click.prevent.stop="openProduct(item, $event)">
-        <div class="compact-product-info">
-            <div class="compact-product-title-row">
-                <span class="compact-product-title">{{ item.name }}</span>
-                <span v-if="item.secondname && item.secondname.trim()"
-                    class="compact-product-subtitle">
-                    {{ item.secondname }}
-                </span>
-            </div>
+                            <div v-if="openAccordions.includes(group.id)" class="menu-category-body">
+                                <!-- ✅ CORREGIDO: click.prevent.stop + disabled hasta que la página esté lista -->
+                                <button v-for="item in group.visibleItems" :key="item.name" type="button"
+                                    class="compact-product" :disabled="!isPageReady"
+                                    @click.prevent.stop="openProduct(item, $event)">
+                                    <div class="compact-product-info">
+                                        <div class="compact-product-title-row">
+                                            <span class="compact-product-title">{{ item.name }}</span>
+                                            <span v-if="item.secondname && item.secondname.trim()"
+                                                class="compact-product-subtitle">
+                                                {{ item.secondname }}
+                                            </span>
+                                        </div>
 
-            <p class="compact-product-description">
-                {{ item.contents }}
-            </p>
+                                        <p class="compact-product-description">
+                                            {{ item.contents }}
+                                        </p>
 
-            <div v-if="item.flags && item.flags.length" class="compact-product-tags">
-                <span v-for="flag in item.flags.slice(0, 3)" :key="flag"
-                    class="compact-tag" :class="getFlagClass(flag)">
-                    {{ flag }}
-                </span>
-            </div>
-        </div>
+                                        <div v-if="item.flags && item.flags.length" class="compact-product-tags">
+                                            <span v-for="flag in item.flags.slice(0, 3)" :key="flag" class="compact-tag"
+                                                :class="getFlagClass(flag)">
+                                                {{ flag }}
+                                            </span>
+                                        </div>
+                                    </div>
 
-        <div class="compact-product-action">
-            <span class="compact-product-price">{{ item.price }}</span>
-            <span class="compact-product-plus" aria-hidden="true">
-                <i class="fas fa-plus text-xs"></i>
-            </span>
-        </div>
-    </button>
+                                    <div class="compact-product-action">
+                                        <span class="compact-product-price">{{ item.price }}</span>
+                                        <span class="compact-product-plus" aria-hidden="true">
+                                            <i class="fas fa-plus text-xs"></i>
+                                        </span>
+                                    </div>
+                                </button>
 
-    <button v-if="group.items.length > productPreviewLimit && !menuSearch" type="button"
-        class="menu-more-btn" @click="toggleCategoryExpanded(group.id)">
-        {{ expandedCategories.includes(group.id) ? 'Ver menos' : `Ver los ${group.items.length} platos` }}
-        <i class="fas ml-2"
-            :class="expandedCategories.includes(group.id) ? 'fa-chevron-up' : 'fa-chevron-down'">
-        </i>
-    </button>
-</div>
-        </div>
-    </template>
+                                <button v-if="group.items.length > productPreviewLimit && !menuSearch" type="button"
+                                    class="menu-more-btn" @click="toggleCategoryExpanded(group.id)">
+                                    {{ expandedCategories.includes(group.id) ? 'Ver menos' : `Ver los
+                                    ${group.items.length} platos` }}
+                                    <i class="fas ml-2"
+                                        :class="expandedCategories.includes(group.id) ? 'fa-chevron-up' : 'fa-chevron-down'">
+                                    </i>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
 
-    <div v-else class="menu-empty-state">
-        <div class="text-2xl mb-2">🍣</div>
-        <p class="font-bold text-carbon-black mb-1">No encontramos ese plato</p>
-        <p class="text-sm mb-4">
-            Probá con otro nombre, ingrediente o quitá algún filtro.
-        </p>
-        <button type="button" @click="clearAllFilters"
-            class="bg-carbon-black text-warm-white px-5 py-2 rounded-full text-xs font-bold">
-            Ver todo el menú
-        </button>
-    </div>
-</div>
-            </div>
-
-<!-- Product detail bottom sheet / desktop modal -->
-<transition name="fade">
-    <div v-show="modalVisible && selectedProduct && selectedProduct.name"
-         class="menu-detail-overlay"
-         :class="{ 'is-visible': modalVisible }"
-         @click.self="closeProduct"
-         @keydown.esc="closeProduct">
-        <div v-if="selectedProduct" class="menu-detail-sheet" role="dialog" aria-modal="true">
-            <div class="menu-detail-handle"></div>
-
-            <div class="menu-detail-header">
-                <div>
-                    <div class="menu-detail-kicker">
-                        {{ selectedProduct.subcategory || selectedProduct.type }}
+                    <div v-else class="menu-empty-state">
+                        <div class="text-2xl mb-2">🍣</div>
+                        <p class="font-bold text-carbon-black mb-1">No encontramos ese plato</p>
+                        <p class="text-sm mb-4">
+                            Probá con otro nombre, ingrediente o quitá algún filtro.
+                        </p>
+                        <button type="button" @click="clearAllFilters"
+                            class="bg-carbon-black text-warm-white px-5 py-2 rounded-full text-xs font-bold">
+                            Ver todo el menú
+                        </button>
                     </div>
-                    <h3 class="menu-detail-title">
-                        {{ selectedProduct.name }}
-                    </h3>
-                    <p v-if="selectedProduct.secondname && selectedProduct.secondname.trim()"
-                        class="menu-detail-subtitle">
-                        {{ selectedProduct.secondname }}
-                    </p>
-                </div>
-
-                <button type="button" class="menu-detail-close" @click.prevent.stop="closeProduct"
-                    aria-label="Cerrar detalle">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <p class="menu-detail-description">
-                {{ selectedProduct.contents }}
-            </p>
-
-            <div v-if="selectedProduct.flags && selectedProduct.flags.length" class="menu-detail-tags">
-                <span v-for="flag in selectedProduct.flags" :key="flag" class="compact-tag"
-                    :class="getFlagClass(flag)">
-                    {{ flag }}
-                </span>
-            </div>
-
-            <div v-if="selectedProduct.options && selectedProduct.options.length"
-                class="menu-detail-options">
-
-                <div class="menu-detail-options-title">
-                    Presentación
-                </div>
-
-                <div class="menu-option-list">
-                    <button v-for="option in selectedProduct.options" :key="option" type="button"
-                        class="menu-option" :class="{ 'active': selectedOption === option }"
-                        @click="selectedOption = option">
-                        {{ option }}
-                    </button>
                 </div>
             </div>
 
-            <div v-if="selectedProduct.variants && selectedProduct.variants.length"
-                class="menu-detail-options">
-                <div class="menu-detail-options-title">
-                    Elegí una opción
-                </div>
-                <div class="menu-option-list">
-                    <button v-for="variant in selectedProduct.variants" :key="variant.label" type="button"
-                        class="menu-option" :class="{ 'active': selectedVariantLabel === variant.label }"
-                        @click="selectVariant(variant)">
-                        {{ variant.label }} · {{ variant.price }}
-                    </button>
-                </div>
-            </div>
+            <!-- Product detail bottom sheet / desktop modal -->
+            <transition name="fade">
+                <div v-show="modalVisible && selectedProduct && selectedProduct.name" class="menu-detail-overlay"
+                    :class="{ 'is-visible': modalVisible }" @click.self="closeProduct" @keydown.esc="closeProduct">
+                    <div v-if="selectedProduct" class="menu-detail-sheet" role="dialog" aria-modal="true">
+                        <div class="menu-detail-handle"></div>
 
-            <div class="menu-detail-footer">
-                <span class="menu-detail-price">
-                    {{ selectedProductPrice }}
-                </span>
+                        <div class="menu-detail-header">
+                            <div>
+                                <div class="menu-detail-kicker">
+                                    {{ selectedProduct.subcategory || selectedProduct.type }}
+                                </div>
+                                <h3 class="menu-detail-title">
+                                    {{ selectedProduct.name }}
+                                </h3>
+                                <p v-if="selectedProduct.secondname && selectedProduct.secondname.trim()"
+                                    class="menu-detail-subtitle">
+                                    {{ selectedProduct.secondname }}
+                                </p>
+                            </div>
 
-                <button type="button" class="menu-detail-order menu-detail-add" @click.prevent.stop="addToCart">
-                    <i class="fas fa-cart-plus"></i>
-                    Agregar al carrito
-                </button>
-            </div>
-        </div>
-    </div>
-</transition>
+                            <button type="button" class="menu-detail-close" @click.prevent.stop="closeProduct"
+                                aria-label="Cerrar detalle">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <p class="menu-detail-description">
+                            {{ selectedProduct.contents }}
+                        </p>
+
+                        <div v-if="selectedProduct.flags && selectedProduct.flags.length" class="menu-detail-tags">
+                            <span v-for="flag in selectedProduct.flags" :key="flag" class="compact-tag"
+                                :class="getFlagClass(flag)">
+                                {{ flag }}
+                            </span>
+                        </div>
+
+                        <div v-if="selectedProduct.options && selectedProduct.options.length"
+                            class="menu-detail-options">
+
+                            <div class="menu-detail-options-title">
+                                Presentación
+                            </div>
+
+                            <div class="menu-option-list">
+                                <button v-for="option in selectedProduct.options" :key="option" type="button"
+                                    class="menu-option" :class="{ 'active': selectedOption === option }"
+                                    @click="selectedOption = option">
+                                    {{ option }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div v-if="selectedProduct.variants && selectedProduct.variants.length"
+                            class="menu-detail-options">
+                            <div class="menu-detail-options-title">
+                                Elegí una opción
+                            </div>
+                            <div class="menu-option-list">
+                                <button v-for="variant in selectedProduct.variants" :key="variant.label" type="button"
+                                    class="menu-option" :class="{ 'active': selectedVariantLabel === variant.label }"
+                                    @click="selectVariant(variant)">
+                                    {{ variant.label }} · {{ variant.price }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="menu-detail-footer">
+                            <span class="menu-detail-price">
+                                {{ selectedProductPrice }}
+                            </span>
+
+                            <button type="button" class="menu-detail-order menu-detail-add"
+                                @click.prevent.stop="addToCart">
+                                <i class="fas fa-cart-plus"></i>
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </transition>
 
 
         </section>
@@ -504,16 +555,15 @@
                         <div class="flex flex-col">
                             <div class="flex text-subtle-gold text-lg">
                                 <i v-for="n in 5" :key="n" class="fas"
-                                :class="n <= Math.round(averageRating) ? 'fa-star' : 'fa-star-o'"></i>
+                                    :class="n <= Math.round(averageRating) ? 'fa-star' : 'fa-star-o'"></i>
                             </div>
                             <span class="text-xs text-medium-gray">
                                 {{ filteredReviews.length }} reseñas destacadas
                             </span>
                         </div>
                     </div>
-                    <a href="https://www.google.com/maps/place/Senda+Sushi/@-34.5886408,-58.508417,17z"
-                    target="_blank" rel="noopener"
-                    class="text-sm text-torii-red hover:underline font-medium">
+                    <a href="https://www.google.com/maps/place/Senda+Sushi/@-34.5886408,-58.508417,17z" target="_blank"
+                        rel="noopener" class="text-sm text-torii-red hover:underline font-medium">
                         Ver todas en Google Maps <i class="fas fa-external-link-alt text-xs ml-1"></i>
                     </a>
                 </div>
@@ -521,22 +571,18 @@
                 <!-- Reviews carousel -->
                 <div v-if="reviewsLoaded && filteredReviews.length" class="reviews-carousel-wrapper">
                     <div class="reviews-carousel relative max-w-6xl mx-auto">
-                        <div class="reviews-track"
-                            :style="{ transform: `translateX(-${reviewPage * 100}%)` }">
-                            <div v-for="(page, pageIndex) in reviewPages"
-                                :key="pageIndex"
-                                class="review-page">
+                        <div class="reviews-track" :style="{ transform: `translateX(-${reviewPage * 100}%)` }">
+                            <div v-for="(page, pageIndex) in reviewPages" :key="pageIndex" class="review-page">
                                 <div v-for="review in page" :key="review.reviewId" class="review-card">
                                     <div class="review-card-header">
-                                        <img :src="review.avatar" :alt="review.author"
-                                            class="review-avatar"
+                                        <img :src="review.avatar" :alt="review.author" class="review-avatar"
                                             onerror="this.style.display='none'">
                                         <div class="review-meta">
                                             <h4 class="review-author">{{ review.author }}</h4>
                                             <span class="review-date">{{ review.date }}</span>
                                             <div class="review-stars text-subtle-gold">
                                                 <i v-for="n in 5" :key="n" class="fas"
-                                                :class="n <= review.starsNumber ? 'fa-star' : 'fa-star-o'"></i>
+                                                    :class="n <= review.starsNumber ? 'fa-star' : 'fa-star-o'"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -545,7 +591,7 @@
 
                                     <div class="review-footer">
                                         <a :href="review.alternativeLink" target="_blank" rel="noopener"
-                                        class="review-link">
+                                            class="review-link">
                                             <i class="fab fa-google mr-1"></i>
                                             Ver reseña original
                                         </a>
@@ -564,26 +610,20 @@
 
                     <!-- Dots: versión desktop (todos) + versión mobile (solo 3) -->
                     <div class="reviews-dots reviews-dots-desktop">
-                        <span v-for="(page, index) in reviewPages" :key="index"
-                            @click="goToReviewPage(index)"
-                            class="carousel-dot"
-                            :class="{ 'active': reviewPage === index }"></span>
+                        <span v-for="(page, index) in reviewPages" :key="index" @click="goToReviewPage(index)"
+                            class="carousel-dot" :class="{ 'active': reviewPage === index }"></span>
                     </div>
 
                     <div class="reviews-dots-mobile">
-                        <span class="dot-arrow"
-                            :class="{ 'disabled': reviewPage === 0 }"
-                            @click="prevReviewPage">
+                        <span class="dot-arrow" :class="{ 'disabled': reviewPage === 0 }" @click="prevReviewPage">
                             <i class="fas fa-chevron-left"></i>
                         </span>
-                        <span v-for="(dot, i) in mobileDots" :key="'m'+i"
-                            class="carousel-dot"
+                        <span v-for="(dot, i) in mobileDots" :key="'m'+i" class="carousel-dot"
                             :class="{ 'active': dot.active, 'ellipsis': dot.ellipsis }"
                             @click="dot.page !== null && goToReviewPage(dot.page)">
                             {{ dot.label }}
                         </span>
-                        <span class="dot-arrow"
-                            :class="{ 'disabled': reviewPage === totalReviewPages - 1 }"
+                        <span class="dot-arrow" :class="{ 'disabled': reviewPage === totalReviewPages - 1 }"
                             @click="nextReviewPage">
                             <i class="fas fa-chevron-right"></i>
                         </span>
@@ -668,98 +708,211 @@
         </footer>
 
         <!-- Floating WhatsApp Button -->
-        <a href="https://wa.me/+541161123904" class="whatsapp-float whatsapp-pulse" target="_blank">
+        <a :href="whatsappLink" class="whatsapp-float whatsapp-pulse" target="_blank">
             <i class="fab fa-whatsapp"></i>
         </a>
         <!-- Botón flotante del carrito -->
-        <button
-            type="button"
-            class="cart-float"
-            :class="{ 'has-items': cartTotalItems > 0 }"
-            @click="toggleCart"
+        <button type="button" class="cart-float" :class="{ 'has-items': cartTotalItems > 0 }" @click="toggleCart"
             aria-label="Abrir carrito">
             <i class="fas fa-shopping-bag"></i>
             <span v-if="cartTotalItems > 0" class="cart-float-badge">
                 {{ cartTotalItems }}
             </span>
         </button>
-<!-- Cart Drawer -->
-<div
-    v-show="cartOpen"
-    class="cart-overlay"
-    :class="{ 'is-visible': cartOpen }"
-    @click.self="closeCart">
-    <aside class="cart-drawer" role="dialog" aria-modal="true" aria-label="Carrito de compras">
-        <header class="cart-header">
-            <div>
-                <h3 class="cart-title">Tu pedido</h3>
-                <p class="cart-subtitle" v-if="cartTotalItems">
-                    {{ cartTotalItems }} ítem<span v-if="cartTotalItems !== 1">s</span>
-                </p>
-                <p class="cart-subtitle" v-else>El carrito está vacío</p>
-            </div>
-            <button type="button" class="cart-close" @click="closeCart" aria-label="Cerrar carrito">
-                <i class="fas fa-times"></i>
-            </button>
-        </header>
-
-        <div class="cart-body">
-            <div v-if="!cart.length" class="cart-empty">
-                <div class="cart-empty-emoji">🍣</div>
-                <p class="cart-empty-title">Todavía no agregaste nada</p>
-                <p class="cart-empty-text">Sumá tus platos favoritos y armá el pedido completo.</p>
-                <button type="button" class="cart-empty-btn" @click="closeCart">
-                    Ver el menú
-                </button>
-            </div>
-
-            <ul v-else class="cart-list">
-                <li v-for="item in cart" :key="item.key" class="cart-item">
-                    <div class="cart-item-info">
-                        <div class="cart-item-name">{{ item.name }}</div>
-                        <div v-if="item.variant" class="cart-item-variant">{{ item.variant }}</div>
-                        <div v-if="item.option" class="cart-item-option">{{ item.option }}</div>
-                        <div class="cart-item-price">{{ item.price }} c/u</div>
+        <!-- Cart Drawer -->
+        <div v-show="cartOpen" class="cart-overlay" :class="{ 'is-visible': cartOpen }" @click.self="closeCart">
+            <aside class="cart-drawer" role="dialog" aria-modal="true" aria-label="Carrito de compras">
+                <header class="cart-header">
+                    <div>
+                        <h3 class="cart-title">Tu pedido</h3>
+                        <p class="cart-subtitle" v-if="cartTotalItems">
+                            {{ cartTotalItems }} ítem<span v-if="cartTotalItems !== 1">s</span>
+                        </p>
+                        <p class="cart-subtitle" v-else>El carrito está vacío</p>
                     </div>
+                    <button type="button" class="cart-close" @click="closeCart" aria-label="Cerrar carrito">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </header>
 
-                    <div class="cart-item-actions">
-                        <div class="cart-qty">
-                            <button type="button" @click="decreaseQty(item)" aria-label="Restar">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <span>{{ item.qty }}</span>
-                            <button type="button" @click="increaseQty(item)" aria-label="Sumar">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                        <button type="button" class="cart-item-remove" @click="removeFromCart(item)" aria-label="Eliminar">
-                            <i class="fas fa-trash-alt"></i>
+                <div class="cart-body">
+                    <div v-if="!cart.length" class="cart-empty">
+                        <div class="cart-empty-emoji">🍣</div>
+                        <p class="cart-empty-title">Todavía no agregaste nada</p>
+                        <p class="cart-empty-text">Sumá tus platos favoritos y armá el pedido completo.</p>
+                        <button type="button" class="cart-empty-btn" @click="closeCart">
+                            Ver el menú
                         </button>
                     </div>
-                </li>
-            </ul>
+
+                    <ul v-else class="cart-list">
+                        <li v-for="item in cart" :key="item.key" class="cart-item">
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">{{ item.name }}</div>
+                                <div v-if="item.variant" class="cart-item-variant">{{ item.variant }}</div>
+                                <div v-if="item.option" class="cart-item-option">{{ item.option }}</div>
+                                <div class="cart-item-price">{{ item.price }} c/u</div>
+                            </div>
+
+                            <div class="cart-item-actions">
+                                <div class="cart-qty">
+                                    <button type="button" @click="decreaseQty(item)" aria-label="Restar">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span>{{ item.qty }}</span>
+                                    <button type="button" @click="increaseQty(item)" aria-label="Sumar">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <button type="button" class="cart-item-remove" @click="removeFromCart(item)" `
+                                    aria-label="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <footer class="cart-footer" v-if="cart.length">
+                    <!-- Formulario de datos (visible para todos, logueados e invitados) -->
+                    <div class="cart-checkout-form">
+                        <input v-model="checkout.name" placeholder="Nombre y Apellido" class="cart-input">
+                        <input v-model="checkout.phone" placeholder="Teléfono (WhatsApp)" class="cart-input">
+                        <select v-model="checkout.order_type" class="cart-input">
+                            <option value="delivery">Delivery</option>
+                            <option value="takeaway">Take away (Retiro en local)</option>
+                        </select>
+                        <input v-if="checkout.order_type === 'delivery'" v-model="checkout.address"
+                            placeholder="Dirección de entrega" class="cart-input">
+                        <textarea v-model="checkout.notes" placeholder="Notas (opcional)" class="cart-input"></textarea>
+                    </div>
+
+                    <div class="cart-subtotal">
+                        <span>Subtotal estimado</span>
+                        <strong>{{ formatPrice(cartSubtotal) }}</strong>
+                    </div>
+
+                    <!-- Paso 1: ir a WhatsApp (para usuarios logueados e invitados) -->
+                    <button v-if="!orderSent" @click="sendOrderViaWhatsapp" class="cart-checkout"
+                        :disabled="!checkout.name || !checkout.phone">
+                        <i class="fab fa-whatsapp"></i>
+                        Enviar pedido por WhatsApp
+                    </button>
+
+                    <!-- Paso 2: confirmar después de enviar -->
+                    <button v-if="orderSent" @click="confirmOrderSaved" class="cart-checkout cart-confirm-save"
+                        :disabled="submittingOrder">
+                        <i class="fas fa-check"></i>
+                        {{ submittingOrder ? 'Guardando...' : 'Ya envié el mensaje, guardar pedido' }}
+                    </button>
+
+                    <p v-if="orderError" class="cart-error">{{ orderError }}</p>
+
+                    <!-- Botón extra para iniciar sesión si es invitado, opcional pero útil -->
+                    <button type="button" class="cart-clear mt-2" v-if="!currentUser" @click="openAuthModal">
+                        <i class="fas fa-user"></i> ¿Ya tenés cuenta? Ingresá acá
+                    </button>
+
+                    <button type="button" class="cart-clear" @click="clearCart">Vaciar carrito</button>
+                </footer>
+            </aside>
+
         </div>
+        <!-- Auth Modal -->
+        <div v-if="authModalOpen" class="auth-overlay" @click.self="closeAuthModal">
+            <div class="auth-modal" role="dialog" aria-modal="true">
+                <button class="auth-close" @click="closeAuthModal" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
 
-        <footer class="cart-footer" v-if="cart.length">
-            <div class="cart-subtotal">
-                <span>Subtotal estimado</span>
-                <strong>{{ formatPrice(cartSubtotal) }}</strong>
+                <h3 class="auth-title">{{ isRegistering ? 'Creá tu cuenta' : 'Ingresá a SENDA' }}</h3>
+                <p class="auth-subtitle">Guardá tus pedidos y direcciones</p>
+
+                <input v-model="authEmail" type="email" placeholder="tu@email.com" class="auth-input mb-2"
+                    :disabled="authLoading">
+
+                <input v-if="!useMagicLink" v-model="authPassword" type="password" placeholder="Contraseña"
+                    class="auth-input mb-2" :disabled="authLoading">
+
+                <!-- Botón Principal (Contraseña) -->
+                <button v-if="!useMagicLink" @click="handlePasswordAuth" class="auth-email-btn"
+                    :disabled="authLoading || !authEmail || !authPassword">
+                    <i class="fas fa-lock mr-2"></i>
+                    {{ authLoading ? 'Procesando...' : (isRegistering ? 'Registrarme' : 'Ingresar') }}
+                </button>
+
+                <!-- Botón Link Mágico -->
+                <button v-if="useMagicLink" @click="signInWithMagicLink" class="auth-email-btn"
+                    :disabled="authLoading || !authEmail">
+                    <i class="fas fa-envelope mr-2"></i>
+                    {{ authLoading ? 'Enviando...' : 'Enviar link mágico' }}
+                </button>
+
+                <div class="auth-divider"><span>o</span></div>
+
+                <!-- Toggle entre métodos -->
+                <button @click="useMagicLink = !useMagicLink"
+                    class="text-sm text-center w-full text-torii-red hover:underline mb-2" type="button">
+                    {{ useMagicLink ? 'Ingresar con contraseña' : 'Ingresar sin contraseña (link mágico)' }}
+                </button>
+
+                <!-- Toggle Registro/Login (solo si usa contraseña) -->
+                <button v-if="!useMagicLink" @click="isRegistering = !isRegistering"
+                    class="text-xs text-center w-full text-medium-gray hover:text-carbon-black mt-1" type="button">
+                    {{ isRegistering ? '¿Ya tenés cuenta? Ingresá' : '¿No tenés cuenta? Registrate' }}
+                </button>
+
+                <!-- Recuperar contraseña -->
+                <button v-if="!isRegistering && !useMagicLink" @click="resetPassword"
+                    class="text-xs text-center w-full text-medium-gray hover:text-carbon-black mt-2" type="button">
+                    ¿Olvidaste tu contraseña?
+                </button>
+
+                <p v-if="authMessage" class="auth-message">{{ authMessage }}</p>
+                <p v-if="authError" class="auth-error">{{ authError }}</p>
             </div>
-            <a :href="cartWhatsappLink" target="_blank" rel="noopener"
-               class="cart-checkout" @click="closeCart">
-                <i class="fab fa-whatsapp"></i>
-                Enviar pedido por WhatsApp
-            </a>
-            <button type="button" class="cart-clear" @click="clearCart">
-                Vaciar carrito
-            </button>
-        </footer>
-    </aside>
-</div>
+        </div>
+        <div v-if="ordersModalOpen" class="auth-overlay" @click.self="closeOrdersModal">
+            <div class="auth-modal" style="max-width: 600px;" role="dialog">
+                <button class="auth-close" @click="closeOrdersModal"><i class="fas fa-times"></i></button>
+                <h3 class="auth-title mb-4">Mis pedidos</h3>
 
+                <div v-if="!currentUser" class="text-center text-medium-gray py-8">
+                    <p>Ingresá para ver tus pedidos.</p>
+                    <button @click="closeOrdersModal(); openAuthModal()" class="map-button mt-4">Ingresar</button>
+                </div>
+                <div v-else-if="!myOrders.length" class="text-center text-medium-gray py-8">
+                    <p>Todavía no hiciste pedidos.</p>
+                </div>
+                <div v-else class="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                    <div v-for="order in myOrders" :key="order.id"
+                        class="bg-white rounded-xl p-4 border border-gray-200 text-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-carbon-black">Pedido #{{ order.id }} · {{
+                                    formatPrice(order.total) }}</p>
+                                <p class="text-xs text-medium-gray">{{ new
+                                    Date(order.created_at).toLocaleString('es-AR') }}</p>
+                            </div>
+                            <span class="text-xs px-2 py-1 rounded-full font-bold" :class="statusClass(order.status)">
+                                {{ statusLabel(order.status) }}
+                            </span>
+                        </div>
+                        <ul class="mt-2 text-medium-gray">
+                            <li v-for="it in order.order_items" :key="it.id">
+                                {{ it.quantity }}x {{ it.product_name }} <span v-if="it.variant">({{ it.variant
+                                    }})</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js" defer></script>
     <script src="script.js" defer></script>
 </body>
 

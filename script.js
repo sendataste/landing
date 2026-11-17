@@ -10,7 +10,36 @@ const {
 
 const app = createApp({
     setup() {
+        // ========== CONFIG GLOBAL ==========
+        const CONFIG = window.SENDA_CONFIG || {};
+        const whatsappNumber = CONFIG.whatsappNumber || '5491161123904';
+
+        const whatsappLink = computed(() => CONFIG.getWhatsappLink
+            ? CONFIG.getWhatsappLink()
+            : `https://wa.me/${whatsappNumber}`
+        );
+
+        const googleMapsLink = CONFIG.googleMapsLink || 'https://maps.google.com/?q=Senda+Sushi';
+
         const scrolled = ref(false);
+
+        // ========== AUTH + SUPABASE ==========
+        const currentUser = ref(null);
+        const authModalOpen = ref(false);
+        const userMenuOpen = ref(false);
+        const authEmail = ref('');
+        const authLoading = ref(false);
+        const authMessage = ref('');
+        const authError = ref('');
+
+        const myOrders = ref([]);
+        const submittingOrder = ref(false);
+        const orderError = ref('');
+        const newPassword = ref('');
+        const showResetForm = ref(false);
+        const authPassword = ref('');
+        const isRegistering = ref(false); // false = Ingresar, true = Registrarse
+        const useMagicLink = ref(false); // false = Contraseña, true = Magic Link
 
         // Menu UX state
         const selectedCategory = ref('all');
@@ -21,7 +50,7 @@ const app = createApp({
         const expandedCategories = ref([]);
         const selectedProduct = ref(null);
         const isModalOpen = ref(false);
-        const modalVisible = ref(false);  
+        const modalVisible = ref(false);
 
         const selectedOption = ref('');
         const selectedVariantLabel = ref('');
@@ -31,6 +60,329 @@ const app = createApp({
         const mobileMenuDropdownOpen = ref(false);
         const currentSlide = ref(0);
         let autoplayInterval = null;
+
+        const checkout = ref({
+            name: '',
+            phone: '',
+            order_type: 'delivery',
+            address: '',
+            notes: ''
+        });
+
+        const sb = window.sb;
+
+        const ordersModalOpen = ref(false);
+
+        const openOrdersModal = () => {
+            ordersModalOpen.value = true;
+            if (currentUser.value) loadMyOrders(); // Actualizar datos
+            closeUserMenu();
+        };
+        const closeOrdersModal = () => { ordersModalOpen.value = false; };
+
+        // --- Auth listeners ---
+        const initAuth = async () => {
+            const { data: { session } } = await sb.auth.getSession();
+            currentUser.value = session?.user || null;
+            if (currentUser.value) {
+                loadProfileDefaults();
+                loadMyOrders();
+            }
+
+            sb.auth.onAuthStateChange((_event, session) => {
+                currentUser.value = session?.user || null;
+                if (currentUser.value) {
+                    loadProfileDefaults();
+                    loadMyOrders();
+                } else {
+                    myOrders.value = [];
+                }
+            });
+        };
+
+        const loadProfileDefaults = async () => {
+            if (!currentUser.value) return;
+            const { data } = await sb.from('profiles')
+                .select('full_name, phone, default_address')
+                .eq('id', currentUser.value.id)
+                .single();
+            if (data) {
+                checkout.value.name = checkout.value.name || data.full_name || '';
+                checkout.value.phone = checkout.value.phone || data.phone || '';
+                checkout.value.address = checkout.value.address || data.default_address || '';
+            }
+        };
+
+        // Guarda/actualiza los datos del perfil del usuario
+        const saveProfileDefaults = async () => {
+            if (!currentUser.value) return;
+
+            const payload = {
+                id: currentUser.value.id,
+                full_name: checkout.value.name?.trim() || null,
+                phone: checkout.value.phone?.trim() || null,
+                default_address: checkout.value.address?.trim() || null,
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await sb.from('profiles').upsert(payload, {
+                onConflict: 'id'
+            });
+
+            if (error) {
+                console.warn('No se pudo guardar el perfil:', error.message);
+            }
+        };
+
+        const loadMyOrders = async () => {
+            if (!currentUser.value) return;
+            const { data, error } = await sb.from('orders')
+                .select('*, order_items(*)')
+                .order('created_at', { ascending: false });
+            if (!error) myOrders.value = data || [];
+        };
+
+        const openAuthModal = () => {
+            authModalOpen.value = true;
+            authMessage.value = '';
+            authError.value = '';
+        };
+        const closeAuthModal = () => { authModalOpen.value = false; };
+
+        const toggleUserMenu = () => { userMenuOpen.value = !userMenuOpen.value; };
+        const closeUserMenu = () => { userMenuOpen.value = false; };
+
+        const signInWithGoogle = async () => {
+            authLoading.value = true;
+            authError.value = '';
+            const { error } = await sb.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + window.location.pathname
+                }
+            });
+            authLoading.value = false;
+            if (error) authError.value = error.message;
+        };
+
+        const signInWithMagicLink = async () => {
+            if (!authEmail.value) return;
+            authLoading.value = true;
+            authError.value = '';
+            authMessage.value = '';
+            const { error } = await sb.auth.signInWithOtp({
+                email: authEmail.value,
+                options: {
+                    emailRedirectTo: window.location.origin + window.location.pathname
+                }
+            });
+            authLoading.value = false;
+            if (error) authError.value = error.message;
+            else authMessage.value = 'Revisá tu email, te mandamos el link de acceso.';
+        };
+
+        const signOut = async () => {
+            await sb.auth.signOut();
+            closeUserMenu();
+        };
+
+        // Estado nuevo
+        const orderSent = ref(false);           // true cuando ya se abrió WhatsApp
+        const pendingOrderPayload = ref(null);  // payload temporal antes de guardar
+
+        // --- AUTENTICACIÓN ---
+        const handlePasswordAuth = async () => {
+            if (!authEmail.value || !authPassword.value) return;
+            authLoading.value = true;
+            authError.value = '';
+            authMessage.value = '';
+
+            try {
+                if (isRegistering.value) {
+                    const { error } = await sb.auth.signUp({
+                        email: authEmail.value.trim().toLowerCase(),
+                        password: authPassword.value,
+                    });
+                    if (error) throw error;
+                    authMessage.value = 'Registro exitoso. Ya podés ingresar.';
+                    isRegistering.value = false;
+                } else {
+                    const { error } = await sb.auth.signInWithPassword({
+                        email: authEmail.value,
+                        password: authPassword.value,
+                    });
+                    if (error) throw error;
+                    closeAuthModal();
+                }
+            } catch (error) {
+                authError.value = error.message;
+            } finally {
+                authLoading.value = false;
+            }
+        };
+
+        const resetPassword = async () => {
+            if (!authEmail.value) return;
+            authLoading.value = true;
+            authError.value = '';
+            authMessage.value = '';
+            const { error } = await sb.auth.resetPasswordForEmail(authEmail.value, {
+                redirectTo: window.location.origin + window.location.pathname + '?reset=1'
+            });
+            authLoading.value = false;
+            if (error) authError.value = error.message;
+            else authMessage.value = 'Te enviamos un email para restablecer tu contraseña.';
+        };
+        // Confirmar pedido (versión invitado)
+        const confirmOrderAsGuest = async () => {
+            if (!pendingOrderPayload.value) return;
+            submittingOrder.value = true;
+            orderError.value = '';
+
+            // Si no hay usuario, iniciar sesión anónimo primero
+            if (!currentUser.value) {
+                const { data, error } = await sb.auth.signInAnonymously();
+                if (error) {
+                    orderError.value = 'No se pudo crear sesión de invitado: ' + error.message;
+                    submittingOrder.value = false;
+                    return;
+                }
+                currentUser.value = data.user;
+            }
+
+            // Luego ejecutar el RPC create_order_with_items original
+            // ... (el resto es igual que confirmOrderSaved)
+        };
+
+        // Paso 1: abrir WhatsApp con el mensaje
+        // Paso 1: abrir WhatsApp con el mensaje
+        const sendOrderViaWhatsapp = () => {
+            // 1. Quitamos la validación de currentUser para que los guests puedan enviar
+            if (!cart.value.length) return;
+
+            orderError.value = '';
+
+            // Solo guardamos el perfil si ya hay un usuario logueado (no anónimo)
+            if (currentUser.value && !currentUser.value.is_anonymous) {
+                saveProfileDefaults();
+            }
+
+            const lines = [
+                `Hola SENDA 🍣, soy ${checkout.value.name}.`,
+                `Pedido: ${checkout.value.order_type === 'delivery' ? 'Delivery' : 'Take away'}`,
+                ''
+            ];
+
+            cart.value.forEach((item, idx) => {
+                const parts = [`${idx + 1}. ${item.qty}x ${item.name}`];
+                if (item.variant) parts.push(`(${item.variant})`);
+                if (item.option) parts.push(`- ${item.option}`);
+                lines.push(parts.join(' '));
+            });
+
+            lines.push('');
+            if (checkout.value.address) lines.push(`Dirección: ${checkout.value.address}`);
+            if (checkout.value.notes) lines.push(`Notas: ${checkout.value.notes}`);
+            lines.push(`Total: ${formatPrice(cartSubtotal.value)}`);
+
+            // 2. Guardamos correctamente el payload completo para usarlo después
+            pendingOrderPayload.value = {
+                order_type: checkout.value.order_type,
+                payment_method: 'cash', // Puedes ajustar esto luego
+                customer_name: checkout.value.name,
+                customer_phone: checkout.value.phone,
+                delivery_address: checkout.value.order_type === 'delivery' ? checkout.value.address : null,
+                notes: checkout.value.notes || null,
+                subtotal: cartSubtotal.value,
+                shipping_cost: 0,
+                discount: 0,
+                total: cartSubtotal.value
+            };
+
+            // 👇 Usar la variable global para el link de WhatsApp
+            const url = CONFIG.getWhatsappLink
+                ? CONFIG.getWhatsappLink(lines.join('\n'))
+                : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(lines.join('\n'))}`;
+
+            window.open(url, '_blank');
+
+            // 3. Marcamos que ya se envió para mostrar el botón de "Guardar pedido"
+            orderSent.value = true;
+        };
+
+        // --- CONFIRMACIÓN DE PEDIDO (GUEST Y LOGUEADO) ---
+        const confirmOrderSaved = async () => {
+            if (!pendingOrderPayload.value) return;
+
+            submittingOrder.value = true;
+            orderError.value = '';
+
+            try {
+                // 1. Si no hay usuario logueado, creamos un usuario anónimo (Guest)
+                if (!currentUser.value) {
+                    const { data, error } = await sb.auth.signInAnonymously();
+                    if (error) throw new Error('Error al crear sesión de invitado: ' + error.message);
+                    currentUser.value = data.user;
+                }
+
+                // 2. Preparamos los ítems
+                const itemsPayload = cart.value.map(i => ({
+                    product_name: i.name,
+                    variant: i.variant || null,
+                    option: i.option || null,
+                    unit_price: parsePrice(i.price),
+                    quantity: i.qty
+                }));
+
+                // 3. Guardamos el pedido en Supabase
+                const { data: orderId, error: rpcError } = await sb.rpc('create_order_with_items', {
+                    p_order: pendingOrderPayload.value,
+                    p_items: itemsPayload
+                });
+
+                if (rpcError) throw rpcError;
+
+                // 4. Limpieza exitosa
+                clearCart();
+                closeCart();
+                orderSent.value = false;
+                pendingOrderPayload.value = null;
+                checkout.value.notes = '';
+
+                // Si es un usuario real (no guest), actualizamos su perfil con los datos ingresados
+                if (currentUser.value && !currentUser.value.is_anonymous) {
+                    await saveProfileDefaults();
+                }
+
+                loadMyOrders();
+
+            } catch (error) {
+                orderError.value = 'No pudimos guardar tu pedido: ' + error.message;
+            } finally {
+                submittingOrder.value = false;
+            }
+        };
+
+
+        // Helpers de estado
+        const statusLabel = (s) => ({
+            pending: 'Pendiente',
+            confirmed: 'Confirmado',
+            preparing: 'Preparando',
+            ready: 'Listo',
+            delivered: 'Entregado',
+            cancelled: 'Cancelado'
+        }[s] || s);
+
+        const statusClass = (s) => ({
+            pending: 'bg-yellow-100 text-yellow-800',
+            confirmed: 'bg-blue-100 text-blue-800',
+            preparing: 'bg-orange-100 text-orange-800',
+            ready: 'bg-purple-100 text-purple-800',
+            delivered: 'bg-green-100 text-green-800',
+            cancelled: 'bg-red-100 text-red-800'
+        }[s] || 'bg-gray-100 text-gray-700');
+
 
         // ========== CARRITO ==========
         const CART_STORAGE_KEY = 'senda_cart_v1';
@@ -66,7 +418,7 @@ const app = createApp({
         watch(cart, persistCart, { deep: true });
 
         // Nuevas categorías según segmentación
-       const menuCategories = ref([
+        const menuCategories = ref([
             { id: 'entradas', name: 'Entradas', icon: '🥟' },
             { id: 'platos', name: 'Platos', icon: '🍜' },
             { id: 'cortes', name: 'Cortes', icon: '🔪' },
@@ -109,7 +461,6 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "3 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Gyozas",
@@ -123,7 +474,6 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "5 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Langostino Crunchy",
@@ -137,7 +487,6 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "6 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Tempura",
@@ -155,7 +504,6 @@ const app = createApp({
                     { label: "Langostino", price: "$15.000" },
                     { label: "Mixto", price: "$15.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Colchón de arroz frito",
@@ -169,7 +517,6 @@ const app = createApp({
                 subcategory: "Entradas",
                 pieces: "4 unidades",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -192,7 +539,6 @@ const app = createApp({
                     { label: "Tokyo", price: "$18.000" },
                     { label: "Veggie", price: "$18.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Chow Fan",
@@ -213,7 +559,6 @@ const app = createApp({
                     // { label: "Lomo", price: "$20.000" },
                     // { label: "Veggie", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Wok",
@@ -234,7 +579,6 @@ const app = createApp({
                     { label: "Lomo", price: "$20.000" },
                     { label: "Mixto", price: "$22.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Cerdo Tonkatsu",
@@ -248,7 +592,6 @@ const app = createApp({
                 subcategory: "Platos",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Lomo salteado",
@@ -262,9 +605,8 @@ const app = createApp({
                 subcategory: "Platos",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
-                        {
+            {
                 name: "Udon",
                 secondname: "",
                 type: "Plato",
@@ -281,9 +623,8 @@ const app = createApp({
                     { label: "Lomo", price: "$20.000" },
                     { label: "Veggie", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
-            
+
 
             // ============================================================
             // ========== CORTES ==========
@@ -306,7 +647,6 @@ const app = createApp({
                     { label: "Atún rojo", price: "$13.000" },
                     { label: "Pulpo", price: "$13.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Nigiris",
@@ -327,7 +667,6 @@ const app = createApp({
                     { label: "Langostino", price: "$14.000" },
                     { label: "Palta flameada", price: "$14.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Sashimis",
@@ -346,7 +685,6 @@ const app = createApp({
                     { label: "Pulpo", price: "$14.000" },
                     { label: "SENDA", price: "$16.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Geishas",
@@ -365,7 +703,6 @@ const app = createApp({
                     { label: "Salmón", price: "$13.000" },
                     { label: "Langostino crunchy", price: "$13.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Tiraditos",
@@ -383,7 +720,6 @@ const app = createApp({
                     { label: "Atún rojo", price: "$16.000" },
                     { label: "Pulpo", price: "$16.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -407,7 +743,6 @@ const app = createApp({
                     { label: "Atún rojo", price: "$13.000" },
                     { label: "Kani", price: "$13.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Super Dog",
@@ -426,7 +761,6 @@ const app = createApp({
                     { label: "Atún rojo", price: "$19.000" },
                     { label: "Kani", price: "$19.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Sushi Burger",
@@ -446,7 +780,6 @@ const app = createApp({
                     { label: "Kanikama", price: "$20.000" },
                     { label: "Veggie", price: "$18.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Sushi bowls",
@@ -466,7 +799,6 @@ const app = createApp({
                     { label: "Atún rojo", price: "$20.000" },
                     { label: "Vegetariano", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -489,7 +821,6 @@ const app = createApp({
                     { label: "Atún rojo", price: "$23.000" },
                     { label: "Pulpo", price: "$23.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Ceviches",
@@ -508,7 +839,6 @@ const app = createApp({
                     { label: "Pulpo", price: "$23.000" },
                     { label: "Atún rojo", price: "$23.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Baos",
@@ -525,7 +855,6 @@ const app = createApp({
                     { label: "Pulled Pork", price: "$16.000" },
                     { label: "Lango fusion", price: "$16.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -553,7 +882,6 @@ const app = createApp({
                     { label: "Avocado tuna", price: "$9.500" },
                     { label: "Spicy tuna", price: "$9.500" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Rolls veggie",
@@ -571,7 +899,6 @@ const app = createApp({
                     { label: "Praga", price: "$8.500" },
                     { label: "Wasabi", price: "$8.500" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Tamago rolls",
@@ -589,7 +916,6 @@ const app = createApp({
                     { label: "Sweet palmi", price: "$10.500" },
                     { label: "Chill", price: "$10.500" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Rolls Premium",
@@ -614,7 +940,6 @@ const app = createApp({
                     { label: "Tataki", price: "$10.500" },
                     { label: "Nach", price: "$10.500" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Rolls Supreme",
@@ -635,7 +960,6 @@ const app = createApp({
                     { label: "Red hot", price: "$12.000" },
                     { label: "Golden", price: "$12.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Hot rolls",
@@ -653,7 +977,6 @@ const app = createApp({
                     { label: "Tokio", price: "$10.500" },
                     { label: "Furai", price: "$10.500" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Hot rolls sin arroz",
@@ -671,7 +994,6 @@ const app = createApp({
                     { label: "Bs As", price: "$12.000" },
                     { label: "Italian", price: "$12.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -694,7 +1016,6 @@ const app = createApp({
                     { label: "x30", price: "$46.000" },
                     { label: "x50", price: "$80.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Doble Paso",
@@ -712,7 +1033,6 @@ const app = createApp({
                     { label: "x30", price: "$55.000" },
                     { label: "x50", price: "$89.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Gran Paso",
@@ -730,7 +1050,6 @@ const app = createApp({
                     { label: "x30", price: "$60.000" },
                     { label: "x60", price: "$105.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             // ============================================================
             // ========== BEBIDAS ==========
@@ -755,7 +1074,6 @@ const app = createApp({
                     { label: "Paso de los toros pomelo", price: "$3.500" },
                     { label: "Agua tónica", price: "$3.500" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Agua",
@@ -774,7 +1092,6 @@ const app = createApp({
                     { label: "Saborizada Pomelo", price: "$3.000" },
                     { label: "Saborizada Manzana", price: "$3.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Cerveza",
@@ -791,7 +1108,6 @@ const app = createApp({
                     { label: "Asahi japonesa", price: "$5.000" },
                     { label: "Corona", price: "$6.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Vino Blanco",
@@ -810,7 +1126,6 @@ const app = createApp({
                     { label: "Lola Torrontés 750ml", price: "$10.000" },
                     { label: "Puerta Alta Torrontés 750ml", price: "$10.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Vino Rosado",
@@ -824,7 +1139,6 @@ const app = createApp({
                 subcategory: "Vinos",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Vino Tinto",
@@ -843,7 +1157,6 @@ const app = createApp({
                     { label: "Puerta Alta Malbec 750ml", price: "$17.000" },
                     { label: "Puerta Alta Malbec Reserva 750ml", price: "$20.000" }
                 ],
-                whatsappLink: "https://wa.me/+541161123904"
             },
 
             // ============================================================
@@ -862,7 +1175,6 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Brownie chocolate",
@@ -876,7 +1188,6 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Cookie vainilla & chips chocolate",
@@ -890,7 +1201,6 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             },
             {
                 name: "Café",
@@ -904,7 +1214,6 @@ const app = createApp({
                 subcategory: "Postres",
                 pieces: "",
                 variants: [],
-                whatsappLink: "https://wa.me/+541161123904"
             }
         ]);
 
@@ -935,11 +1244,11 @@ const app = createApp({
         //         'Sin TACC': '🌾 Sin TACC',
         //         'Opción Veggie': '🌱 Opción Veggie'
         //     };
-            
+
         //     const flags = [...new Set(
         //         menuItems.value.flatMap(item => item.flags || [])
         //     )];
-            
+
         //     return flags.filter(flag => flagsMap[flag]);
         // });
 
@@ -1023,15 +1332,15 @@ const app = createApp({
         const productWhatsappLink = computed(() => {
             if (!selectedProduct.value) return '#';
 
-            const option = selectedVariant.value ?
-                ` - ${selectedVariant.value.label}` :
-                (selectedOption.value ? ` - ${selectedOption.value}` : '');
+            const option = selectedVariant.value
+                ? ` - ${selectedVariant.value.label}`
+                : (selectedOption.value ? ` - ${selectedOption.value}` : '');
 
-            const text = encodeURIComponent(
-                `Hola SENDA, quiero pedir ${selectedProduct.value.name}${option}. Precio: ${selectedProductPrice.value}`
-            );
+            const text = `Hola SENDA, quiero pedir ${selectedProduct.value.name}${option}. Precio: ${selectedProductPrice.value}`;
 
-            return `https://wa.me/541161123904?text=${text}`;
+            return CONFIG.getWhatsappLink
+                ? CONFIG.getWhatsappLink(text)
+                : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
         });
 
         const selectVariant = (variant) => {
@@ -1232,8 +1541,8 @@ const app = createApp({
         const reviews = ref([]);
         const reviewsLoaded = ref(false);
         const reviewPage = ref(0);
-        const reviewsPerView = ref(1); 
-         
+        const reviewsPerView = ref(1);
+
         let reviewAutoplay = null;
         let reviewAutoplayResume = null;
         const reviewAutoplayInterval = 5000; // 5 segundos
@@ -1364,104 +1673,119 @@ const app = createApp({
         };
 
         // Genera una clave única por producto + variante + opción
-const cartItemKey = (name, variant, option) => {
-    return [name, variant || '', option || ''].join('||');
-};
+        const cartItemKey = (name, variant, option) => {
+            return [name, variant || '', option || ''].join('||');
+        };
 
-// Cantidad total de ítems (sumando cantidades)
-const cartTotalItems = computed(() =>
-    cart.value.reduce((sum, item) => sum + item.qty, 0)
-);
+        // Cantidad total de ítems (sumando cantidades)
+        const cartTotalItems = computed(() =>
+            cart.value.reduce((sum, item) => sum + item.qty, 0)
+        );
 
-// Subtotal formateado (opcional, sin decimales)
-const parsePrice = (priceStr) => {
-    if (!priceStr) return 0;
-    const digits = String(priceStr).replace(/[^\d]/g, '');
-    return parseInt(digits, 10) || 0;
-};
+        // Subtotal formateado (opcional, sin decimales)
+        const parsePrice = (priceStr) => {
+            if (!priceStr) return 0;
+            const digits = String(priceStr).replace(/[^\d]/g, '');
+            return parseInt(digits, 10) || 0;
+        };
 
-const formatPrice = (n) =>
-    '$' + n.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+        const formatPrice = (n) =>
+            '$' + n.toLocaleString('es-AR', { maximumFractionDigits: 0 });
 
-const cartSubtotal = computed(() =>
-    cart.value.reduce((sum, item) => {
-        return sum + parsePrice(item.price) * item.qty;
-    }, 0)
-);
+        const cartSubtotal = computed(() =>
+            cart.value.reduce((sum, item) => {
+                return sum + parsePrice(item.price) * item.qty;
+            }, 0)
+        );
 
-const addToCart = () => {
-    if (!selectedProduct.value) return;
+        const addToCart = () => {
+            if (!selectedProduct.value) return;
 
-    const variantLabel = selectedVariant.value?.label || '';
-    const optionLabel = selectedVariant.value
-        ? '' 
-        : (selectedOption.value || '');
+            const variantLabel = selectedVariant.value?.label || '';
+            const optionLabel = selectedVariant.value
+                ? ''
+                : (selectedOption.value || '');
 
-    const price = selectedProductPrice.value;
-    const key = cartItemKey(selectedProduct.value.name, variantLabel, optionLabel);
+            const price = selectedProductPrice.value;
+            const key = cartItemKey(selectedProduct.value.name, variantLabel, optionLabel);
 
-    const existing = cart.value.find(i => i.key === key);
-    if (existing) {
-        existing.qty += 1;
-    } else {
-        cart.value.push({
-            key,
-            name: selectedProduct.value.name,
-            variant: variantLabel,
-            option: optionLabel,
-            price,
-            qty: 1,
-            type: selectedProduct.value.subcategory || selectedProduct.value.type || ''
+            const existing = cart.value.find(i => i.key === key);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.value.push({
+                    key,
+                    name: selectedProduct.value.name,
+                    variant: variantLabel,
+                    option: optionLabel,
+                    price,
+                    qty: 1,
+                    type: selectedProduct.value.subcategory || selectedProduct.value.type || ''
+                });
+            }
+
+            // Cierra el modal del producto pero deja el carrito cerrado hasta que el usuario haga click en el icono
+            closeProduct();
+        };
+
+        // Cambiar cantidad
+        const increaseQty = (item) => { item.qty += 1; };
+        const decreaseQty = (item) => {
+            if (item.qty > 1) item.qty -= 1;
+            else removeFromCart(item);
+        };
+        const removeFromCart = (item) => {
+            cart.value = cart.value.filter(i => i.key !== item.key);
+        };
+        const clearCart = () => {
+            if (!cart.value.length) return;
+            if (confirm('¿Vaciar el carrito?')) {
+                cart.value = [];
+            }
+        };
+
+        // Abrir/cerrar drawer
+        const openCart = () => {
+            cartOpen.value = true;
+            document.body.classList.add('menu-lock-scroll');
+            if (currentUser.value && !currentUser.value.is_anonymous) {
+                loadProfileDefaults();
+            }
+        }; const closeCart = () => { cartOpen.value = false; document.body.classList.remove('menu-lock-scroll'); };
+        const toggleCart = () => cartOpen.value ? closeCart() : openCart();
+
+        // Si el usuario vacía el carrito o cierra el drawer sin confirmar, reseteamos
+        watch(cartOpen, (open) => {
+            if (!open) {
+                orderSent.value = false;
+                pendingOrderPayload.value = null;
+            }
         });
-    }
 
-    // Cierra el modal del producto pero deja el carrito cerrado hasta que el usuario haga click en el icono
-    closeProduct();
-};
+        // Mensaje completo de WhatsApp con todo el pedido
+        const cartWhatsappLink = computed(() => {
+            if (!cart.value.length) return '#';
 
-// Cambiar cantidad
-const increaseQty = (item) => { item.qty += 1; };
-const decreaseQty = (item) => {
-    if (item.qty > 1) item.qty -= 1;
-    else removeFromCart(item);
-};
-const removeFromCart = (item) => {
-    cart.value = cart.value.filter(i => i.key !== item.key);
-};
-const clearCart = () => {
-    if (!cart.value.length) return;
-    if (confirm('¿Vaciar el carrito?')) {
-        cart.value = [];
-    }
-};
+            const lines = ['Hola SENDA 🍣, quiero hacer el siguiente pedido:', ''];
 
-// Abrir/cerrar drawer
-const openCart = () => { cartOpen.value = true; document.body.classList.add('menu-lock-scroll'); };
-const closeCart = () => { cartOpen.value = false; document.body.classList.remove('menu-lock-scroll'); };
-const toggleCart = () => cartOpen.value ? closeCart() : openCart();
+            cart.value.forEach((item, idx) => {
+                const parts = [`${idx + 1}. ${item.qty}x ${item.name}`];
+                if (item.variant) parts.push(`(${item.variant})`);
+                if (item.option) parts.push(`- ${item.option}`);
+                parts.push(`→ ${item.price} c/u`);
+                lines.push(parts.join(' '));
+            });
 
-// Mensaje completo de WhatsApp con todo el pedido
-const cartWhatsappLink = computed(() => {
-    if (!cart.value.length) return '#';
+            lines.push('');
+            lines.push(`Subtotal estimado: ${formatPrice(cartSubtotal.value)}`);
+            lines.push('');
+            lines.push('¡Gracias!');
 
-    const lines = ['Hola SENDA 🍣, quiero hacer el siguiente pedido:', ''];
-
-    cart.value.forEach((item, idx) => {
-        const parts = [`${idx + 1}. ${item.qty}x ${item.name}`];
-        if (item.variant) parts.push(`(${item.variant})`);
-        if (item.option) parts.push(`- ${item.option}`);
-        parts.push(`→ ${item.price} c/u`);
-        lines.push(parts.join(' '));
-    });
-
-    lines.push('');
-    lines.push(`Subtotal estimado: ${formatPrice(cartSubtotal.value)}`);
-    lines.push('');
-    lines.push('¡Gracias!');
-
-    const text = encodeURIComponent(lines.join('\n'));
-    return `https://wa.me/541161123904?text=${text}`;
-});
+            const text = lines.join('\n');
+            return CONFIG.getWhatsappLink
+                ? CONFIG.getWhatsappLink(text)
+                : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+        });
         // ----- Autoplay del carrusel de reviews -----
         const stopReviewAutoplay = () => {
             if (reviewAutoplay) {
@@ -1529,6 +1853,7 @@ const cartWhatsappLink = computed(() => {
         };
 
         onMounted(() => {
+            initAuth();
             loadReviews();
             updateReviewsPerView();
             window.addEventListener('resize', updateReviewsPerView);
@@ -1566,9 +1891,23 @@ const cartWhatsappLink = computed(() => {
                     stopReviewAutoplay();
                 }
             });
+
+            if (new URLSearchParams(window.location.search).get('reset') === '1') {
+                showResetForm.value = true;
+            }
+
+            const updatePassword = async () => {
+                const { error } = await sb.auth.updateUser({ password: newPassword.value });
+                if (error) authError.value = error.message;
+                else {
+                    authMessage.value = 'Contraseña actualizada. Ya podés iniciar sesión.';
+                    showResetForm.value = false;
+                }
+            };
         });
 
         onUnmounted(() => {
+            if (sb) sb.auth.onAuthStateChange(() => { }); // opcional: limpiar
             loadCartFromStorage();
 
             if (autoplayInterval) {
@@ -1585,6 +1924,8 @@ const cartWhatsappLink = computed(() => {
             scrolled,
             isPageReady,
             modalVisible,
+            whatsappLink,
+            googleMapsLink,
 
             // Menu redesign
             selectedCategory,
@@ -1631,7 +1972,7 @@ const cartWhatsappLink = computed(() => {
             scrollToCategory,
             nextSlide,
             prevSlide,
-            goToSlide, 
+            goToSlide,
 
             // Reviews
             reviews,
@@ -1664,6 +2005,44 @@ const cartWhatsappLink = computed(() => {
             closeCart,
             toggleCart,
             formatPrice,
+
+            // Auth
+            currentUser,
+            authModalOpen,
+            userMenuOpen,
+            authEmail,
+            authLoading,
+            authMessage,
+            authError,
+            openAuthModal,
+            closeAuthModal,
+            toggleUserMenu,
+            closeUserMenu,
+            // signInWithGoogle,
+            signInWithMagicLink,
+            signOut,
+            ordersModalOpen,
+            openOrdersModal,
+            closeOrdersModal,
+            authPassword,
+            isRegistering,
+            useMagicLink,
+            handlePasswordAuth,
+            resetPassword,
+            confirmOrderSaved,
+
+            // Orders
+            myOrders,
+            submittingOrder,
+            orderError,
+            checkout,
+            sendOrderViaWhatsapp,
+            confirmOrderSaved,
+            statusLabel,
+            statusClass,
+            orderSent,
+            sendOrderViaWhatsapp,
+            confirmOrderSaved,
         };
     }
 });
