@@ -72,13 +72,22 @@ const app = createApp({
         const sb = window.sb;
 
         const ordersModalOpen = ref(false);
+        const ordersModalVisible = ref(false); 
 
         const openOrdersModal = () => {
             ordersModalOpen.value = true;
             if (currentUser.value) loadMyOrders(); // Actualizar datos
             closeUserMenu();
+            requestAnimationFrame(() => {
+             ordersModalVisible.value = true;
+            });
         };
-        const closeOrdersModal = () => { ordersModalOpen.value = false; };
+        const closeOrdersModal = () => {
+            ordersModalVisible.value = false;       // 👈 baja la que controla el v-show
+            setTimeout(() => {
+                ordersModalOpen.value = false;      // limpia el flag lógico después de la transición
+            }, 200);
+        };
 
         // --- Auth listeners ---
         const initAuth = async () => {
@@ -234,39 +243,54 @@ const app = createApp({
             else authMessage.value = 'Te enviamos un email para restablecer tu contraseña.';
         };
         // Confirmar pedido (versión invitado)
-        const confirmOrderAsGuest = async () => {
-            if (!pendingOrderPayload.value) return;
-            submittingOrder.value = true;
-            orderError.value = '';
+        // const confirmOrderAsGuest = async () => {
+        //     if (!pendingOrderPayload.value) return;
+        //     submittingOrder.value = true;
+        //     orderError.value = '';
 
-            // Si no hay usuario, iniciar sesión anónimo primero
-            if (!currentUser.value) {
-                const { data, error } = await sb.auth.signInAnonymously();
-                if (error) {
-                    orderError.value = 'No se pudo crear sesión de invitado: ' + error.message;
-                    submittingOrder.value = false;
-                    return;
-                }
-                currentUser.value = data.user;
-            }
+        //     // Si no hay usuario, iniciar sesión anónimo primero
+        //     if (!currentUser.value) {
+        //         const { data, error } = await sb.auth.signInAnonymously();
+        //         if (error) {
+        //             orderError.value = 'No se pudo crear sesión de invitado: ' + error.message;
+        //             submittingOrder.value = false;
+        //             return;
+        //         }
+        //         currentUser.value = data.user;
+        //     }
 
-            // Luego ejecutar el RPC create_order_with_items original
-            // ... (el resto es igual que confirmOrderSaved)
-        };
+        //     // Luego ejecutar el RPC create_order_with_items original
+        //     // ... (el resto es igual que confirmOrderSaved)
+        // };
 
         // Paso 1: abrir WhatsApp con el mensaje
-        // Paso 1: abrir WhatsApp con el mensaje
-        const sendOrderViaWhatsapp = () => {
-            // 1. Quitamos la validación de currentUser para que los guests puedan enviar
+        // Paso 1: abrir WhatsApp con el mensaje y guardar automáticamente
+        const sendOrderViaWhatsapp = async () => {
             if (!cart.value.length) return;
 
-            orderError.value = '';
+            // Validación básica
+            if (!checkout.value.name?.trim()) {
+                orderError.value = 'Ingresá tu nombre para continuar.';
+                return;
+            }
+            if (!checkout.value.phone?.trim()) {
+                orderError.value = 'Ingresá tu teléfono para continuar.';
+                return;
+            }
+            if (checkout.value.order_type === 'delivery' && !checkout.value.address?.trim()) {
+                orderError.value = 'Ingresá la dirección de delivery.';
+                return;
+            }
 
-            // Solo guardamos el perfil si ya hay un usuario logueado (no anónimo)
+            orderError.value = '';
+            submittingOrder.value = true;
+
+            // Guardar perfil solo si hay usuario real (no anónimo)
             if (currentUser.value && !currentUser.value.is_anonymous) {
                 saveProfileDefaults();
             }
 
+            // 1. Armar mensaje de WhatsApp
             const lines = [
                 `Hola SENDA 🍣, soy ${checkout.value.name}.`,
                 `Pedido: ${checkout.value.order_type === 'delivery' ? 'Delivery' : 'Take away'}`,
@@ -285,10 +309,10 @@ const app = createApp({
             if (checkout.value.notes) lines.push(`Notas: ${checkout.value.notes}`);
             lines.push(`Total: ${formatPrice(cartSubtotal.value)}`);
 
-            // 2. Guardamos correctamente el payload completo para usarlo después
+            // 2. Payload del pedido
             pendingOrderPayload.value = {
                 order_type: checkout.value.order_type,
-                payment_method: 'cash', // Puedes ajustar esto luego
+                payment_method: 'cash',
                 customer_name: checkout.value.name,
                 customer_phone: checkout.value.phone,
                 delivery_address: checkout.value.order_type === 'delivery' ? checkout.value.address : null,
@@ -299,33 +323,23 @@ const app = createApp({
                 total: cartSubtotal.value
             };
 
-            // 👇 Usar la variable global para el link de WhatsApp
+            // 3. Abrir WhatsApp
             const url = CONFIG.getWhatsappLink
                 ? CONFIG.getWhatsappLink(lines.join('\n'))
                 : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(lines.join('\n'))}`;
 
             window.open(url, '_blank');
 
-            // 3. Marcamos que ya se envió para mostrar el botón de "Guardar pedido"
-            orderSent.value = true;
-        };
-
-        // --- CONFIRMACIÓN DE PEDIDO (GUEST Y LOGUEADO) ---
-        const confirmOrderSaved = async () => {
-            if (!pendingOrderPayload.value) return;
-
-            submittingOrder.value = true;
-            orderError.value = '';
-
+            // 4. Guardar automáticamente en Supabase
             try {
-                // 1. Si no hay usuario logueado, creamos un usuario anónimo (Guest)
+                // Sesión anónima si no hay usuario
                 if (!currentUser.value) {
                     const { data, error } = await sb.auth.signInAnonymously();
                     if (error) throw new Error('Error al crear sesión de invitado: ' + error.message);
                     currentUser.value = data.user;
                 }
 
-                // 2. Preparamos los ítems
+                // Items
                 const itemsPayload = cart.value.map(i => ({
                     product_name: i.name,
                     variant: i.variant || null,
@@ -334,7 +348,7 @@ const app = createApp({
                     quantity: i.qty
                 }));
 
-                // 3. Guardamos el pedido en Supabase
+                // RPC
                 const { data: orderId, error: rpcError } = await sb.rpc('create_order_with_items', {
                     p_order: pendingOrderPayload.value,
                     p_items: itemsPayload
@@ -342,26 +356,86 @@ const app = createApp({
 
                 if (rpcError) throw rpcError;
 
-                // 4. Limpieza exitosa
-                clearCart();
+                console.log('✅ Pedido guardado con ID:', orderId);
+
+                // 5. Limpieza exitosa (sin abrir modal de "¿Vaciar carrito?")
+                cart.value = [];
                 closeCart();
                 orderSent.value = false;
                 pendingOrderPayload.value = null;
                 checkout.value.notes = '';
 
-                // Si es un usuario real (no guest), actualizamos su perfil con los datos ingresados
+                // Refrescar perfil si es usuario real
                 if (currentUser.value && !currentUser.value.is_anonymous) {
                     await saveProfileDefaults();
                 }
 
+                // Refrescar "Mis pedidos"
                 loadMyOrders();
 
             } catch (error) {
-                orderError.value = 'No pudimos guardar tu pedido: ' + error.message;
+                console.error('❌ Error guardando pedido:', error);
+                orderError.value = 'El pedido se envió por WhatsApp, pero no pudimos guardarlo en tu historial: ' + error.message;
+                // 👆 Importante: el usuario ve el error, pero el pedido YA salió por WhatsApp.
+                // No limpiamos el carrito para que pueda reintentar el guardado o revisar.
             } finally {
                 submittingOrder.value = false;
             }
         };
+
+        // --- CONFIRMACIÓN DE PEDIDO (GUEST Y LOGUEADO) ---
+        // const confirmOrderSaved = async () => {
+        //     if (!pendingOrderPayload.value) return;
+
+        //     submittingOrder.value = true;
+        //     orderError.value = '';
+
+        //     try {
+        //         // 1. Si no hay usuario logueado, creamos un usuario anónimo (Guest)
+        //         if (!currentUser.value) {
+        //             const { data, error } = await sb.auth.signInAnonymously();
+        //             if (error) throw new Error('Error al crear sesión de invitado: ' + error.message);
+        //             currentUser.value = data.user;
+        //         }
+
+        //         // 2. Preparamos los ítems
+        //         const itemsPayload = cart.value.map(i => ({
+        //             product_name: i.name,
+        //             variant: i.variant || null,
+        //             option: i.option || null,
+        //             unit_price: parsePrice(i.price),
+        //             quantity: i.qty
+        //         }));
+
+        //         // 3. Guardamos el pedido en Supabase
+        //         const { data: orderId, error: rpcError } = await sb.rpc('create_order_with_items', {
+        //             p_order: pendingOrderPayload.value,
+        //             p_items: itemsPayload
+        //         });
+
+        //         if (rpcError) throw rpcError;
+
+        //         // 4. Limpieza exitosa
+        //         // console.log('pasa');
+        //         clearCart();
+        //         closeCart();
+        //         orderSent.value = false;
+        //         pendingOrderPayload.value = null;
+        //         checkout.value.notes = '';
+
+        //         // Si es un usuario real (no guest), actualizamos su perfil con los datos ingresados
+        //         if (currentUser.value && !currentUser.value.is_anonymous) {
+        //             await saveProfileDefaults();
+        //         }
+
+        //         loadMyOrders();
+
+        //     } catch (error) {
+        //         orderError.value = 'No pudimos guardar tu pedido: ' + error.message;
+        //     } finally {
+        //         submittingOrder.value = false;
+        //     }
+        // };
 
 
         // Helpers de estado
@@ -444,778 +518,7 @@ const app = createApp({
         ]);
 
         // NUEVA ESTRUCTURA DE MENÚ SEGÚN SEGMENTACIÓN
-        const menuItems = ref([
-            // ============================================================
-            // ========== ENTRADAS ==========
-            // Harumakis, Gyozas, Langostino Crunchy, Tempura, Colchón de arroz frito
-            // ============================================================
-            {
-                name: "Harumakis",
-                secondname: "Carne o verdura con salsa",
-                type: "Entrada",
-                contents: "Harumakis de carne o verdura con salsa.",
-                price: "$9.000",
-                flags: [],
-                options: ["3 unidades"],
-                category: "entradas",
-                subcategory: "Entradas",
-                pieces: "3 unidades",
-                variants: [],
-            },
-            {
-                name: "Gyozas",
-                secondname: "De cerdo y verduras",
-                type: "Entrada",
-                contents: "Gyozas rellenas de cerdo y verduras.",
-                price: "$12.000",
-                flags: [],
-                options: ["5 unidades"],
-                category: "entradas",
-                subcategory: "Entradas",
-                pieces: "5 unidades",
-                variants: [],
-            },
-            {
-                name: "Langostino Crunchy",
-                secondname: "Con salsa",
-                type: "Entrada",
-                contents: "Langostinos crocantes con salsa.",
-                price: "$15.000",
-                flags: ["Tempura"],
-                options: ["6 unidades"],
-                category: "entradas",
-                subcategory: "Entradas",
-                pieces: "6 unidades",
-                variants: [],
-            },
-            {
-                name: "Tempura",
-                secondname: "Salmón con salsa Bs As / Langostino con salsa teriyaki / Mixto",
-                type: "Entrada",
-                contents: "Salmón con salsa Bs As / Langostino con salsa teriyaki / Mixto salmón y langostino.",
-                price: "$15.000",
-                flags: ["Tempura"],
-                options: ["5 unidades"],
-                category: "entradas",
-                subcategory: "Entradas",
-                pieces: "5 unidades",
-                variants: [
-                    { label: "Salmón", price: "$15.000" },
-                    { label: "Langostino", price: "$15.000" },
-                    { label: "Mixto", price: "$15.000" }
-                ],
-            },
-            {
-                name: "Colchón de arroz frito",
-                secondname: "Topping de tartar de salmón y salsa Senda",
-                type: "Entrada",
-                contents: "Colchón de arroz frito con topping de tartar de salmón y salsa Senda.",
-                price: "$15.000",
-                flags: [],
-                options: ["4 unidades"],
-                category: "entradas",
-                subcategory: "Entradas",
-                pieces: "4 unidades",
-                variants: [],
-            },
-
-            // ============================================================
-            // ========== PLATOS ==========
-            // Sushi burrito, Chow Fan, Wok, Cerdo Tonkatsu, Lomo salteado
-            // ============================================================
-            {
-                name: "Sushi burrito",
-                secondname: "Crunchy / Tokyo / Veggie",
-                type: "Sushi Burrito",
-                contents: "Crunchy: langostino apanado, kanikama y hongo en aceite de sésamo, palta, ciboulette con salsa acevichada / Tokyo: salmón, palta, philadelphia, pepino con salsa teriyaki / Veggie: zanahoria, pepino, palta, huevo, philadelphia y sésamo tostado.",
-                price: "$18.000",
-                flags: ["Opción Veggie"],
-                options: ["1 unidad"],
-                category: "platos",
-                subcategory: "Platos",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Crunchy", price: "$18.000" },
-                    { label: "Tokyo", price: "$18.000" },
-                    { label: "Veggie", price: "$18.000" }
-                ],
-            },
-            {
-                name: "Chow Fan",
-                secondname: "Pollo / Vegetales / Cerdo / Langostinos / Lomo / Veggie",
-                type: "Chow Fan",
-                contents: "Arroz sofrito, huevo, zanahoria, arvejas y verdeo. Pollo o Vegetales + 2 harumakis (carne o verdura). Fideos de huevo, morrón, cebolla, zanahoria, brote de soja y salsa roja.",
-                price: "$20.000",
-                flags: ["Opción Veggie"],
-                options: [],
-                category: "platos",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [
-                    { label: "Pollo", price: "$20.000" },
-                    { label: "Vegetales", price: "$20.000" }
-                    // { label: "Cerdo", price: "$20.000" },
-                    // { label: "Langostinos", price: "$20.000" },
-                    // { label: "Lomo", price: "$20.000" },
-                    // { label: "Veggie", price: "$20.000" }
-                ],
-            },
-            {
-                name: "Wok",
-                secondname: "Pollo teriyaki / Langostinos / Salmón grille / Vegetales / Lomo / Mixto",
-                type: "Wok",
-                contents: "Zanahoria, brote de soja, huevo, verdeo y salsa de soja. Mixto: salmón grille y langostinos.",
-                price: "$20.000",
-                flags: ["Picante", "Opción Veggie"],
-                options: [],
-                category: "platos",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [
-                    { label: "Pollo teriyaki", price: "$20.000" },
-                    { label: "Langostinos", price: "$20.000" },
-                    { label: "Salmón grille", price: "$20.000" },
-                    { label: "Vegetales", price: "$20.000" },
-                    { label: "Lomo", price: "$20.000" },
-                    { label: "Mixto", price: "$22.000" }
-                ],
-            },
-            {
-                name: "Cerdo Tonkatsu",
-                secondname: "",
-                type: "Plato",
-                contents: "Apanado en panko, frito con salsa tonkatsu y arroz con huevo.",
-                price: "$18.000",
-                flags: ["Tempura"],
-                options: [],
-                category: "platos",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [],
-            },
-            {
-                name: "Lomo salteado",
-                secondname: "",
-                type: "Plato",
-                contents: "Lomo salteado con cebolla morada, morrón rojo y amarillo, y cilantro, sobre un colchón de arroz blanco con aceite de sésamo.",
-                price: "$22.000",
-                flags: ["Picante"],
-                options: [],
-                category: "platos",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [],
-            },
-            {
-                name: "Udon",
-                secondname: "",
-                type: "Plato",
-                contents: "Fideos de huevo, morrón, cebolla, zanahoria, brote de soja y salsa roja",
-                price: "$20.000",
-                flags: ["Picante"],
-                options: [],
-                category: "platos",
-                subcategory: "Platos",
-                pieces: "",
-                variants: [
-                    { label: "Cerdo", price: "$20.000" },
-                    { label: "Langostino", price: "$20.000" },
-                    { label: "Lomo", price: "$20.000" },
-                    { label: "Veggie", price: "$20.000" }
-                ],
-            },
-
-
-            // ============================================================
-            // ========== CORTES ==========
-            // Temakis, Nigiris, Sashimis, Geishas, Tiraditos
-            // ============================================================
-            {
-                name: "Temakis",
-                secondname: "Salmón / Langostino / Atún rojo / Pulpo",
-                type: "Temaki",
-                contents: "Salmón, philadelphia y palta / Langostino sellado en soja, palta, philadelphia y verdeo / Atún rojo, philadelphia picante, negui y pepino / Pulpo, palta, cremoso de ají amarillo, cilantro.",
-                price: "$13.000",
-                flags: ["Sin TACC", "Opción Veggie"],
-                options: ["1 unidad"],
-                category: "cortes",
-                subcategory: "Cortes",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Salmón", price: "$13.000" },
-                    { label: "Langostino", price: "$13.000" },
-                    { label: "Atún rojo", price: "$13.000" },
-                    { label: "Pulpo", price: "$13.000" }
-                ],
-            },
-            {
-                name: "Nigiris",
-                secondname: "Atún rojo / Salmón / Salmón flameado / Salmón ahumado / Langostino / Palta flameada",
-                type: "Nigiri",
-                contents: "Atún rojo cremoso de ají amarillo con ralladura de lima / Salmón / Salmón flameado con mayonesa acevichada y hondashi / Salmón ahumado / Langostino / Palta flameada con salsa thai.",
-                price: "$14.000",
-                flags: ["Sin TACC", "Opción Veggie"],
-                options: ["5 unidades"],
-                category: "cortes",
-                subcategory: "Cortes",
-                pieces: "5 unidades",
-                variants: [
-                    { label: "Atún rojo", price: "$14.000" },
-                    { label: "Salmón", price: "$14.000" },
-                    { label: "Salmón flameado", price: "$14.000" },
-                    { label: "Salmón ahumado", price: "$14.000" },
-                    { label: "Langostino", price: "$14.000" },
-                    { label: "Palta flameada", price: "$14.000" }
-                ],
-            },
-            {
-                name: "Sashimis",
-                secondname: "Salmón / Atún rojo / Pulpo / SENDA",
-                type: "Sashimi",
-                contents: "Salmón / Atún rojo / Pulpo / SENDA: salmón, atún, pulpo, salmón flameado.",
-                price: "$16.000",
-                flags: ["Sin TACC"],
-                options: ["4 unidades"],
-                category: "cortes",
-                subcategory: "Cortes",
-                pieces: "4 unidades",
-                variants: [
-                    { label: "Salmón", price: "$14.000" },
-                    { label: "Atún rojo", price: "$14.000" },
-                    { label: "Pulpo", price: "$14.000" },
-                    { label: "SENDA", price: "$16.000" }
-                ],
-            },
-            {
-                name: "Geishas",
-                secondname: "Atún rojo / Pulpo / Salmón / Langostino crunchy",
-                type: "Geisha",
-                contents: "Atún rojo, palta, philadelphia y ciboulette / Pulpo, palta con teriyaki flameado / Salmón, palta y philadelphia / Langostino crunchy, palta, philadelphia envuelto en salmón.",
-                price: "$13.000",
-                flags: ["Sin TACC"],
-                options: ["5 unidades"],
-                category: "cortes",
-                subcategory: "Cortes",
-                pieces: "5 unidades",
-                variants: [
-                    { label: "Atún rojo", price: "$13.000" },
-                    { label: "Pulpo", price: "$13.000" },
-                    { label: "Salmón", price: "$13.000" },
-                    { label: "Langostino crunchy", price: "$13.000" }
-                ],
-            },
-            {
-                name: "Tiraditos",
-                secondname: "Salmón / Atún rojo / Pulpo",
-                type: "Tiradito",
-                contents: "Salmón: jugo de lima y mango, cremoso de ají amarillo y palta flameada / Atún rojo: en salsa de soja alimonada, mirin, con cebolla morada en pluma / Pulpo: espuma de aceituna, ralladura de lima y aceite de oliva.",
-                price: "$16.000",
-                flags: [],
-                options: ["6 unidades"],
-                category: "cortes",
-                subcategory: "Cortes",
-                pieces: "6 unidades",
-                variants: [
-                    { label: "Salmón", price: "$16.000" },
-                    { label: "Atún rojo", price: "$16.000" },
-                    { label: "Pulpo", price: "$16.000" }
-                ],
-            },
-
-            // ============================================================
-            // ========== SUSHI ==========
-            // Hot dogs, Super Dog, Sushi Burger, Sushi bowls
-            // ============================================================
-            {
-                name: "Hot dogs",
-                secondname: "Salmón / Langostino crunchy / Atún rojo / Kani",
-                type: "Hot Dog",
-                contents: "Media alga, roll de arroz en panko, frito, relleno de palta y philadelphia. Salmón fresco o grille con lluvia de ciboulette / Langostino crunchy con lluvia de batata frita / Atún rojo con lluvia de pepino y teriyaki / Kani, champignon, salsa acevichada y lluvia de batata frita.",
-                price: "$13.000",
-                flags: ["Tempura", "Picante"],
-                options: ["1 unidad"],
-                category: "sushi",
-                subcategory: "Sushi",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Salmón", price: "$13.000" },
-                    { label: "Langostino crunchy", price: "$13.000" },
-                    { label: "Atún rojo", price: "$13.000" },
-                    { label: "Kani", price: "$13.000" }
-                ],
-            },
-            {
-                name: "Super Dog",
-                secondname: "Salmón / Langostino crunchy / Atún rojo / Kani",
-                type: "Super Dog",
-                contents: "Alga completa, roll de arroz en panko, frito, relleno de palta y philadelphia. Salmón fresco o grille y negui / Langostino crunchy con lluvia de batata frita / Atún rojo con lluvia de pepino y teriyaki / Kani, champignon, salsa acevichada y sésamo.",
-                price: "$19.000",
-                flags: ["Tempura", "Picante"],
-                options: ["1 unidad"],
-                category: "sushi",
-                subcategory: "Sushi",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Salmón", price: "$19.000" },
-                    { label: "Langostino crunchy", price: "$19.000" },
-                    { label: "Atún rojo", price: "$19.000" },
-                    { label: "Kani", price: "$19.000" }
-                ],
-            },
-            {
-                name: "Sushi Burger",
-                secondname: "Salmón / Langostino / Mixto / Kanikama / Veggie",
-                type: "Sushi Burger",
-                contents: "Todas las burger vienen con chips de pepino. Salmón: salmón crudo y ahumado con palta alimonada / Langostino: philadelphia hashi, negui y chips de pepino / Mixto: salmón y lango, philadelphia hashi, champignon y negui / Kanikama: kani en finos hilos, langostino crunch y palta / Veggie: palta alimonada, champignon, tomate asado.",
-                price: "$20.000",
-                flags: ["Opción Veggie"],
-                options: ["1 unidad"],
-                category: "sushi",
-                subcategory: "Sushi",
-                pieces: "1 unidad",
-                variants: [
-                    { label: "Salmón", price: "$20.000" },
-                    { label: "Langostino", price: "$20.000" },
-                    { label: "Mixto", price: "$20.000" },
-                    { label: "Kanikama", price: "$20.000" },
-                    { label: "Veggie", price: "$18.000" }
-                ],
-            },
-            {
-                name: "Sushi bowls",
-                secondname: "Tropical / Salmón / Langostino crunchy / Atún rojo / Vegetariano",
-                type: "Sushi Bowl",
-                contents: "Tropical: arroz dulce, palta, philadelphia, salmón fresco, mango e hilos de batata frita / Salmón: arroz dulce, palta, philadelphia, salmón grille y negui / Langostino crunchy: arroz dulce, palta, philadelphia, langostino crunchy, zanahoria tare y lluvia de batata frita / Atún rojo: arroz dulce, palta, philadelphia, atún rojo, pepino y salsa de ostras / Vegetariano: arroz dulce, palta, philadelphia, zanahoria tare, hongo rehogado en aceite de sésamo.",
-                price: "$20.000",
-                flags: ["Opción Veggie"],
-                options: [],
-                category: "sushi",
-                subcategory: "Sushi",
-                pieces: "",
-                variants: [
-                    { label: "Tropical", price: "$20.000" },
-                    { label: "Salmón", price: "$20.000" },
-                    { label: "Langostino crunchy", price: "$20.000" },
-                    { label: "Atún rojo", price: "$20.000" },
-                    { label: "Vegetariano", price: "$20.000" }
-                ],
-            },
-
-            // ============================================================
-            // ========== FUSIÓN ==========
-            // Tartares, Ceviches, Baos
-            // ============================================================
-            {
-                name: "Tartares",
-                secondname: "Salmón / Atún rojo / Pulpo",
-                type: "Tartar",
-                contents: "Salmón: colchón de palta, salmón crudo, ahumado, aceite de oliva, soja y ciboulette con ralladura de lima / Atún rojo: colchón de palta, atún marinado en aceite de sésamo y jengibre, con sésamo / Pulpo: colchón de palta, marinado en cremoso picante de ají amarillo coronado con brunoise de pepino.",
-                price: "$23.000",
-                flags: [],
-                options: [],
-                category: "fusion",
-                subcategory: "Fusión",
-                pieces: "",
-                variants: [
-                    { label: "Salmón", price: "$23.000" },
-                    { label: "Atún rojo", price: "$23.000" },
-                    { label: "Pulpo", price: "$23.000" }
-                ],
-            },
-            {
-                name: "Ceviches",
-                secondname: "Salmón o mixto / Pulpo o atún rojo",
-                type: "Ceviche",
-                contents: "Salmón o mixto con langostino: cebolla morada en pluma, palta, ají dulce, jugo de limón, cilantro y cancha / Pulpo o atún rojo: cebolla morada en pluma, palta, cilantro, jugo de limón, ají dulce, rodajas de boniato y cancha.",
-                price: "$23.000",
-                flags: ["Picante"],
-                options: [],
-                category: "fusion",
-                subcategory: "Fusión",
-                pieces: "",
-                variants: [
-                    { label: "Mixto", price: "$23.000" },
-                    { label: "Salmón", price: "$23.000" },
-                    { label: "Pulpo", price: "$23.000" },
-                    { label: "Atún rojo", price: "$23.000" }
-                ],
-            },
-            {
-                name: "Baos",
-                secondname: "Pulled Pork / Lango fusion",
-                type: "Bao",
-                contents: "Pulled Pork occidental: bondiola de cerdo desmenuzada, braseada en cerveza, verduras, con tiritas de pepino / Lango fusion: langostinos y champignon a la plancha con aceite de sésamo con chips de pepino.",
-                price: "$16.000",
-                flags: ["Picante"],
-                options: ["2 unidades"],
-                category: "fusion",
-                subcategory: "Fusión",
-                pieces: "2 unidades",
-                variants: [
-                    { label: "Pulled Pork", price: "$16.000" },
-                    { label: "Lango fusion", price: "$16.000" }
-                ],
-            },
-
-            // ============================================================
-            // ========== ROLLS ==========
-            // Rolls clásicos, Rolls veggie, Tamago rolls, Rolls Premium, Rolls supreme, Hot rolls, Hot rolls sin arroz
-            // ============================================================
-            {
-                name: "Rolls clásicos",
-                secondname: "New York / Philadelphia / New York phila / California / Lango cheese / Salmón grille / Avocado tuna / Spicy tuna",
-                type: "Roll clásico",
-                contents: "New York: salmón y palta / Philadelphia: salmón y philadelphia / New York phila: salmón, palta y philadelphia / California: kanikama y palta / Lango cheese: langostino y philadelphia con sésamo / Salmón grille con cobertura de palta / Avocado tuna: atún, verdeo, jugo de limón, con cobertura de palta / Spicy tuna: atún, verdeo, jugo de limón, con cobertura de palta y salsa spicy.",
-                price: "$9.500",
-                flags: ["Picante"],
-                options: ["5 piezas"],
-                category: "rolls",
-                subcategory: "Rolls clásicos",
-                pieces: "5 piezas",
-                variants: [
-                    { label: "New York", price: "$9.500" },
-                    { label: "Philadelphia", price: "$9.500" },
-                    { label: "New York phila", price: "$9.500" },
-                    { label: "California", price: "$9.500" },
-                    { label: "Lango cheese", price: "$9.500" },
-                    { label: "Salmón grille", price: "$9.500" },
-                    { label: "Avocado tuna", price: "$9.500" },
-                    { label: "Spicy tuna", price: "$9.500" }
-                ],
-            },
-            {
-                name: "Rolls veggie",
-                secondname: "Zen / Praga / Wasabi",
-                type: "Roll veggie",
-                contents: "Zen: zanahoria tare, philadelphia, con cobertura de palta flameada en salsa thai / Praga: palta, philadelphia, cobertura de mango, salsa mango y lluvia de batata / Wasabi: tomate asado, philadelphia, ciboulette, cobertura de palta y mayo wasabi.",
-                price: "$8.500",
-                flags: ["Opción Veggie"],
-                options: ["5 piezas"],
-                category: "rolls",
-                subcategory: "Rolls veggie",
-                pieces: "5 piezas",
-                variants: [
-                    { label: "Zen", price: "$8.500" },
-                    { label: "Praga", price: "$8.500" },
-                    { label: "Wasabi", price: "$8.500" }
-                ],
-            },
-            {
-                name: "Tamago rolls",
-                secondname: "Cheese / Sweet palmi / Chill",
-                type: "Tamago Roll",
-                contents: "Sin arroz ni alga, roll envuelto en huevo sweet. Cheese: salmón, philadelphia, verdeo / Sweet palmi: salmón, palmito, mango, con lluvia de almendras y salsa teriyaki / Chill: atún rojo, philadelphia picante y tira de pepino.",
-                price: "$10.500",
-                flags: ["Picante"],
-                options: ["5 piezas"],
-                category: "rolls",
-                subcategory: "Tamago rolls",
-                pieces: "5 piezas",
-                variants: [
-                    { label: "Cheese", price: "$10.500" },
-                    { label: "Sweet palmi", price: "$10.500" },
-                    { label: "Chill", price: "$10.500" }
-                ],
-            },
-            {
-                name: "Rolls Premium",
-                secondname: "Senda / Amai / Flameado / Tori / Umi / Crunchy / Maracuyá / Palmi / Tataki / Nach",
-                type: "Roll premium",
-                contents: "Senda: langostino, palta, philadelphia, con cobertura de salmón y salsa teriyaki / Amai: langostino crunchy, philadelphia, cobertura de salmón y salsa acevichada / Flameado: langostino, philadelphia, con cobertura de salmón flameado con mayo wasabi / Tori: salmón, philadelphia con lluvia de verdeo / Umi: salmón, philadelphia con cobertura de mango, salsa teriyaki y almendras picadas / Crunchy: salmón crunchy, palta con salsa acevichada y lluvia de batata frita / Maracuyá: langostino crunchy, palta, pepino, philadelphia hashi, envuelto en salmón y palta con salsa de maracuyá / Palmi: salmón, palmito, envuelto en palta / Tataki: hongo, philadelphia, coronado con kanikama spicy / Nach: salmón, palta coronado de salsa curry y diamante de langostino.",
-                price: "$10.500",
-                flags: ["Picante", "Tempura", "Flameado"],
-                options: ["5 piezas"],
-                category: "rolls",
-                subcategory: "Rolls Premium",
-                pieces: "5 piezas",
-                variants: [
-                    { label: "Senda", price: "$10.500" },
-                    { label: "Amai", price: "$10.500" },
-                    { label: "Flameado", price: "$10.500" },
-                    { label: "Tori", price: "$10.500" },
-                    { label: "Umi", price: "$10.500" },
-                    { label: "Crunchy", price: "$10.500" },
-                    { label: "Maracuyá", price: "$10.500" },
-                    { label: "Palmi", price: "$10.500" },
-                    { label: "Tataki", price: "$10.500" },
-                    { label: "Nach", price: "$10.500" }
-                ],
-            },
-            {
-                name: "Rolls Supreme",
-                secondname: "Ahumado / Fusión / Caviar / Octopus / Red hot / Golden",
-                type: "Roll supreme",
-                contents: "Ahumado: palta, pepino con cobertura de salmón ahumado / Fusión: salmón, palta, con topping de pulpo con cremoso de ají y cancha / Caviar: philadelphia, palta con topping de tartar de salmón y caviar / Octopus: pulpo, con cobertura de palta flameada con salsa thai y teriyaki / Red hot: palta, kanikama, con topping spicy de tartar de atún / Golden: langostino, palta, cubierto de salmón flameado, jalapeño en tempura y caviar.",
-                price: "$12.000",
-                flags: ["Picante", "Tempura", "Flameado"],
-                options: ["5 piezas"],
-                category: "rolls",
-                subcategory: "Rolls Supreme",
-                pieces: "5 piezas",
-                variants: [
-                    { label: "Ahumado", price: "$12.000" },
-                    { label: "Fusión", price: "$12.000" },
-                    { label: "Caviar", price: "$12.000" },
-                    { label: "Octopus", price: "$12.000" },
-                    { label: "Red hot", price: "$12.000" },
-                    { label: "Golden", price: "$12.000" }
-                ],
-            },
-            {
-                name: "Hot rolls",
-                secondname: "Mystic / Tokio / Furai",
-                type: "Hot Roll",
-                contents: "Roll relleno, apanado en panko frito. Mystic: salmón crunchy con philadelphia / Tokio: langostino, palta y philadelphia / Furai: kanikama, philadelphia con topping de guacamole.",
-                price: "$10.500",
-                flags: ["Empanado", "Tempura"],
-                options: ["5 piezas"],
-                category: "rolls",
-                subcategory: "Hot rolls",
-                pieces: "5 piezas",
-                variants: [
-                    { label: "Mystic", price: "$10.500" },
-                    { label: "Tokio", price: "$10.500" },
-                    { label: "Furai", price: "$10.500" }
-                ],
-            },
-            {
-                name: "Hot rolls sin arroz",
-                secondname: "Mex / Bs As / Italian",
-                type: "Hot Roll sin arroz",
-                contents: "Apanado en panko, frito. Mex: tiras de salmón, palta, con topping de salmón ahumado alimonado y maíz cancha / Bs As: tiras de salmón, palta, philadelphia, coronado con ciboulette y salsa Bs As / Italian: tiras de salmón, philadelphia, albahaca, coronado de tomate asado.",
-                price: "$12.000",
-                flags: ["Empanado", "Tempura"],
-                options: ["5 piezas"],
-                category: "rolls",
-                subcategory: "Hot rolls sin arroz",
-                pieces: "5 piezas",
-                variants: [
-                    { label: "Mex", price: "$12.000" },
-                    { label: "Bs As", price: "$12.000" },
-                    { label: "Italian", price: "$12.000" }
-                ],
-            },
-
-            // ============================================================
-            // ========== TABLAS ==========
-            // Camino Simple, Doble Paso, Gran Paso
-            // ============================================================
-            {
-                name: "Camino Simple",
-                secondname: "x15 / x30 / x50",
-                type: "Tabla",
-                contents: "x15: 2 Nigiris lango, 5 lango cheese, 4 california, 4 tuna spicy / x30: 3 Nigiri lango, 2 nigiri salmon, 5 california, 5 zen, 5 lango cheese, 5 avocado tuna y 5 makis grille / x50: 5 langostinos crunchy, 5 lango cheese, 5 california, 5 makis langostino, 5 new york, 5 grille, 5 zen, 5 avocado tuna, 5 new york phila, hot dog a elección.",
-                price: "$25.000",
-                flags: ["Picante", "Empanado"],
-                options: ["15 piezas", "30 piezas", "50 piezas"],
-                category: "tablas",
-                subcategory: "Tablas",
-                pieces: "15/30/50 piezas",
-                variants: [
-                    { label: "x15", price: "$25.000" },
-                    { label: "x30", price: "$46.000" },
-                    { label: "x50", price: "$80.000" }
-                ],
-            },
-            {
-                name: "Doble Paso",
-                secondname: "x15 / x30 / x50",
-                type: "Tabla",
-                contents: "x15: 2 Nigiri salmon, 2 geishas, 5 New York phila, 4 Umi, 2 Maki / x30: 2 Nigiri salmon, 3 geishas, 5 senda, 5 New York phila, 5 New York, 5 maki grille, 5 hot mystic / x50: 4 Nigiris salmon, 3 geishas de salmon, 3 sashimis, 5 salmon grille, 5 new york, 5 new york phila, 5 tamago cheese, 5 senda, 5 makis salmon, hot mystic, hot dog a elección.",
-                price: "$28.000",
-                flags: ["Picante", "Empanado"],
-                options: ["15 piezas", "30 piezas", "50 piezas"],
-                category: "tablas",
-                subcategory: "Tablas",
-                pieces: "15/30/50 piezas",
-                variants: [
-                    { label: "x15", price: "$28.000" },
-                    { label: "x30", price: "$55.000" },
-                    { label: "x50", price: "$89.000" }
-                ],
-            },
-            {
-                name: "Gran Paso",
-                secondname: "x15 / x30 / x60",
-                type: "Tabla",
-                contents: "x15: 2 Nigiris salmon ahumado, 5 tori, 5 octopus, 3 maki de atún rojo / x30: 2 Nigiris salmon, 3 geishas, 5 tori, 5 octopus, 5 maki atún rojo, 5 golden, 5 New York phila / x60: 5 octopus, 5 amai, 5 makis de atún rojo, 5 new york, 5 tori, 3 geishas, 4 sashimis de salmon, 3 nigiris de salmon ahumado, 5 crunchy, hot tokyo, hot dog a elección.",
-                price: "$30.000",
-                flags: ["Picante", "Empanado"],
-                options: ["15 piezas", "30 piezas", "60 piezas"],
-                category: "tablas",
-                subcategory: "Tablas",
-                pieces: "15/30/60 piezas",
-                variants: [
-                    { label: "x15", price: "$30.000" },
-                    { label: "x30", price: "$60.000" },
-                    { label: "x60", price: "$105.000" }
-                ],
-            },
-            // ============================================================
-            // ========== BEBIDAS ==========
-            // Gaseosas, Aguas, Cervezas, Vinos Blancos, Vinos Rosados, Vinos Tintos
-            // ============================================================
-            {
-                name: "Gaseosas",
-                secondname: "Coca, Coca zero, Sprite, Fanta, Paso de los Toros pomelo, Agua tónica",
-                type: "Bebida",
-                contents: "Opciones: Coca, Coca zero, Sprite, Fanta, Paso de los toros pomelo, Agua tónica.",
-                price: "$3.500",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas",
-                pieces: "",
-                variants: [
-                    { label: "Coca", price: "$3.500" },
-                    { label: "Coca zero", price: "$3.500" },
-                    { label: "Sprite", price: "$3.500" },
-                    { label: "Fanta", price: "$3.500" },
-                    { label: "Paso de los toros pomelo", price: "$3.500" },
-                    { label: "Agua tónica", price: "$3.500" }
-                ],
-            },
-            {
-                name: "Agua",
-                secondname: "Sin gas / Con gas / Saborizada (Pomelo, Manzana)",
-                type: "Bebida",
-                contents: "Agua mineral con o sin gas, o agua saborizada sabor pomelo o manzana.",
-                price: "$3.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas",
-                pieces: "",
-                variants: [
-                    { label: "Sin gas", price: "$3.000" },
-                    { label: "Con gas", price: "$3.000" },
-                    { label: "Saborizada Pomelo", price: "$3.000" },
-                    { label: "Saborizada Manzana", price: "$3.000" }
-                ],
-            },
-            {
-                name: "Cerveza",
-                secondname: "Asahi japonesa / Corona",
-                type: "Bebida",
-                contents: "Cerveza Asahi japonesa o Cerveza Corona.",
-                price: "$5.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Bebidas",
-                pieces: "",
-                variants: [
-                    { label: "Asahi japonesa", price: "$5.000" },
-                    { label: "Corona", price: "$6.000" }
-                ],
-            },
-            {
-                name: "Vino Blanco",
-                secondname: "Putruele 500ml / Cordero con piel de lobo 750ml / Lola Torrontés 750ml / Puerta Alta Torrontés 750ml",
-                type: "Vino Blanco",
-                contents: "Bodega Putruele (500ml), Cordero con piel de lobo (750ml), Lola Torrontés (750ml) o Puerta Alta Torrontés (750ml).",
-                price: "$10.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Vinos",
-                pieces: "",
-                variants: [
-                    { label: "Bodega Putruele 500ml", price: "$10.000" },
-                    { label: "Cordero con piel de lobo 750ml", price: "$13.000" },
-                    { label: "Lola Torrontés 750ml", price: "$10.000" },
-                    { label: "Puerta Alta Torrontés 750ml", price: "$10.000" }
-                ],
-            },
-            {
-                name: "Vino Rosado",
-                secondname: "Bodega Putruele 500ml",
-                type: "Vino Rosado",
-                contents: "Bodega Putruele Rosado (500ml).",
-                price: "$10.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Vinos",
-                pieces: "",
-                variants: [],
-            },
-            {
-                name: "Vino Tinto",
-                secondname: "Malbicho 750ml / Aristides 750ml / Puerta Alta Malbec 750ml / Puerta Alta Malbec Reserva 750ml",
-                type: "Vino Tinto",
-                contents: "Malbicho 750ml, Aristides 750ml, Puerta Alta Malbec 750ml o Puerta Alta Malbec Reserva 750ml.",
-                price: "$12.000",
-                flags: [],
-                options: [],
-                category: "bebidas",
-                subcategory: "Vinos",
-                pieces: "",
-                variants: [
-                    { label: "Malbicho 750ml", price: "$12.000" },
-                    { label: "Aristides 750ml", price: "$15.000" },
-                    { label: "Puerta Alta Malbec 750ml", price: "$17.000" },
-                    { label: "Puerta Alta Malbec Reserva 750ml", price: "$20.000" }
-                ],
-            },
-
-            // ============================================================
-            // ========== POSTRES ==========
-            // Cheesecake japonés, Brownie, Cookie, Café
-            // ============================================================
-            {
-                name: "Cheesecake japonés",
-                secondname: "",
-                type: "Postre",
-                contents: "Esponjoso y suave cheesecake al estilo japonés.",
-                price: "$3.700",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Postres",
-                pieces: "",
-                variants: [],
-            },
-            {
-                name: "Brownie chocolate",
-                secondname: "",
-                type: "Postre",
-                contents: "Brownie artesanal de chocolate.",
-                price: "$3.000",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Postres",
-                pieces: "",
-                variants: [],
-            },
-            {
-                name: "Cookie vainilla & chips chocolate",
-                secondname: "",
-                type: "Postre",
-                contents: "Galleta de vainilla con chispas de chocolate.",
-                price: "$2.500",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Postres",
-                pieces: "",
-                variants: [],
-            },
-            {
-                name: "Café",
-                secondname: "",
-                type: "Postre",
-                contents: "Café infusionado.",
-                price: "$4.000",
-                flags: [],
-                options: [],
-                category: "postres",
-                subcategory: "Postres",
-                pieces: "",
-                variants: [],
-            }
-        ]);
+        const menuItems = ref(window.SENDA_MENU_ITEMS || []);
 
         const schedules = ref([
             { day: 'Almuerzo:', hours: 'Miércoles a Sábados de 12 a 15:30hs' },
@@ -1737,11 +1040,27 @@ const app = createApp({
         const removeFromCart = (item) => {
             cart.value = cart.value.filter(i => i.key !== item.key);
         };
+
         const clearCart = () => {
+            askClearCart();
+        };
+
+        const clearCartModalOpen = ref(false);
+
+        const askClearCart = () => {
             if (!cart.value.length) return;
-            if (confirm('¿Vaciar el carrito?')) {
-                cart.value = [];
-            }
+            clearCartModalOpen.value = true;
+        };
+
+        const cancelClearCart = () => {
+            clearCartModalOpen.value = false;
+        };
+
+        const confirmClearCart = () => {
+            cart.value = [];
+            clearCartModalOpen.value = false;
+            orderSent.value = false;
+            pendingOrderPayload.value = null;
         };
 
         // Abrir/cerrar drawer
@@ -2001,6 +1320,10 @@ const app = createApp({
             decreaseQty,
             removeFromCart,
             clearCart,
+            clearCartModalOpen,
+            askClearCart,
+            cancelClearCart,
+            confirmClearCart,
             openCart,
             closeCart,
             toggleCart,
@@ -2022,6 +1345,7 @@ const app = createApp({
             signInWithMagicLink,
             signOut,
             ordersModalOpen,
+            ordersModalVisible,
             openOrdersModal,
             closeOrdersModal,
             authPassword,
@@ -2029,7 +1353,7 @@ const app = createApp({
             useMagicLink,
             handlePasswordAuth,
             resetPassword,
-            confirmOrderSaved,
+            // confirmOrderSaved,
 
             // Orders
             myOrders,
@@ -2037,12 +1361,12 @@ const app = createApp({
             orderError,
             checkout,
             sendOrderViaWhatsapp,
-            confirmOrderSaved,
+            // confirmOrderSaved,
             statusLabel,
             statusClass,
             orderSent,
             sendOrderViaWhatsapp,
-            confirmOrderSaved,
+            // confirmOrderSaved,
         };
     }
 });

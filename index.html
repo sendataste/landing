@@ -67,7 +67,7 @@
 </head>
 
 <body class="bg-warm-white text-carbon-black font-primary">
-    <div id="app">
+    <div id="app" v-cloak>
 
         <!-- Sticky Header -->
         <header class="sticky-header fixed w-full z-50 py-4" :class="{'scrolled': scrolled}">
@@ -113,7 +113,7 @@
                     </button>
 
                     <!-- Avatar cuando logueado -->
-                    <div v-else class="relative">
+                    <div v-else class="relative" style="z-index: 60;">
                         <button @click="toggleUserMenu" class="flex items-center gap-2">
                             <img :src="currentUser.user_metadata?.avatar_url || 'assets/logo_cuadrado_transparente.png'"
                                 class="w-9 h-9 rounded-full object-cover border-2 border-torii-red" alt="Avatar">
@@ -123,7 +123,8 @@
                         </button>
 
                         <div v-if="userMenuOpen"
-                            class="absolute right-0 mt-2 w-56 bg-carbon-black rounded-lg shadow-xl py-2 border border-gray-700">
+                            class="absolute right-0 mt-2 w-56 bg-carbon-black rounded-lg shadow-xl py-2 border border-gray-700"
+                            style="z-index: 70;">
                             <button @click="openOrdersModal"
                                 class="block w-full text-left px-4 py-2 text-warm-white text-sm hover:bg-torii-red">
                                 <i class="fas fa-receipt mr-2"></i> Mis pedidos
@@ -800,11 +801,11 @@
                     </button>
 
                     <!-- Paso 2: confirmar después de enviar -->
-                    <button v-if="orderSent" @click="confirmOrderSaved" class="cart-checkout cart-confirm-save"
+                    <!-- <button v-if="orderSent" @click="confirmOrderSaved" class="cart-checkout cart-confirm-save"
                         :disabled="submittingOrder">
                         <i class="fas fa-check"></i>
                         {{ submittingOrder ? 'Guardando...' : 'Ya envié el mensaje, guardar pedido' }}
-                    </button>
+                    </button> -->
 
                     <p v-if="orderError" class="cart-error">{{ orderError }}</p>
 
@@ -818,8 +819,28 @@
             </aside>
 
         </div>
+        <!-- Clear Cart Confirm Modal -->
+        <div v-show="clearCartModalOpen" class="cart-overlay" :class="{ 'is-visible': clearCartModalOpen }"
+            @click.self="cancelClearCart">
+            <div class="auth-modal" style="max-width: 420px;" role="dialog" aria-modal="true">
+                <h3 class="auth-title mb-2">¿Vaciar el carrito?</h3>
+                <p class="text-sm text-medium-gray mb-6">
+                    Se van a quitar todos los platos que agregaste. Esta acción no se puede deshacer.
+                </p>
+                <div class="flex gap-3">
+                    <button type="button" @click="cancelClearCart"
+                        class="flex-1 py-3 rounded-full border border-gray-300 text-sm font-bold text-carbon-black hover:bg-gray-100 transition">
+                        Cancelar
+                    </button>
+                    <button type="button" @click="confirmClearCart"
+                        class="flex-1 py-3 rounded-full bg-torii-red text-warm-white text-sm font-bold hover:bg-opacity-90 transition">
+                        Sí, vaciar
+                    </button>
+                </div>
+            </div>
+        </div>
         <!-- Auth Modal -->
-        <div v-if="authModalOpen" class="auth-overlay" @click.self="closeAuthModal">
+        <div v-show="authModalOpen" class="auth-overlay" :class="{ 'is-visible': authModalOpen }" @click.self="closeAuthModal">
             <div class="auth-modal" role="dialog" aria-modal="true">
                 <button class="auth-close" @click="closeAuthModal" aria-label="Cerrar">
                     <i class="fas fa-times"></i>
@@ -866,13 +887,13 @@
                 <button v-if="!isRegistering && !useMagicLink" @click="resetPassword"
                     class="text-xs text-center w-full text-medium-gray hover:text-carbon-black mt-2" type="button">
                     ¿Olvidaste tu contraseña?
-                </button>
+                </button>z
 
                 <p v-if="authMessage" class="auth-message">{{ authMessage }}</p>
                 <p v-if="authError" class="auth-error">{{ authError }}</p>
             </div>
         </div>
-        <div v-if="ordersModalOpen" class="auth-overlay" @click.self="closeOrdersModal">
+        <div v-show="ordersModalVisible" class="auth-overlay" :class="{ 'is-visible': ordersModalVisible }" @click.self="closeOrdersModal">
             <div class="auth-modal" style="max-width: 600px;" role="dialog">
                 <button class="auth-close" @click="closeOrdersModal"><i class="fas fa-times"></i></button>
                 <h3 class="auth-title mb-4">Mis pedidos</h3>
@@ -913,6 +934,7 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js" defer></script>
+    <script src="menu-data.js"></script>
     <script src="script.js" defer></script>
 </body>
 
