@@ -147,6 +147,7 @@ const app = createApp({
             if (!currentUser.value) return;
             const { data, error } = await sb.from('orders')
                 .select('*, order_items(*)')
+                .eq('user_id', currentUser.value.id)
                 .order('created_at', { ascending: false });
             if (!error) myOrders.value = data || [];
         };
